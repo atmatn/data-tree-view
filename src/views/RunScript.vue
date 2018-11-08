@@ -1,6 +1,6 @@
 <template>
   <div>
-    Running script {{scriptId}} with params {{myParams}}
+    Running script {{myScriptId}} with params {{myParams}}
     <div ref="content"></div>
     <Button @click="changeParam">Change Param</Button>
     <Button @click="doRun">Run</Button>
@@ -9,10 +9,13 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
-  data () {
+  data : function() {
+    debugger
     return {
-        myParams: {}
+        myScriptId: this.$store.state.currentScriptId,
+        myParams: JSON.parse(JSON.stringify(this.$store.state.currentScriptParams))
     }
   },
   props: {
@@ -22,29 +25,43 @@ export default {
   beforeRouteEnter (to, from, next) {
     debugger
     //不能用this, 可以 next ( vm => {  vm是组件实例})
-    next( vm => {
-      vm.myParams = JSON.parse(JSON.stringify(to.query))
-    })
+    // next( vm => {
+    //   vm.myParams = JSON.parse(JSON.stringify(to.query))
+    // })
+    next()
   },
   beforeRouteLeave (to, from, next) {
-    debugger
-    next(false)
+    // debugger
+    // next(false)
+  },
+  computed: {
+    ...mapState(['currentScriptId','currentScriptParams'])
+  },
+  watch: {
+    currentScriptId (val, oldVal) {
+      //current script id changed
+      console.log('current script id from ' + oldVal + ' to ' + val)
+      // console.log(this.$route)
+      this.myParams = JSON.parse(JSON.stringify(this.currentScriptParams))
+      this.myScriptId = this.currentScriptId
+      // 清空结果
+      this.$refs.content.innerHTML('')
+    }
   },
   methods: {
+    ...mapActions(['updateScriptParams']),
     changeParam(){
       var x = Math.random()
-      // 更新参数
+      // 更新组件内参数
       this.myParams.param_a = x
     },
     doRun () {
       // 更新URL
-      this.$router.push({
-        name: 'run-script',
-        query: {
-          param_a: this.myParams.param_a,
-          param_b: this.myParams.param_b
+      this.updateScriptParams({
+        params: {
+          ...this.myParams
         }
-      })
+      });
 
       debugger
       // 假设下面的是结果

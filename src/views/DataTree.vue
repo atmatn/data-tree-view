@@ -42,7 +42,9 @@
                 </Breadcrumb>
                 <Content :style="{padding: '24px 0', minHeight: '280px', background: '#fff'}">
                     <div class="extra">
-                      <Button @click="$router.push({name:'run-script', query:{ 'scriptId': '123', 'param_a': 1, 'param_b': 2 }})">Open Script</Button>
+                      <Button @click="openScript({scriptId: '123', params: { 'param_a': '1', 'param_b': '2' }})">Open Script 123</Button>
+                      <br/>
+                      <Button @click="openScript({scriptId: '456', params: {'param_a': 4, 'param_b': 5 } })">Open Script 456</Button>
                     </div>
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}">
@@ -92,6 +94,9 @@ import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
 
 export default {
+  beforeRouteEnter (to, from, next) {
+    next()
+  },
   methods: {
 
     // 较为直接的处理
@@ -105,6 +110,11 @@ export default {
     },
     // 通过vuex的action间接处理状态
     ...mapActions(["setSomeMsg"]),
+    changeSomeMsgInVuex () {
+      this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
+    },
+    // 通过vuex的处理openScript
+    ...mapActions(["openScript"]),
     changeSomeMsgInVuex () {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     }

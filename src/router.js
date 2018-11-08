@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import RunScript from './views/RunScript.vue'
 import DataTree from './views/DataTree.vue'
 import DataTreeHome from './views/DataTreeHome.vue'
-
 Vue.use(Router)
 
 export default new Router({
