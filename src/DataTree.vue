@@ -2,6 +2,8 @@
 <div class="layout">
         <Layout>
             <Header>
+                <Button @click="getSomeData">Get Some Data</Button>
+                <Input v-model="someData"/>
                 <Menu mode="horizontal" theme="dark" active-name="1">
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
@@ -74,8 +76,25 @@
 </template>
 
 <script>
-export default {
+import axios from 'axios'
 
+export default {
+  methods: {
+    getSomeData: function () {
+      axios.request({
+        url: '/getWelcomeMsg',
+        method: 'get'
+      }).then( res => {
+        this.someData = res.data.msg
+      })
+
+    }
+  },
+  data () {
+    return {
+      someData: "nothing"
+    }
+  }
 }
 </script>
 
