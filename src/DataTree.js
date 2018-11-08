@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import DataTree from './DataTree.vue'
+import DataTreeWrapper from './DataTreeWrapper.vue'
 import router from './router'
 import store from './store'
 import $ from 'jquery'
@@ -12,5 +12,5 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: h => h(DataTree)
+  render: h => h(DataTreeWrapper)
 }).$mount('#app')
