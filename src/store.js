@@ -21,7 +21,7 @@ export default new Vuex.Store({
       state.currentScriptParams = params
     },
 
-    updateScriptParams: (state, params) => {
+    updateScriptParams: (state, { params }) => {
       state.currentScriptParams = params
     }
   },
@@ -42,6 +42,7 @@ export default new Vuex.Store({
       })
     },
     updateScriptParams ({ commit, state }, { params }) {
+      debugger
       commit('updateScriptParams', { params })
       router.push({
         name: 'run-script',

@@ -11,17 +11,21 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { objEqual } from '../lib/tools'
 export default {
   data : function() {
     debugger
-    // return {
-    //   myScriptId: '',
-    //   myParams: {}
-    // }
     return {
-        myScriptId: this.$store.state.currentScriptId,
-        myParams: JSON.parse(JSON.stringify(this.$store.state.currentScriptParams))
+      myScriptId: '',
+      myParams: {}
     }
+    // return {
+    //     myScriptId: this.$store.state.currentScriptId,
+    //     myParams: JSON.parse(JSON.stringify(this.$store.state.currentScriptParams))
+    // }
+  },
+  mounted: function(){
+    this.reload()
   },
   props: {
     scriptId: String,
@@ -47,10 +51,17 @@ export default {
       //current script id changed
       console.log('current script id from ' + oldVal + ' to ' + val)
       // console.log(this.$route)
-      this.myParams = JSON.parse(JSON.stringify(this.currentScriptParams))
-      this.myScriptId = this.currentScriptId
-      // 清空结果
-      this.$refs.content.innerHTML = ''
+
+      this.reload()
+    },
+    currentScriptParams (val, oldVal) {
+      debugger
+      //current script params changed
+      console.log('current script params from ' + oldVal + ' to ' + val)
+      var equalToSavedParams = objEqual(val, this.myParams)
+      if( !equalToSavedParams ) {
+        this.reload()
+      }
     }
   },
   methods: {
@@ -61,6 +72,7 @@ export default {
       this.myParams.param_a = x
     },
     doRun () {
+      debugger
       // 更新URL
       this.updateScriptParams({
         params: {
@@ -72,6 +84,12 @@ export default {
       // 假设下面的是结果
       this.$refs.content.innerText = '结果:' + this.myParams.param_a
 
+    },
+    reload: function () {
+      this.myParams = JSON.parse(JSON.stringify(this.currentScriptParams))
+      this.myScriptId = this.currentScriptId
+      // 清空结果
+      this.$refs.content.innerHTML = ''
     }
   }
 }
