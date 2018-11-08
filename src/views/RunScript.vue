@@ -1,9 +1,10 @@
 <template>
   <div>
     Running script {{myScriptId}} with params {{myParams}}
-    <div ref="content"></div>
+    <br/>
     <Button @click="changeParam">Change Param</Button>
     <Button @click="doRun">Run</Button>
+    <div ref="content"></div>
   </div>
 
 </template>
@@ -13,6 +14,10 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data : function() {
     debugger
+    // return {
+    //   myScriptId: '',
+    //   myParams: {}
+    // }
     return {
         myScriptId: this.$store.state.currentScriptId,
         myParams: JSON.parse(JSON.stringify(this.$store.state.currentScriptParams))
@@ -45,7 +50,7 @@ export default {
       this.myParams = JSON.parse(JSON.stringify(this.currentScriptParams))
       this.myScriptId = this.currentScriptId
       // 清空结果
-      this.$refs.content.innerHTML('')
+      this.$refs.content.innerHTML = ''
     }
   },
   methods: {

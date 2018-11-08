@@ -94,8 +94,18 @@ import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  beforeRouteEnter (to, from, next) {
-    next()
+  beforeRouteEnter: function (to, from, next) {
+    debugger
+    if( to.name == 'run-script' ) {
+      next( function(vm) {
+        vm.openScript({
+          scriptId: to.query.scriptId,
+          params: to.query
+        })
+      })
+    } else {
+      next()
+    }
   },
   methods: {
 
