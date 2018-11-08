@@ -1,10 +1,18 @@
 <template>
 <div class="layout">
+  <div class="extra">
+    <div>
+      someData: <Input v-model="someData" style="width: 200px;"/>
+      <Button @click="getSomeData">Get Some Data (ajax)</Button>
+    </div>
+    <div>
+      someMsg: <Input v-model="someMsg" style="width: 200px;"/>
+      <Button @click="changeSomeMsgInVuex">Change SomeMsg (random)</Button>
+    </div>
+  </div>
         <Layout>
             <Header>
-                <Button @click="getSomeData">Get Some Data</Button>
-                <Input v-model="someData"/>
-                <Menu mode="horizontal" theme="dark" active-name="1">
+                <!--Menu mode="horizontal" theme="dark" active-name="1">
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
                         <MenuItem name="1">
@@ -24,7 +32,7 @@
                             Item 4
                         </MenuItem>
                     </div>
-                </Menu>
+                </Menu-->
             </Header>
             <Layout :style="{padding: '0 50px'}">
                 <Breadcrumb :style="{margin: '16px 0'}">
@@ -77,9 +85,13 @@
 
 <script>
 import axios from 'axios'
+// 参考：https://vuex.vuejs.org/zh/guide/state.html
+import { mapState, mapActions } from 'vuex'
 
 export default {
   methods: {
+
+    // 较为直接的处理
     getSomeData: function () {
       axios.request({
         url: '/getWelcomeMsg',
@@ -87,8 +99,17 @@ export default {
       }).then( res => {
         this.someData = res.data.msg
       })
-
+    },
+    // 通过vuex的action间接处理状态
+    ...mapActions(["setSomeMsg"]),
+    changeSomeMsgInVuex () {
+      this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     }
+  },
+  computed: {
+    ...mapState({
+      someMsg: "someMsg"
+    })
   },
   data () {
     return {
@@ -123,5 +144,11 @@ export default {
 }
 .layout-footer-center{
     text-align: center;
+}
+.extra {
+    display: inline-block;
+    border-style: solid;
+    border-color: red;
+    z-index: 10000;
 }
 </style>
