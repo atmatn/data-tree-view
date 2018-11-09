@@ -9,6 +9,10 @@
       someMsg: <Input v-model="someMsg" style="width: 200px;"/>
       <Button @click="changeSomeMsgInVuex">Change SomeMsg (random)</Button>
     </div>
+    <div>
+      data-tree-json: <Input type="textarea" :rows="4" v-bind:value="JSON.stringify(dataTreeNodes, null, 4)" style="width: 800px;"/>
+      <Button @click="reloadDataTree">Reload Data Tree</Button>
+    </div>
   </div>
         <Layout>
             <Header>
@@ -127,11 +131,14 @@ export default {
     ...mapActions(["openScript"]),
     changeSomeMsgInVuex () {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
-    }
+    },
+    // 通过vuex的处理reload data tree
+    ...mapActions(["reloadDataTree"])
   },
   computed: {
     ...mapState({
-      someMsg: "someMsg"
+      someMsg: "someMsg",
+      dataTreeNodes: "dataTreeNodes"
     })
   },
   data () {
