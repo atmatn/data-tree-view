@@ -23,6 +23,32 @@ var getDataTree = function getDataTree ({ url, type, body }) {
         children: [
           {
             type: 'folder',
+            id: 15,
+            title: '链接',
+            currentUserExecutable: true,
+            executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            children: [
+              {
+                type: 'direct-link',
+                id: 16,
+                title: 'KPI数据',
+                currentUserExecutable: true,
+                executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+                linkUrl: '/xxx.html'
+              },
+              {
+                type: 'direct-link',
+                id: 17,
+                title: '绝密KPI数据',
+                currentUserExecutable: false,
+                executable_perms: ['ke_core'] // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+                // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的linkUrl
+                // linkUrl: '/xxx.html',
+              }
+            ]
+          },
+          {
+            type: 'folder',
             id: 5,
             title: '财务',
             executable_perms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
