@@ -6,6 +6,8 @@ import DataTreeHome from './views/DataTreeHome.vue'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
+  base: '/ui/',
   routes: [
     {
       path: '/data-tree',
