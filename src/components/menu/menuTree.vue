@@ -12,16 +12,16 @@
 </template>
 
 <script>
-import submenu from '@/menu/submenu.vue';
+import submenu from '@/components/menu/submenu.vue';
 import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 export default {
      components:{submenu},
-data(){
- return {
-    dateTreeNodes:'hello',
-        }
-    },
+// data(){
+//  return {
+//     dateTreeNodes:'hello',
+//         }
+//     },
     computed:{
     //   getDataTree: function () {
     //     return axios.get('/api/data-tree').then( res => {

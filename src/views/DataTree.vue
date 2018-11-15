@@ -49,7 +49,7 @@
 import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
-import menuTree from '@/menu/menuTree.vue'
+import menuTree from '@/components/menu/menuTree.vue'
 // import {getDataTree} from '@/mock/index.js'
 
 export default {
