@@ -1,8 +1,8 @@
 <template>
-  <div v-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='args-script'&&model.currentUserVisible=== true">
+  <div v-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='args-script'">
     <MenuItem @click.native="openScript({scriptId: model.id, params: {'param_a': model.scriptParams.param_a, 'param_b': model.scriptParams.param_b }})">{{model.title}}</MenuItem>
   </div>
-  <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'&&model.currentUserVisible=== true">
+  <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
     <MenuItem @click.native="childrenClick()">{{model.title}}</MenuItem>
   </div>
   <div v-else>

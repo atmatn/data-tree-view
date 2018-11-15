@@ -31,7 +31,7 @@
                     </div>
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}">
-                              <test></test>
+                              <menuTree></menuTree>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                             <router-view/>
@@ -49,11 +49,11 @@
 import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
-import test from '@/test/test.vue'
+import menuTree from '@/menu/menuTree.vue'
 // import {getDataTree} from '@/mock/index.js'
 
 export default {
-  components: {test},
+  components: {menuTree},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
