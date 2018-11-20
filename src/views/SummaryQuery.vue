@@ -61,7 +61,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
-import { Input } from 'iview'
+import { Input, Button } from 'iview'
 
 export default {
   components: {
@@ -85,6 +85,7 @@ export default {
         {
           title: '参数值',
           key: 'dim_val',
+          width: 300,
           render: (h,params) => {
             return h('span', {
               class: {
@@ -105,8 +106,12 @@ export default {
           renderHeader: (h, col) => {
             // debugger
             return (
-              <span><span>{col.column.title}</span>
-              <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input></span>
+              <span>
+              <span>{col.column.title}</span>
+              <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
+              {this.dimValFilter != ''?<Button>将【包含“{this.dimValFilter.toLowerCase()}”】添加到【过滤条件】</Button>:<span></span>}
+              </span>
+
             )
           }
         },

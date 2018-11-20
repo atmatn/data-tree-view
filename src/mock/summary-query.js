@@ -42,7 +42,7 @@ export const getDimValsPvUv = ({ url, type, body }) => {
   var arr = []
   var pv
   var uv
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < 100; i++) {
     pv = 300 + Math.round(Math.random() * 100)
     uv = Math.round(pv * Math.random()) + 1
     arr.push(
