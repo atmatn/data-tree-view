@@ -49,7 +49,7 @@ export const getDimValsPvUv = ({ url, type, body }) => {
       { 'dim_val': curDim + '_value_' + i, pv, uv }
     )
     arr = arr.sort((a, b) => b.uv - a.uv)
-    debugger
+    // debugger
   }
   return {
     dimValsPvUvData: arr

@@ -37,8 +37,9 @@
       </p>
       <p>
         <Modal v-model="showModalDimVals"
-          :title="(curDim + '参数值')">
-          <Table height="500" :columns="dimValCols" :data="dimValsPvUvData">
+          :title="(curDim + '参数值')"
+          @on-visible-change="clearUpModal">
+          <Table height="500" :columns="dimValCols" :data="filterdDimValsPvUvData">
 
           </Table>
         </Modal>
@@ -60,6 +61,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
+import { Input } from 'iview'
 
 export default {
   components: {
@@ -81,23 +83,33 @@ export default {
       // ],
       dimValCols: [
         {
-          title: '参数值', key: 'dim_val', render: (h,params) => {
-          return h('span', {
-            class: {
-              'dim-val-label': true
-            },
-            on: {
-              click: () => {
-                console.log('clicked dim val: ' + params.row.dim_val)
-                this.addFilter({
-                  dim: this.curDim,
-                  dimVal: params.row.dim_val
-                })
-                this.showModalDimVals = false
+          title: '参数值',
+          key: 'dim_val',
+          render: (h,params) => {
+            return h('span', {
+              class: {
+                'dim-val-label': true
+              },
+              on: {
+                click: () => {
+                  console.log('clicked dim val: ' + params.row.dim_val)
+                  this.addFilter({
+                    dim: this.curDim,
+                    dimVal: params.row.dim_val
+                  })
+                  this.showModalDimVals = false
+                }
               }
-            }
-          }, params.row.dim_val)
-        }},
+            }, params.row.dim_val)
+          },
+          renderHeader: (h, col) => {
+            // debugger
+            return (
+              <span><span>{col.column.title}</span>
+              <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input></span>
+            )
+          }
+        },
         {title: 'UV', key: 'uv'},
         {title: 'PV', key: 'pv'}
       ],
@@ -105,7 +117,14 @@ export default {
       dimValsPvUvData: [],
       dateRangePvUvData: [],
       curDim: '',
-      showModalDimVals: false
+      showModalDimVals: false,
+      dimValFilter: ''
+    }
+  },
+  computed: {
+    filterdDimValsPvUvData: function(){
+      debugger
+      return this.dimValsPvUvData.filter( s => s.dim_val.toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
     }
   },
   mounted: function() {
@@ -125,6 +144,9 @@ export default {
   methods: {
     debug () {
       debugger
+    },
+    clearUpModal(){
+      this.dimValFilter = ''
     },
     onChangeDataSource: function(val){
       console.log("datasource changed to: " + val)
@@ -179,12 +201,12 @@ export default {
           to: moment(this.daterange[1]).format('YYYY-MM-DD'),
         }
       }).then( res => {
-        debugger
+        // debugger
         var list = res.data.dateRangePvUvData
         this.dateRangePvUvData = list
         var $disp = $(this.$refs.dateRangePvUvDisp)
         $disp.empty()
-        debugger
+        // debugger
         drawChart({
           title: '概要数据',
           source: {
