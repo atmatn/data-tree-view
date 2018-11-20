@@ -1,47 +1,57 @@
 <template>
   <div>
-    <Button @click="debug">Debug</Button>
+    <!--Button @click="debug">Debug</Button-->
     <p>
-      数据源：
-      <Select @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
+      <div class="h">数据源</div>
+      <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
             <Option v-for="item in dataSourceList"
             :value="item.value"
             :key="item.value">{{ item.value }}
             </Option>
       </Select>
     </p>
-    <p>
-      日期：<DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 400px"></DatePicker>
-    </p>
-    <p v-if="filters.length > 0">
-      过滤条件：
-      <p v-for="(item,idx) in filters">
-        {{item.dim}} = {{item.dimVal}}
-        <Button @click="filters.splice(idx, 1)" class="btn-del">删除</Button>
+    <div v-if="dataSource != ''">
+      <p>
+        <div class="h">日期</div><DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 400px"></DatePicker>
       </p>
-    </p>
-    <p>
-      参数：
-      <span v-for="item in dimList">
-        <a @click="dimClick(item.value)" class="dim-item">{{item.value}}</a>
-      </span>
-    </p>
-    <p>
-      <Modal v-model="showModalDimVals"
-        :title="(curDim + '参数值')">
-        <Table :columns="dimValCols" :data="dimValsPvUvData">
+      <p>
+        <div class="h">过滤条件</div>
+        <p v-if="filters.length == 0">
+          无
+        </p>
+        <p v-if="filters.length > 0">
+          <p v-for="(item,idx) in filters">
+            {{item.dim}} = {{item.dimVal}}
+            <Button @click="filters.splice(idx, 1)" class="btn-del">删除</Button>
+          </p>
+        </p>
+      </p>
+      <p>
+        <div class="h">参数</div>
+        <div><Input v-model="dimNameFilter" placeholder="搜索参数" style="width: 300px"></Input></div>
+        <div class="dim-list">
+        <span v-if="item.value.indexOf(dimNameFilter.toLowerCase()) >= 0" v-for="item in dimList">
+          <a @click="dimClick(item.value)" class="dim-item">{{item.value}}</a>
+        </span>
+        </div>
+      </p>
+      <p>
+        <Modal v-model="showModalDimVals"
+          :title="(curDim + '参数值')">
+          <Table height="500" :columns="dimValCols" :data="dimValsPvUvData">
 
-        </Table>
-      </Modal>
-    </p>
-    <p>
-      <div ref="dateRangePvUvDisp">
+          </Table>
+        </Modal>
+      </p>
+      <p>
+        <div ref="dateRangePvUvDisp">
 
-      </div>
-      <!--Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
+        </div>
+        <!--Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
 
-      </Table-->
-    </p>
+        </Table-->
+      </p>
+    </div>
   </div>
 </template>
 
@@ -60,7 +70,8 @@ export default {
 
     return {
       dataSourceList: [],
-      dataSource: "",
+      dataSource: '',
+      dimNameFilter: '',
       daterange: [fromDate.toDate(), toDate.toDate()],
       dimList: [],
       // dateRangePvUvCols: [
@@ -150,8 +161,10 @@ export default {
     addFilter: function({dim, dimVal}) {
       this.filters.push({
         dim: dim,
-        dimVal: dimVal
+        dimVal: dimVal,
+        operator: '='
       })
+      this.dimNameFilter = ''
     },
     updatePvUvList() {
       console.log('update pv uv list')
@@ -173,7 +186,7 @@ export default {
         $disp.empty()
         debugger
         drawChart({
-          title: '数据',
+          title: '概要数据',
           source: {
             cols: ['day','uv','pv'],
             data: list
@@ -187,7 +200,7 @@ export default {
           $target: $disp
         })
         drawTable({
-          title: '数据',
+          title: '概要数据',
           source: {
             cols: ['day','uv','pv'],
             data: list
@@ -220,8 +233,18 @@ export default {
 </script>
 
 <style scoped lang="less">
+  .dim-list {
+    display: flex;
+    width: 90%;
+    flex-wrap: wrap;
+  }
   .dim-item {
     margin-right: 5px;
+  }
+  .h {
+    font-size: 24px;
+    display: inline-block;
+    margin-right: 1em;
   }
 </style>
 

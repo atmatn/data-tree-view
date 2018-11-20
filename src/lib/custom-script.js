@@ -217,7 +217,6 @@ export const drawTable = function (params) {
         }
       }
     })
-    v()
   } else {
     debugger
     var tblHtml = createTable(title)
