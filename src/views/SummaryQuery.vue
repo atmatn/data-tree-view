@@ -21,7 +21,8 @@
         </p>
         <p v-if="filters.length > 0">
           <p v-for="(item,idx) in filters">
-            {{item.dim}} = {{item.dimVal}}
+            <span class="filter-dim">{{item.dim}}</span> : <span v-if="item.operator=='='">{{item.dimVal}}</span>
+            <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
             <Button @click="filters.splice(idx, 1)" class="btn-del">删除</Button>
           </p>
         </p>
@@ -94,12 +95,14 @@ export default {
               on: {
                 click: () => {
                   console.log('clicked dim val: ' + params.row.dim_val)
-                  this.addFilter({
+                  this.addEqFilterWrapper({
                     dim: this.curDim,
                     dimVal: params.row.dim_val
                   })
-                  this.showModalDimVals = false
                 }
+              },
+              domProps: {
+                'title': 'a'
               }
             }, params.row.dim_val)
           },
@@ -109,7 +112,7 @@ export default {
               <span>
               <span>{col.column.title}</span>
               <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
-              {this.dimValFilter != ''?<Button>将【包含“{this.dimValFilter.toLowerCase()}”】添加到【过滤条件】</Button>:<span></span>}
+              {this.dimValFilter != ''?<Button on-click={this.addLikeFilterWrapper.bind(this, {dim: this.curDim, dimVal: this.dimValFilter})}>将【包含“{this.dimValFilter.toLowerCase()}”（忽略大小写）】<br/>添加到【过滤条件】</Button>:<span></span>}
               </span>
 
             )
@@ -185,13 +188,29 @@ export default {
         this.showModalDimVals = true
       })
     },
-    addFilter: function({dim, dimVal}) {
+    addEqFilterWrapper: function({dim, dimVal}) {
+      this.addEqFilter({dim, dimVal})
+      this.showModalDimVals = false
+      this.dimNameFilter = ''
+    },
+    addEqFilter: function({dim, dimVal}) {
       this.filters.push({
         dim: dim,
         dimVal: dimVal,
         operator: '='
       })
+    },
+    addLikeFilterWrapper: function({dim, dimVal}) {
+      this.addLikeFilter({dim, dimVal})
+      this.showModalDimVals = false
       this.dimNameFilter = ''
+    },
+    addLikeFilter: function({dim, dimVal}) {
+      this.filters.push({
+        dim: dim,
+        dimVal: dimVal,
+        operator: 'like'
+      })
     },
     updatePvUvList() {
       console.log('update pv uv list')
@@ -267,6 +286,12 @@ export default {
   }
   .dim-item {
     margin-right: 5px;
+  }
+  .filter-dim {
+    font-size: 18px;
+  }
+  .btn-del {
+    margin-left: 10px;
   }
   .h {
     font-size: 24px;
