@@ -35,9 +35,12 @@
       </Modal>
     </p>
     <p>
-      <Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
+      <div ref="dateRangePvUvDisp">
 
-      </Table>
+      </div>
+      <!--Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
+
+      </Table-->
     </p>
   </div>
 </template>
@@ -45,6 +48,8 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import { drawTable } from '@/lib/custom-script.js'
+import $ from 'jquery'
 
 export default {
   components: {
@@ -58,11 +63,11 @@ export default {
       dataSource: "",
       daterange: [fromDate.toDate(), toDate.toDate()],
       dimList: [],
-      dateRangePvUvCols: [
-         { title: '日期', key: 'day' },
-         { title: 'UV', key: 'uv' },
-         { title: 'PV', key: 'pv' }
-      ],
+      // dateRangePvUvCols: [
+      //    { title: '日期', key: 'day' },
+      //    { title: 'UV', key: 'uv' },
+      //    { title: 'PV', key: 'pv' }
+      // ],
       dimValCols: [
         {
           title: '参数值', key: 'dim_val', render: (h,params) => {
@@ -164,6 +169,21 @@ export default {
         debugger
         var list = res.data.dateRangePvUvData
         this.dateRangePvUvData = list
+        var $disp = $(this.$refs.dateRangePvUvDisp)
+        $disp.empty()
+        drawTable({
+          title: '数据',
+          source: {
+            cols: ['day','uv','pv'],
+            data: list
+          },
+          headerMap: {
+            'uv': 'UV',
+            'pv': 'PV'
+          },
+          $target: $disp,
+          simple: true
+        })
       })
     }
   },

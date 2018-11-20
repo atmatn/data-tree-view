@@ -27,15 +27,14 @@ export const getDimValsPvUv = ({ url, type, body }) => {
 
 export const getDateRangePvUv = ({ url, type, body }) => {
   var b = JSON.parse(body)
-  var dataSource = b.dataSource
-  var fromDate = b.dateRange.from;
-  var toDate = b.dateRange.to;
+  // var dataSource = b.dataSource
+  var fromDate = b.dateRange.from
+  var toDate = b.dateRange.to
 
-  var dataList = [];
-  var pv;
-  debugger
-  for(var day = fromDate; day <= toDate; day = moment(day + "T00:00:00").add(1,'days').format('YYYY-MM-DD'))
-  {
+  var dataList = []
+  var pv
+  // debugger
+  for (var day = fromDate; day <= toDate; day = moment(day + 'T00:00:00').add(1, 'days').format('YYYY-MM-DD')) {
     pv = 300 + Math.round(Math.random() * 100)
     dataList.push({
       day: day,

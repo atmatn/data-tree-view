@@ -4,7 +4,13 @@ const BASE_URL = process.env.NODE_ENV === 'production' ? '/ui' : '/ui'
 
 module.exports = {
   lintOnSave: false,
+  runtimeCompiler: true,
   baseUrl: BASE_URL,
+  // resolve: {
+  //   alias: {
+  //     'vue$': 'vue/dist/vue.esm.js' // 'vue/dist/vue.common.js' for webpack 1
+  //   }
+  // },
   chainWebpack: config => {
     config.resolve.alias
       .set('@', resolve('src'))
@@ -20,9 +26,11 @@ module.exports = {
           jquery: 'jquery',
           jQuery: 'jquery',
           'window.jQuery': 'jquery'
-        }, {
-          Vue: 'vue'
-        }])
+        }
+        // , {
+        //   Vue: 'vue'
+        // }
+      ])
   },
   pages: {
     index: {
