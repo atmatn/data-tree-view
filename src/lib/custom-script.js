@@ -5,6 +5,10 @@ import { downloadCsv } from '@/lib/tools'
 import { Table, Button } from 'iview'
 import { timeFormatter, autoFormat } from '@/lib/format'
 import '@/lib/custom-script.css'
+import echarts from 'echarts'
+
+const NoResult = NaN
+
 function isHeadless () {
   return false
 }
@@ -30,7 +34,7 @@ function createTableHeader (headers, userClassMap, hideDate) {
       <% } %>
       </tr></thead>
   `
-  var f = _.template(tmpl);
+  var f = _.template(tmpl)
   var html = f({ headers: headers, userClassMap: userClassMap })
   var $elem = $(html)
   if (hideDate) {
@@ -88,7 +92,7 @@ function createTableLine (time, headers, values, attachDataList, userClassMap, h
     var $td = $($tdList[i])
     $td.data('attachData', attachData)
     if (attachData.css !== undefined) {
-      // debugger;
+      // debugger
       $td.css(attachData.css)
     }
     if (attachData.addClass !== undefined) {
@@ -110,13 +114,13 @@ export const drawTable = function (params) {
     if (typeof (data) === 'string' && data.indexOf('ERROR') >= 0) {
       alert('查询失败：' + data)
     } else {
-      debugger
+      // debugger
       alert("drawTable(): 'data' 参数错误！")
     }
     return
   }
   if (typeof (cols) !== 'object' || !(cols instanceof Array)) {
-    debugger
+    // debugger
     alert("drawTable(): 'cols' 参数错误！")
     return
   }
@@ -208,12 +212,12 @@ export const drawTable = function (params) {
       },
       methods: {
         downloadClick: function (encoding) {
-          debugger
+          // debugger
           downloadCsv(cols, data, encoding)
         }
       }
     })
-    v
+    v()
   } else {
     debugger
     var tblHtml = createTable(title)
@@ -232,7 +236,7 @@ export const drawTable = function (params) {
       for (var j = 0; j < cols.length; j++) {
         values.push(data[i][cols[j]])
       }
-      $tbody.append(createTableLine('', cols, values, [], {}, true));
+      $tbody.append(createTableLine('', cols, values, [], {}, true))
     }
     $tbl.find('.custom-table').append($thead)
     $tbl.find('.custom-table').append($tbody)
@@ -248,4 +252,231 @@ export const drawTable = function (params) {
       downloadCsv(cols, data, 'GBK')
     })
   }
+}
+
+export const drawChart = function (params) {
+  if (isHeadless()) {
+    return
+  }
+  var table = params.source
+  var title = params.title
+  var chartType = params.chartType || 'line'
+  var data = table.data
+  var headerMap = params.headerMap
+  // var cols = table.cols
+  var x = params.x
+  var yList = params.yList || [params.y]
+  var $target = params.$target
+  // var width = params.width
+  var $newElem = $('<div>').addClass('echarts')
+  $target.append($newElem)
+
+  var e = $newElem[0]
+
+  var xAxisData = _.map(data, function (lineData) {
+    return lineData[x]
+  }).reverse()
+
+  var theTitle
+  if (params.showTitle === false) {
+    theTitle = {}
+  } else {
+    theTitle = {
+      fontFamily: '宋体',
+      text: title
+    }
+  }
+
+  var theXAxis
+  var theYAxis
+  if (chartType === 'line') {
+    theXAxis = [{
+      type: 'category',
+      boundaryGap: false,
+      data: xAxisData
+    }]
+    theYAxis = [{
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}'
+      }
+    }]
+  } else if (chartType === 'bar') {
+    theXAxis = [{
+      type: 'category',
+      boundaryGap: false,
+      data: xAxisData,
+      axisTick: {
+        interval: 0
+      },
+      axisLabel: {
+        interval: 0,
+        rotate: 45
+      }
+    }]
+
+    if (params.yAxisFormatter) {
+      theYAxis = [{
+        type: 'value',
+        axisLabel: {
+          formatter: this.yAxisFormatter
+        }
+      }]
+    } else {
+      theYAxis = [{
+        type: 'value',
+        axisLabel: {
+          formatter: '{value}'
+        }
+      }]
+    }
+  }
+
+  var preDefineColors = [
+    '#f64747', '#26c281', '#f7ca18', '#f9690e', '#4183d7',
+    '#f288ac', '#4ecdc4', '#be90d4', '#dd834e', '#22a7f0',
+    '#ce114b', '#6ca5b6', '#663399', '#8e4e77', '#e6a133',
+    '#9bd2eb', '#2a7c65', '#dd6370', '#c3bd22' //,'#bfbfbf'
+  ]
+  var preDefineSymbols = ['circle', 'rect', 'triangle', 'diamond']
+
+
+  var seriesType
+  if (chartType == 'line') {
+    seriesType = 'line'
+  } else if (chartType == 'bar') {
+    seriesType = 'bar'
+  }
+
+  var tooltipFormatter = params.tooltipFormatter
+  var labelFormatter = params.labelFormatter
+
+  var seriesItem
+  var series = []
+  var dontDrawUndef = true
+  // debugger
+  for (var i = 0; i < yList.length; i++) {
+    var symbol
+    symbol = preDefineSymbols[i % preDefineSymbols.length]
+
+    seriesItem = {
+      name: '',
+      type: seriesType,
+      data: [],
+      symbol: symbol,
+      symbolSize: 10,
+      itemStyle: {
+        normal: {
+          label: {
+            show: (labelFormatter !== undefined),
+            position: 'top',
+            formatter: labelFormatter
+          }
+        }
+      }
+    }
+
+    seriesItem.data = _.map(data, function (lineData) {
+      var value = lineData[yList[i]]
+      if (value === undefined || isNaN(value)) {
+        value = dontDrawUndef ? undefined : 0
+      } else if (value === NoResult && !$.isNumeric(value)) {
+        value = dontDrawUndef ? undefined : 0
+      }
+      return value
+    }).reverse()
+    var seriesName
+    if (headerMap && headerMap[yList[i]] != undefined) {
+      seriesName = headerMap[yList[i]]
+    } else {
+      seriesName = yList[i]
+    }
+    seriesItem.name = seriesName
+    series.push(seriesItem)
+  }
+
+
+  var theLegend = {
+    data: _.map(series, function (x) {
+      return x.name
+    }),
+    bottom: 0
+  }
+
+  var colors = preDefineColors.concat([])
+  var option = {
+    grid: [{
+      x: 80,
+      y: '10%',
+      width: '80%',
+      height: '70%'
+    }],
+    backgroundColor: '#FFFFFF', //背景色
+    color: colors,
+    title: theTitle,
+    tooltip: {
+      trigger: 'axis',
+      formatter: tooltipFormatter
+    },
+    // grid : {
+    //     bottom: 80
+    // },
+    legend: theLegend,
+    toolbox: {
+      show: true,
+      feature: {
+        mark: {
+          show: true
+        },
+        dataView: {
+          show: true,
+          readOnly: false
+        },
+        magicType: {
+          show: true,
+          type: ['line', 'bar']
+        },
+        restore: {
+          show: true
+        },
+        saveAsImage: {
+          backgroundColor: 'white',
+          show: true
+        },
+        myTool1: {
+          show: true,
+          title: '隐藏图片',
+          icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
+          onclick: function (arg, arg2) {
+            // var $padding = $('<div>').css({
+            //     'width': '30%',
+            //     'height': '1em'
+            // })
+            var $padding = $('<div>').css({
+              'display': 'block'
+            })
+            var $btn = $('<button>显示图片</button>')
+            $padding.append($btn)
+            $btn.on('click', function () {
+              $old.show()
+              $padding.remove()
+            })
+
+            var $old = $(arg2.getDom())
+            $padding.insertAfter($old)
+            $old.hide()
+            //alert('myToolHandler1')
+          }
+        }
+      }
+    },
+    calculable: true,
+    xAxis: theXAxis,
+    yAxis: theYAxis,
+    series: series
+  }
+
+  // debugger
+  var myChart = echarts.init(e)
+  myChart.setOption(option)
 }

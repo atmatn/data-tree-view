@@ -48,7 +48,7 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
-import { drawTable } from '@/lib/custom-script.js'
+import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
 
 export default {
@@ -171,6 +171,21 @@ export default {
         this.dateRangePvUvData = list
         var $disp = $(this.$refs.dateRangePvUvDisp)
         $disp.empty()
+        debugger
+        drawChart({
+          title: '数据',
+          source: {
+            cols: ['day','uv','pv'],
+            data: list
+          },
+          x: 'day',
+          yList: ['uv','pv'],
+          headerMap: {
+            'uv': 'UV',
+            'pv': 'PV'
+          },
+          $target: $disp
+        })
         drawTable({
           title: '数据',
           source: {
@@ -182,7 +197,7 @@ export default {
             'pv': 'PV'
           },
           $target: $disp,
-          simple: true
+          simple: false
         })
       })
     }
