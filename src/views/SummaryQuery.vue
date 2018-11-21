@@ -1,6 +1,7 @@
 <template>
   <div>
     <!--Button @click="debug">Debug</Button-->
+    <h1 class="h1">聚合查询工具</h1>
     <p>
       <div class="h">数据源</div>
       <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
@@ -45,8 +46,37 @@
           </Table>
         </Modal>
       </p>
-      <p>
-        <div ref="dateRangePvUvDisp">
+      <div v-if="uidFieldList.length > 0">
+        <div class="h">用户标识</div>
+        <Select filterable @on-change="onChangeUidField" v-model="uidField" style="width:400px">
+            <Option v-for="item in uidFieldList"
+            :value="item.value"
+            :key="item.value">{{ item.value }}
+            </Option>
+        </Select>
+      </div>
+      <p v-if="dateRangeAggData.length > 0">
+        <hr/>
+        <div class="h agg-result">查询结果</div>
+        <div v-if="isRangeAggDataSampled">
+          <Alert type="warning">
+            <span v-if="isRangeAggDataSampled" class="warn-sampled">已采样{{aggDataSampleType}}计算
+            <Tooltip max-width="400" transfer="true">
+              <Icon type="ios-help-circle-outline" />
+              <div slot="content">
+                  <p align="center">什么是“采样计算”</p>
+                  <p>为了提高查询速度，当前查询使用了 1/N 的用户数据来估算结果。</p>
+                  <p>算法：</p>
+                  <p>1. 取 1/N 用户的数据，计算出 PV 和 UV。</p>
+                  <p>2. 计算结果再乘以 N 作为输出。</p>
+              </div>
+            </Tooltip>
+            <Button class="precise-button"><span class="precise-link" @click="onPreciseLinkClick">我想全量计算当前查询</span></Button>
+            </span>
+          </Alert>
+
+        </div>
+        <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
         <!--Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
@@ -74,6 +104,8 @@ export default {
     return {
       dataSourceList: [],
       dataSource: '',
+      uidFieldList: [],
+      uidField: '',
       dimNameFilter: '',
       daterange: [fromDate.toDate(), toDate.toDate()],
       dimList: [],
@@ -123,15 +155,20 @@ export default {
       ],
       filters: [],
       dimValsPvUvData: [],
-      dateRangePvUvData: [],
+      dateRangeAggData: [],
+      aggResultSuffix: '',
+      isRangeAggDataSampled: false,
+      aggDataSampleType: '',
+      aggDataPreciseSql: '',
       curDim: '',
+      // blink: false,
       showModalDimVals: false,
       dimValFilter: ''
     }
   },
   computed: {
     filterdDimValsPvUvData: function(){
-      debugger
+      // debugger
       return this.dimValsPvUvData.filter( s => s.dim_val.toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
     }
   },
@@ -141,17 +178,29 @@ export default {
       method: 'get'
     }).then( res => {
       // debugger
-      var retList = res.data.dataSources.map( x => ({
-        value: x
-      }))
+      // var retList = res.data.dataSources.map( x => ({
+      //   value: x
+      // }))
+      var retList = res.data.dataSources
       this.dataSourceList = retList
 
-      this.updatePvUvList()
+      // this.updatePvUvList()
     })
+
+    // 变色功能
+    // setInterval( () => {
+    //   this.blink = !this.blink
+    // }, 500)
   },
   methods: {
     debug () {
       debugger
+    },
+    onPreciseLinkClick() {
+      // this.$Message.info('请在弹出页面中点击“查询”！');
+      var prefixMsg = "--请点击“执行”，之后过段时间点击“刷新”看看有没有出结果~\n"
+      var encodedeSql = encodeURIComponent(prefixMsg + this.aggDataPreciseSql)
+      window.open('http://analyzer2.corp.youdao.com/hive-async-query.html?sql=' + encodedeSql,'_blank');
     },
     clearUpModal(){
       this.dimValFilter = ''
@@ -165,10 +214,23 @@ export default {
         }
       ).then( res => {
         // debugger
-        var dimList = res.data.dimList.map( x => {return { value: x }})
+        var dimList = res.data.dimList
         this.dimList = dimList
         console.log('dim list: ' + JSON.stringify(this.dimList ))
+        this.uidFieldList = res.data.uidConf.uidFieldList.map(x=>{
+          return {value: x}
+        })
+        if( this.uidFieldList.length > 0 ) {
+          this.uidField = res.data.uidConf.defaultUidField
+        } else {
+          this.uidField = ''
+        }
+        this.updatePvUvList()
       })
+    },
+    onChangeUidField: function(val) {
+      console.log("uidField changed to: " + val)
+      this.updatePvUvList()
     },
     dimClick: function (dim) {
       console.log('click dim:' + dim);
@@ -213,51 +275,71 @@ export default {
       })
     },
     updatePvUvList() {
-      console.log('update pv uv list')
+      // debugger
+      console.log('update agg list')
       if( this.dataSource == '' ) {
         return
       }
-      axios.post('/api/summary-query/date-range-pv-uv', {
+
+      var aggs = [
+        {
+            name: 'PV',
+            type: 'pv'
+        }
+      ]
+
+      var mtrs = ['PV']
+
+      if( this.uidField != null && this.uidField != '' ) {
+        aggs.push(
+          {
+            name: 'UV',
+            type: 'uv',
+            uidField: this.uidField
+          }
+        )
+        mtrs.push('UV')
+      }
+
+      axios.post('/api/summary-query/date-range-agg', {
         dataSource: this.dataSource,
         filters: this.filters,
         dateRange: {
           from: moment(this.daterange[0]).format('YYYY-MM-DD'),
           to: moment(this.daterange[1]).format('YYYY-MM-DD'),
-        }
+        },
+        aggs: aggs
       }).then( res => {
         // debugger
-        var list = res.data.dateRangePvUvData
-        this.dateRangePvUvData = list
-        var $disp = $(this.$refs.dateRangePvUvDisp)
+        var list = res.data.dateRangeAggData
+        this.dateRangeAggData = list
+        var $disp = $(this.$refs.dateRangeAggDisp)
         $disp.empty()
         // debugger
+        // var suffix = res.data.isSampled?'已采样' + res.data.sampleType + '计算':''
+        // this.aggResultSuffix = suffix
         drawChart({
-          title: '概要数据',
+          title: '',
           source: {
-            cols: ['day','uv','pv'],
+            cols: ['day'].concat(mtrs),
             data: list
           },
           x: 'day',
-          yList: ['uv','pv'],
-          headerMap: {
-            'uv': 'UV',
-            'pv': 'PV'
-          },
+          yList: mtrs,
           $target: $disp
         })
         drawTable({
-          title: '概要数据',
+          title: '',
           source: {
-            cols: ['day','uv','pv'],
+            cols: ['day'].concat(mtrs),
             data: list
-          },
-          headerMap: {
-            'uv': 'UV',
-            'pv': 'PV'
           },
           $target: $disp,
           simple: false
         })
+        this.isRangeAggDataSampled = res.data.isSampled
+        this.aggDataSampleType = res.data.sampleType
+        this.aggDataPreciseSql = res.data.preciseSql || ''
       })
     }
   },
@@ -270,10 +352,10 @@ export default {
       console.log('daterange changed!')
       this.updatePvUvList()
     },
-    "dataSource": function(){
-      console.log('dataSource changed!')
-      this.updatePvUvList()
-    }
+    // "dataSource": function(){
+    //   console.log('dataSource changed!')
+    //   this.updatePvUvList()
+    // }
   }
 }
 </script>
@@ -297,6 +379,34 @@ export default {
     font-size: 24px;
     display: inline-block;
     margin-right: 1em;
+    // margin-top: 1em;
+  }
+  .sampled-data {
+    // background-color: red;
+  }
+  .date-range-agg-disp {
+    // width: 90%;
+  }
+  .agg-result {
+    text-align: center;
+  }
+  hr {
+    margin-top: 1em;
+  }
+  // .lighting{
+  //   color: red;
+  // }
+  .precise-link {
+    color: black;
+    font-size: 24px;
+  }
+  .precise-button {
+    margin-left: 2em;
+    margin-top: 1em;
+  }
+  .warn-sampled {
+    font-size: 24px;
+    color: red;
   }
 </style>
 
@@ -310,5 +420,11 @@ export default {
   }
   .dim-val-label:hover{
     cursor: pointer;
+  }
+  .h2{
+    font-size: 24px;
+  }
+  .h1{
+    font-size: 36px;
   }
 </style>
