@@ -34,7 +34,7 @@ var getDataTree = function getDataTree ({ url, type, body }) {
                 title: 'KPI数据',
                 currentUserExecutable: true,
                 executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-                linkUrl: '/xxx.html'
+                linkUrl: 'http://analyzer2.corp.youdao.com/'
               },
               {
                 type: 'direct-link',
