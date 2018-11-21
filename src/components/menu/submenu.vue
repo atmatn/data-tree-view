@@ -1,7 +1,11 @@
 <template>
   <div v-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='args-script'">
     <div v-if="model.currentUserExecutable=== false">
-        <MenuItem :name="model.id">{{model.title}}<icon type="md-lock"/></MenuItem>
+        <MenuItem :name="model.id">
+            <Poptip  title="缺少下列权限":content="model.executable_perms" placement="right">
+                {{model.title}}<icon type="md-lock"/>
+            </Poptip>
+        </MenuItem>
     </div>
     <div v-else>
         <MenuItem :name="model.id" @click.native="openScript({scriptId: model.id, params: {'param_a': model.scriptParams.param_a, 'param_b': model.scriptParams.param_b }})">{{model.title}}</MenuItem>
@@ -9,7 +13,11 @@
   </div>
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
     <div v-if="model.currentUserExecutable=== false">
-      <MenuItem :name="model.id">{{model.title}}<icon type="md-lock"/></MenuItem>
+      <MenuItem :name="model.id">
+          <Poptip title="缺少下列权限" :content="model.executable_perms" placement="right">
+              {{model.title}}<icon type="md-lock"/>
+          </Poptip>
+      </MenuItem>
     </div>
     <div v-else>
       <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
@@ -48,7 +56,7 @@ export default {
           },
   methods:{
     childClick () {
-         window.location.href=this.model.linkUrl
+         window.open(this.model.linkUrl)
       },
     ...mapActions(["openScript"])
   },
