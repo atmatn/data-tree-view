@@ -312,7 +312,11 @@ export default {
       }).then( res => {
         // debugger
         var list = res.data.dateRangeAggData
-        this.dateRangeAggData = list
+        this.dateRangeAggData = list.sort( (a,b) => {
+          if( a.day > b.day ) return -1
+          else if( a.day < b.day ) return 1
+          else return 0
+        })
         var $disp = $(this.$refs.dateRangeAggDisp)
         $disp.empty()
         // debugger
