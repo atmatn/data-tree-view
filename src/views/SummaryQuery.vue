@@ -35,7 +35,9 @@
         </p>
         <p v-if="filters.length > 0">
           <p class="filter-item" v-for="(item,idx) in filters" v-bind:key="item.idx">
-            <span class="filter-dim">{{item.dim}}</span> : <span v-if="item.operator=='='">{{item.dimVal}}</span>
+            <span class="filter-dim">{{item.dim}}</span> :
+            <span v-if="item.operator=='is_null'">is null</span>
+            <span v-if="item.operator=='='">{{item.dimVal}}</span>
             <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
             <Button @click="filters.splice(idx, 1)" class="btn-del">移除</Button>
           </p>
@@ -379,7 +381,7 @@ export default {
       this.showModalDimVals = false
       this.dimNameFilter = ''
     },
-    addEqFilter: function({dim, dimVal}) {
+    addIsNullFilter: function({dim, dimVal}) {
       this.filters.push({
         dim: dim,
         operator: 'is_null'
