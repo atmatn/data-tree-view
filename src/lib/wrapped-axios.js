@@ -12,7 +12,7 @@ var incrementBy = function (val) {
 
 class HttpRequest {
   request (params) {
-    debugger
+    // debugger
     incrementBy(1)
     return new Promise(function (resolve, reject) {
       setTimeout(() => {

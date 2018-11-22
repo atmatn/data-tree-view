@@ -1,127 +1,109 @@
 <template>
-  <div>
-    <!-- <Button @click="debug">Debug</Button> -->
-    <div class='loader'>
-      <ClipLoader
-        :loading="isGlobalLoading"
-        :color="'#bada55'"
-        :size="20"
-        :widthUnit="'%'"
-      />
-    </div>
+  <div class="all">
     <h1 class="h1">聚合查询工具</h1>
-    <!-- queryingCount = {{queryingCount}} -->
-    <p>
-      <div class="h">数据源</div>
-      <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
-            <Option v-for="item in dataSourceList"
-            :value="item.value"
-            :key="item.value">{{ item.value }}
-            </Option>
-      </Select>
-    </p>
-    <div v-if="dataSource != ''">
-      <p>
-        <div class="h">日期</div><DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 400px"></DatePicker>
-      </p>
-      <p>
-        <div class="h">过滤条件</div>
-        <p v-if="filters.length == 0">
-          无
-        </p>
-        <p v-if="filters.length > 0">
-          <p v-for="(item,idx) in filters">
-            <span class="filter-dim">{{item.dim}}</span> : <span v-if="item.operator=='='">{{item.dimVal}}</span>
-            <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
-            <Button @click="filters.splice(idx, 1)" class="btn-del">删除</Button>
-          </p>
-        </p>
-      </p>
-      <p>
-        <div class="h">参数</div>
-        <div><Input v-model="dimNameFilter" placeholder="搜索参数" style="width: 300px"></Input></div>
-        <div class="dim-list">
-        <span v-if="item.value.indexOf(dimNameFilter.toLowerCase()) >= 0" v-for="item in dimList">
-          <a @click="dimClick(item.value)" class="dim-item">{{item.value}}</a>
-        </span>
-        </div>
-      </p>
-      <p>
-        <Modal v-model="showModalDimVals"
-          :title="(curDim + '参数值 （'+ toDateStr + '）')"
-          @on-visible-change="clearUpModal">
-          <div v-if="dimValsLoading">
-            <div class='loader'>
-              <ClipLoader
-                :loading="dimValsLoading"
-                :color="'#bada55'"
-                :size="20"
-                :widthUnit="'%'"
-              />
-            </div>
-          </div>
-          <div v-if="!dimValsLoading">
-            <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
-
-            </DataSampledWarning>
-            <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
-
-            </DataLimitedWarning>
-            <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
-
-            </Table>
-          </div>
-        </Modal>
-      </p>
-      <div v-if="uidFieldList.length > 0">
-        <div class="h">用户标识</div>
+    <div class="line1">
+      <div class="datasource-part">
+        <div class="h">数据源</div>
+        <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
+              <Option v-for="item in dataSourceList"
+              :value="item.value"
+              :key="item.value">{{ item.value }}
+              </Option>
+        </Select>
+      </div>
+      <div class="daterange-part" v-if="dataSource != ''">
+        <div class="h">日期</div>
+        <DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 400px"></DatePicker>
+      </div>
+      <div class="uid-part" v-if="dataSource != '' && uidFieldList.length > 0">
+        <span class="h">用户标识</span>
         <Select filterable @on-change="onChangeUidField" v-model="uidField" style="width:400px">
             <Option v-for="item in uidFieldList"
             :value="item.value"
             :key="item.value">{{ item.value }}
             </Option>
         </Select>
+      </div> <!-- uid-part -->
+    </div> <!-- line1 -->
+
+
+    <div class="line2" v-if="dataSource != ''">
+      <div class="filter-part" v-if="filters.length > 0">
+        <div class="h">当前过滤条件</div>
+        <p v-if="filters.length == 0">
+          无
+        </p>
+        <p v-if="filters.length > 0">
+          <p class="filter-item" v-for="(item,idx) in filters" v-bind:key="item.idx">
+            <span class="filter-dim">{{item.dim}}</span> : <span v-if="item.operator=='='">{{item.dimVal}}</span>
+            <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
+            <Button @click="filters.splice(idx, 1)" class="btn-del">移除</Button>
+          </p>
       </div>
-      <p v-if="dateRangeAggData.length > 0">
+
+      <div class="params-part">
+        <div class="line_in1">
+        <div class="h">请选择过滤条件</div>
+        <div>
+          <Input v-model="dimNameFilter" placeholder="搜索参数" style="width: 300px"/>
+        </div>
+        </div>
+
+        <div class="dim-cat-part" v-for="dimCat in dimCatList" v-bind:key="dimCat">
+          <div class="dim-cat-name">{{dimCat}}：</div>
+          <div class="dim-cat-value-part">
+            <span class="dim-cat-val" v-if="item.category == dimCat && item.value.indexOf(dimNameFilter.toLowerCase()) >= 0" v-for="item in dimList" v-bind:key="item.value">
+              <a @click="dimClick(item.value)" class="dim-item">{{item.value}}</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>  <!-- line2 -->
+
+    <div class="line3" v-if="dataSource != ''">
+      <Modal v-model="showModalDimVals"
+        :title="(curDim + '参数值 （'+ toDateStr + '）')"
+        @on-visible-change="clearUpModal">
+        <div v-if="dimValsLoading">
+          <div class='loader'>
+            <ClipLoader
+              :loading="dimValsLoading"
+              :color="'#bada55'"
+              :size="20"
+              :widthUnit="'%'"
+            />
+          </div>
+        </div>
+        <div v-if="!dimValsLoading">
+          <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
+
+          </DataSampledWarning>
+          <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
+
+          </DataLimitedWarning>
+          <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
+
+          </Table>
+        </div>
+      </Modal>
+    </div> <!-- line3 -->
+
+    <div class="line4" v-if="dataSource != ''">
+      <div v-if="dateRangeAggData.length > 0">
         <hr/>
         <div class="h agg-result">查询结果</div>
         <DataSampledWarning :isDataSampled="isRangeAggDataSampled" :dataSampleType="aggDataSampleType" :preciseSql="aggDataPreciseSql">
 
         </DataSampledWarning>
-        <!-- <div v-if="isRangeAggDataSampled">
-          <Alert type="warning">
-            <span v-if="isRangeAggDataSampled" class="warn-sampled">已采样{{aggDataSampleType}}计算
-            <Tooltip max-width="400" :transfer="true">
-              <Icon type="ios-help-circle-outline" />
-              <div slot="content">
-                  <p align="center">什么是“采样计算”</p>
-                  <p>为了提高查询速度，当前查询使用了 1/N 的用户数据来估算结果。</p>
-                  <p>算法：</p>
-                  <p>1. 取 1/N 用户的数据，计算出 PV 和 UV。</p>
-                  <p>2. 计算结果再乘以 N 作为输出。</p>
-              </div>
-            </Tooltip>
-            <Button class="precise-button"><span class="precise-link" @click="onPreciseLinkClick">我想全量计算当前查询</span></Button>
-            </span>
-          </Alert>
-        </div> -->
         <div class='loader'>
-          <BarLoader
-            :loading="dateRangeDataLoading"
-            :color="'#bada55'"
-            :size="30"
-            :widthUnit="'%'"
-          />
+          <BarLoader :loading="dateRangeDataLoading" :color="'#bada55'" :size="30" :widthUnit="'%'"/>
         </div>
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
-        <!--Table :columns="dateRangePvUvCols" :data="dateRangePvUvData">
-
-        </Table-->
-      </p>
-    </div>
-  </div>
+      </div>
+    </div> <!-- line4 -->
+  </div> <!-- all -->
 </template>
 
 <script>
@@ -157,6 +139,7 @@ export default {
       dimNameFilter: '',
       daterange: [fromDate.toDate(), toDate.toDate()],
       dimList: [],
+      dimCatList: [],
       // dateRangePvUvCols: [
       //    { title: '日期', key: 'day' },
       //    { title: 'UV', key: 'uv' },
@@ -329,6 +312,7 @@ export default {
         // debugger
         var dimList = res.data.dimList
         this.dimList = dimList
+        this.dimCatList = res.data.dimCatList
         console.log('dim list: ' + JSON.stringify(this.dimList ))
         this.uidFieldList = res.data.uidConf.uidFieldList.map(x=>{
           return {value: x}
@@ -418,7 +402,7 @@ export default {
       })
     },
     updatePvUvList() {
-      // debugger
+      debugger
       console.log('update agg list')
       if( this.dataSource == '' ) {
         return
@@ -449,28 +433,34 @@ export default {
           else return 0
         })
 
-        // debugger
-        drawChart({
-          title: '',
-          source: {
-            //es6 array spread 语法
-            cols: ['day', ...this.basicAggsAndMtrs.mtrs],
-            data: list
-          },
-          x: 'day',
-          yList: this.basicAggsAndMtrs.mtrs,
-          $target: $disp
+        this.$nextTick( () => {
+          var $disp = $(this.$refs.dateRangeAggDisp)
+          $disp.empty()
+
+          // debugger
+          drawChart({
+            title: '',
+            source: {
+              //es6 array spread 语法
+              cols: ['day', ...this.basicAggsAndMtrs.mtrs],
+              data: list
+            },
+            x: 'day',
+            yList: this.basicAggsAndMtrs.mtrs,
+            $target: $disp
+          })
+          drawTable({
+            title: '',
+            source: {
+              //es6 array spread 语法
+              cols: ['day', ...this.basicAggsAndMtrs.mtrs],
+              data: list
+            },
+            $target: $disp,
+            simple: false
+          })
         })
-        drawTable({
-          title: '',
-          source: {
-            //es6 array spread 语法
-            cols: ['day', ...this.basicAggsAndMtrs.mtrs],
-            data: list
-          },
-          $target: $disp,
-          simple: false
-        })
+
         this.isRangeAggDataSampled = res.data.isSampled
         this.aggDataSampleType = res.data.sampleType
         this.aggDataPreciseSql = res.data.preciseSql || ''
@@ -549,6 +539,82 @@ export default {
   }
   .loader {
     height: 20px;
+  }
+  .line1,.line2,.line_in1 {
+    display: flex;
+    margin: 1em;
+  }
+  .datasource-part{
+    flex-basis: 30%;
+  }
+  .daterange-part {
+    flex-basis: 30%;
+  }
+  .uid-part {
+    flex-basis: 30%;
+  }
+  .filter-part {
+    border-style: solid;
+    border-width: 1px;
+    flex-basis: 20%;
+  }
+  .params-part {
+    flex-basis: 60%;
+    border-style: solid;
+    border-width: 1px;
+    flex-grow: 1;
+    padding: 1em;
+  }
+  .dim-cat-part {
+    display: inline-flex;
+    width: 90%;
+    margin-top: 0.5em;
+    // border-bottom-style: solid;
+    // border-bottom-width: 1px;
+  }
+  .dim-cat-name {
+    display: inline-box;
+    flex-basis: 15em;
+    // width: 20em;
+    margin-top: 5px;
+    // border-style: solid;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .dim-cat-value-part {
+    display: flex;
+    // border-style: solid;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .dim-cat-value-part a:hover {
+    color: red;
+  }
+  .dim-cat-val {
+    display: inline-block;
+    flex-basis: 5%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgray;
+    margin-left: 1em;
+    margin-top: 5px;
+    text-align: center;
+  }
+  .filter-dim {
+    display: inline-block;
+    color: blue;
+    flex-basis: 5%;
+    // border-style: solid;
+    // border-width: 1px;
+    border-color: lightgray;
+    margin-left: 1em;
+    margin-top: 5px;
+    text-align: center;
+  }
+  .filter-item {
+    border-style: solid;
+    border-width: 1px;
+    padding: 1em 0.5em 0.5em 1em;
   }
 </style>
 

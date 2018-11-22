@@ -72,16 +72,19 @@ export const getDataSourceDimList = ({ url, type, body }) => {
     }
   }
 
+  var dimCatList = ['常用参数', '设备、浏览器相关参数', '地域相关参数', 'analyzer2自扩展参数', '自定义参数']
   var moreInfoDimList = dimList.map(x => {
+    var idx = Math.round(Math.random() * dimCatList.length)
     return {
       value: x,
-      category: '默认分类'
+      category: dimCatList[idx]
     }
   }
   )
 
   return {
     dimList: moreInfoDimList,
+    dimCatList: dimCatList,
     uidConf: uidConf
   }
 }
@@ -226,7 +229,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
     }).slice(0, limitLength)
   }
 
-  debugger
+  // debugger
   if (isSampled) {
     return {
       dateRangeAggData: dataList,
