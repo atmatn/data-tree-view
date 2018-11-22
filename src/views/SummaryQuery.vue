@@ -41,6 +41,9 @@
         <Modal v-model="showModalDimVals"
           :title="(curDim + '参数值 （'+ toDateStr + '）')"
           @on-visible-change="clearUpModal">
+          <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
+
+          </DataSampledWarning>
           <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
           </Table>
@@ -58,7 +61,10 @@
       <p v-if="dateRangeAggData.length > 0">
         <hr/>
         <div class="h agg-result">查询结果</div>
-        <div v-if="isRangeAggDataSampled">
+        <DataSampledWarning :isDataSampled="isRangeAggDataSampled" :dataSampleType="aggDataSampleType" :preciseSql="aggDataPreciseSql">
+
+        </DataSampledWarning>
+        <!-- <div v-if="isRangeAggDataSampled">
           <Alert type="warning">
             <span v-if="isRangeAggDataSampled" class="warn-sampled">已采样{{aggDataSampleType}}计算
             <Tooltip max-width="400" :transfer="true">
@@ -74,8 +80,7 @@
             <Button class="precise-button"><span class="precise-link" @click="onPreciseLinkClick">我想全量计算当前查询</span></Button>
             </span>
           </Alert>
-
-        </div>
+        </div> -->
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
@@ -93,9 +98,11 @@ import moment from 'moment'
 import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
 import { Input, Button } from 'iview'
+import DataSampledWarning from '_c/DataSampledWarning.vue'
 
 export default {
   components: {
+    DataSampledWarning
   },
   data() {
     var toDate = moment().add(-1, 'days')
@@ -134,7 +141,7 @@ export default {
                 }
               },
               domProps: {
-                'title': 'a'
+                'title': '添加到过滤条件'
               }
             }, params.row[this.curDim])
           },
@@ -156,14 +163,17 @@ export default {
       filters: [],
       dimValsAggData: [],
       dateRangeAggData: [],
-      aggResultSuffix: '',
+      // dim vals modal
+      isDimValsSampled: false,
+      dimValsPreciseSql: '',
+      dimValsSampleType: '',
+      curDim: '',
+      showModalDimVals: false,
+      dimValFilter: '',
+      // date range
       isRangeAggDataSampled: false,
       aggDataSampleType: '',
       aggDataPreciseSql: '',
-      curDim: '',
-      // blink: false,
-      showModalDimVals: false,
-      dimValFilter: ''
     }
   },
   computed: {
@@ -283,6 +293,9 @@ export default {
       ).then( res => {
         // debugger
         console.log(res.data.dateRangeAggData)
+        this.isDimValsSampled = res.data.isSampled
+        this.dimValsSampleType = res.data.sampleType
+        this.dimValsPreciseSql = res.data.preciseSql || ''
         this.dimValsAggData = res.data.dateRangeAggData
         this.showModalDimVals = true
       })
@@ -339,8 +352,6 @@ export default {
         var $disp = $(this.$refs.dateRangeAggDisp)
         $disp.empty()
         // debugger
-        // var suffix = res.data.isSampled?'已采样' + res.data.sampleType + '计算':''
-        // this.aggResultSuffix = suffix
         drawChart({
           title: '',
           source: {
@@ -428,10 +439,6 @@ export default {
   .precise-button {
     margin-left: 2em;
     margin-top: 1em;
-  }
-  .warn-sampled {
-    font-size: 24px;
-    color: red;
   }
 </style>
 
