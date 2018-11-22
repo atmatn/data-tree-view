@@ -39,9 +39,9 @@
       </p>
       <p>
         <Modal v-model="showModalDimVals"
-          :title="(curDim + '参数值')"
+          :title="(curDim + '参数值 （'+ toDateStr + '）')"
           @on-visible-change="clearUpModal">
-          <Table height="500" :columns="dimValCols" :data="filterdDimValsPvUvData">
+          <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
           </Table>
         </Modal>
@@ -61,7 +61,7 @@
         <div v-if="isRangeAggDataSampled">
           <Alert type="warning">
             <span v-if="isRangeAggDataSampled" class="warn-sampled">已采样{{aggDataSampleType}}计算
-            <Tooltip max-width="400" transfer="true">
+            <Tooltip max-width="400" :transfer="true">
               <Icon type="ios-help-circle-outline" />
               <div slot="content">
                   <p align="center">什么是“采样计算”</p>
@@ -117,7 +117,7 @@ export default {
       dimValCols: [
         {
           title: '参数值',
-          key: 'dim_val',
+          key: this.curDim,
           width: 300,
           render: (h,params) => {
             return h('span', {
@@ -129,14 +129,14 @@ export default {
                   console.log('clicked dim val: ' + params.row.dim_val)
                   this.addEqFilterWrapper({
                     dim: this.curDim,
-                    dimVal: params.row.dim_val
+                    dimVal: params.row[this.curDim]
                   })
                 }
               },
               domProps: {
                 'title': 'a'
               }
-            }, params.row.dim_val)
+            }, params.row[this.curDim])
           },
           renderHeader: (h, col) => {
             // debugger
@@ -154,7 +154,7 @@ export default {
         {title: 'PV', key: 'pv'}
       ],
       filters: [],
-      dimValsPvUvData: [],
+      dimValsAggData: [],
       dateRangeAggData: [],
       aggResultSuffix: '',
       isRangeAggDataSampled: false,
@@ -167,9 +167,39 @@ export default {
     }
   },
   computed: {
-    filterdDimValsPvUvData: function(){
-      // debugger
-      return this.dimValsPvUvData.filter( s => s.dim_val.toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
+    basicAggsAndMtrs () {
+      var mtrs = ['pv']
+      var aggs = [
+        {
+            name: 'pv',
+            type: 'pv'
+        }
+      ]
+
+      if( this.uidField != null && this.uidField != '' ) {
+        aggs.push(
+          {
+            name: 'uv',
+            type: 'uv',
+            uidField: this.uidField
+          }
+        )
+        mtrs.push('uv')
+      }
+      return {
+        aggs,
+        mtrs
+      }
+    },
+    filterdDimValsAggData: function(){
+      debugger
+      return this.dimValsAggData.filter( s => s[this.curDim].toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
+    },
+    fromDateStr: function() {
+      return moment(this.daterange[0]).format('YYYY-MM-DD')
+    },
+    toDateStr: function() {
+      return moment(this.daterange[1]).format('YYYY-MM-DD')
     }
   },
   mounted: function() {
@@ -235,18 +265,25 @@ export default {
     dimClick: function (dim) {
       console.log('click dim:' + dim);
       this.curDim = dim
+
       // update: this.dimValData
       axios.post(
-        '/api/summary-query/dim-vals-pv-uv',
+        '/api/summary-query/date-range-agg',
         {
           dataSource: this.dataSource,
-          curDim: dim,
-          filters: this.filters
+          groupByList: [dim],
+          filters: this.filters,
+          dateRange: {
+            from: this.toDateStr,
+            to: this.toDateStr
+          },
+          //es6 map spread 语法
+          ...this.basicAggsAndMtrs
         }
       ).then( res => {
         // debugger
-        console.log(res.data.dimValsPvUvData)
-        this.dimValsPvUvData = res.data.dimValsPvUvData
+        console.log(res.data.dateRangeAggData)
+        this.dimValsAggData = res.data.dateRangeAggData
         this.showModalDimVals = true
       })
     },
@@ -281,26 +318,6 @@ export default {
         return
       }
 
-      var aggs = [
-        {
-            name: 'PV',
-            type: 'pv'
-        }
-      ]
-
-      var mtrs = ['PV']
-
-      if( this.uidField != null && this.uidField != '' ) {
-        aggs.push(
-          {
-            name: 'UV',
-            type: 'uv',
-            uidField: this.uidField
-          }
-        )
-        mtrs.push('UV')
-      }
-
       axios.post('/api/summary-query/date-range-agg', {
         dataSource: this.dataSource,
         filters: this.filters,
@@ -308,7 +325,9 @@ export default {
           from: moment(this.daterange[0]).format('YYYY-MM-DD'),
           to: moment(this.daterange[1]).format('YYYY-MM-DD'),
         },
-        aggs: aggs
+        groupByList: [],
+        //es6 map spread 语法
+        ...this.basicAggsAndMtrs
       }).then( res => {
         // debugger
         var list = res.data.dateRangeAggData
@@ -325,17 +344,19 @@ export default {
         drawChart({
           title: '',
           source: {
-            cols: ['day'].concat(mtrs),
+            //es6 array spread 语法
+            cols: ['day', ...this.basicAggsAndMtrs.mtrs],
             data: list
           },
           x: 'day',
-          yList: mtrs,
+          yList: this.basicAggsAndMtrs.mtrs,
           $target: $disp
         })
         drawTable({
           title: '',
           source: {
-            cols: ['day'].concat(mtrs),
+            //es6 array spread 语法
+            cols: ['day', ...this.basicAggsAndMtrs.mtrs],
             data: list
           },
           $target: $disp,
