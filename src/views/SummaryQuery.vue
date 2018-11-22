@@ -129,7 +129,8 @@ export default {
           render: (h,params) => {
             return h('span', {
               class: {
-                'dim-val-label': true
+                'dim-val-label': true,
+                'dim-val-null': params.row[this.curDim] === null
               },
               on: {
                 click: () => {
@@ -143,7 +144,7 @@ export default {
               domProps: {
                 'title': '添加到过滤条件'
               }
-            }, params.row[this.curDim])
+            }, params.row[this.curDim] || '(is null)')
           },
           renderHeader: (h, col) => {
             // debugger
@@ -151,7 +152,7 @@ export default {
               <span>
               <span>{col.column.title}</span>
               <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
-              {this.dimValFilter != ''?<Button on-click={this.addLikeFilterWrapper.bind(this, {dim: this.curDim, dimVal: this.dimValFilter})}>将【包含“{this.dimValFilter.toLowerCase()}”（忽略大小写）】<br/>添加到【过滤条件】</Button>:<span></span>}
+              {(this.dimValFilter != '' && !this.dimValFilterIsNull)?<Button on-click={this.addLikeFilterWrapper.bind(this, {dim: this.curDim, dimVal: this.dimValFilter})}>将【包含“{this.dimValFilter.toLowerCase()}”（忽略大小写）】<br/>添加到【过滤条件】</Button>:<span></span>}
               </span>
 
             )
@@ -201,9 +202,24 @@ export default {
         mtrs
       }
     },
+    dimValFilterIsNull: function(){
+      // 过滤条件是 is null
+      return (this.dimValFilter.length > 0 &&
+      this.dimValFilter.match(/^\s*is\s*null\s*$/i) != null)
+    },
     filterdDimValsAggData: function(){
       debugger
-      return this.dimValsAggData.filter( s => s[this.curDim].toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
+      if( this.dimValFilter.length > 0 ) {
+        // 写了过滤条件
+        if (this.dimValFilterIsNull){
+          // 只有是 is null，才会显示null
+          return this.dimValsAggData.filter( s => s[this.curDim] === null || s[this.curDim] === undefined)
+        } else {
+          return this.dimValsAggData.filter( s => s[this.curDim] && s[this.curDim].toLowerCase().indexOf(this.dimValFilter.toLowerCase()) >= 0)
+        }
+      } else {
+        return this.dimValsAggData
+      }
     },
     fromDateStr: function() {
       return moment(this.daterange[0]).format('YYYY-MM-DD')
@@ -449,6 +465,9 @@ export default {
   }
   .dim-val-label {
     color: red;
+  }
+  .dim-val-null {
+    color: lightgray;
   }
   .dim-val-label:hover{
     cursor: pointer;
