@@ -148,6 +148,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
   var groupByList = b.groupByList || []
   var filters = b.filters
   var allowLimit = b.allowLimit
+  var allowSample = b.allowSample
 
   var dataList = []
   var pv
@@ -188,7 +189,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
     }
   })
 
-  var isSampled = (ds === 'mobiledictclient_android' && (b.filters === undefined || b.filters.length === 0))
+  var isSampled = allowSample && (ds === 'mobiledictclient_android' && (b.filters === undefined || b.filters.length === 0))
 
   var selectExprForGroupBy = groupByList.map(x => `,\`${x}\``).join(' ')
   var groupByExprForGroupBy = ' group by day ' + selectExprForGroupBy

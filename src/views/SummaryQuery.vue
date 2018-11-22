@@ -1,7 +1,16 @@
 <template>
   <div>
-    <!--Button @click="debug">Debug</Button-->
+    <!-- <Button @click="debug">Debug</Button> -->
+    <div class='loader'>
+      <ClipLoader
+        :loading="isGlobalLoading"
+        :color="'#bada55'"
+        :size="20"
+        :widthUnit="'%'"
+      />
+    </div>
     <h1 class="h1">聚合查询工具</h1>
+    <!-- queryingCount = {{queryingCount}} -->
     <p>
       <div class="h">数据源</div>
       <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
@@ -41,15 +50,27 @@
         <Modal v-model="showModalDimVals"
           :title="(curDim + '参数值 （'+ toDateStr + '）')"
           @on-visible-change="clearUpModal">
-          <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
+          <div v-if="dimValsLoading">
+            <div class='loader'>
+              <ClipLoader
+                :loading="dimValsLoading"
+                :color="'#bada55'"
+                :size="20"
+                :widthUnit="'%'"
+              />
+            </div>
+          </div>
+          <div v-if="!dimValsLoading">
+            <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
-          </DataSampledWarning>
-          <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
+            </DataSampledWarning>
+            <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
-          </DataLimitedWarning>
-          <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
+            </DataLimitedWarning>
+            <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
-          </Table>
+            </Table>
+          </div>
         </Modal>
       </p>
       <div v-if="uidFieldList.length > 0">
@@ -84,6 +105,14 @@
             </span>
           </Alert>
         </div> -->
+        <div class='loader'>
+          <BarLoader
+            :loading="dateRangeDataLoading"
+            :color="'#bada55'"
+            :size="30"
+            :widthUnit="'%'"
+          />
+        </div>
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
@@ -96,18 +125,25 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import HttpRequest from '@/lib/wrapped-axios'
+import { mapState } from 'vuex'
+var axios = new HttpRequest()
 import moment from 'moment'
 import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
 import { Input, Button } from 'iview'
+// https://www.npmjs.com/package/@saeris/vue-spinners
+import { BarLoader, ClipLoader } from '@saeris/vue-spinners'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
 import DataLimitedWarning from '_c/DataLimitedWarning.vue'
 
 export default {
   components: {
     DataSampledWarning,
-    DataLimitedWarning
+    DataLimitedWarning,
+    BarLoader,
+    ClipLoader
   },
   data() {
     var toDate = moment().add(-1, 'days')
@@ -190,9 +226,15 @@ export default {
       isRangeAggDataSampled: false,
       aggDataSampleType: '',
       aggDataPreciseSql: '',
+      dateRangeDataLoading: false,
+      dimValsLoading: true
     }
   },
   computed: {
+    ...mapState(['queryingCount']),
+    isGlobalLoading: function() {
+      return (this.queryingCount > 0)
+    },
     basicAggsAndMtrs () {
       var mtrs = ['pv']
       var aggs = [
@@ -307,6 +349,8 @@ export default {
       console.log('click dim:' + dim);
       this.curDim = dim
 
+      this.dimValsLoading = true
+      this.showModalDimVals = true
       // update: this.dimValData
       axios.post(
         '/api/summary-query/date-range-agg',
@@ -319,6 +363,7 @@ export default {
             to: this.toDateStr
           },
           allowLimit: true,
+          allowSample: true,
           //es6 map spread 语法
           ...this.basicAggsAndMtrs
         }
@@ -332,7 +377,9 @@ export default {
 
         this.isDimValsLimited = res.data.isLimited
         this.dimValsLimitNum = res.data.limitNum
-        this.showModalDimVals = true
+        this.dimValsLoading = false
+      }).catch( err => {
+        this.dimValsLoading = false
       })
     },
     addEqFilterWrapper: function({dim, dimVal}) {
@@ -377,6 +424,9 @@ export default {
         return
       }
 
+      var $disp = $(this.$refs.dateRangeAggDisp)
+      $disp.empty()
+      this.dateRangeDataLoading = true
       axios.post('/api/summary-query/date-range-agg', {
         dataSource: this.dataSource,
         filters: this.filters,
@@ -385,9 +435,12 @@ export default {
           to: moment(this.daterange[1]).format('YYYY-MM-DD'),
         },
         groupByList: [],
+        allowSample: true,
+        allowLimit: false,
         //es6 map spread 语法
         ...this.basicAggsAndMtrs
       }).then( res => {
+        this.dateRangeDataLoading = false
         // debugger
         var list = res.data.dateRangeAggData
         this.dateRangeAggData = list.sort( (a,b) => {
@@ -395,8 +448,7 @@ export default {
           else if( a.day < b.day ) return 1
           else return 0
         })
-        var $disp = $(this.$refs.dateRangeAggDisp)
-        $disp.empty()
+
         // debugger
         drawChart({
           title: '',
@@ -422,10 +474,19 @@ export default {
         this.isRangeAggDataSampled = res.data.isSampled
         this.aggDataSampleType = res.data.sampleType
         this.aggDataPreciseSql = res.data.preciseSql || ''
+      }).catch( err => {
+        this.dateRangeDataLoading = false
       })
     }
   },
   watch: {
+    "dimValsLoading": function (val){
+      // if ( val ) {
+      //   this.$Spin.show()
+      // } else {
+      //   this.$Spin.hide();
+      // }
+    },
     "filters": function(){
       console.log('filters changed!')
       this.updatePvUvList()
@@ -433,7 +494,7 @@ export default {
     "daterange": function(){
       console.log('daterange changed!')
       this.updatePvUvList()
-    },
+    }
     // "dataSource": function(){
     //   console.log('dataSource changed!')
     //   this.updatePvUvList()
@@ -486,6 +547,9 @@ export default {
     margin-left: 2em;
     margin-top: 1em;
   }
+  .loader {
+    height: 20px;
+  }
 </style>
 
 <style lang="less">
@@ -508,4 +572,5 @@ export default {
   .h1{
     font-size: 36px;
   }
+
 </style>
