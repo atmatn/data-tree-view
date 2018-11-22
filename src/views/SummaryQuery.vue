@@ -88,16 +88,19 @@
       </Modal>
     </div> <!-- line3 -->
 
+    <div class="line31" v-if="dateRangeAggData.length > 0 || dateRangeDataLoading">
+      <hr/>
+      <div class="h agg-result">查询结果</div>
+      <div class='loader'>
+        <BarLoader :loading="dateRangeDataLoading" :color="'#bada55'" :size="30" :widthUnit="'%'"/>
+      </div>
+    </div>
     <div class="line4" v-if="dataSource != ''">
       <div v-if="dateRangeAggData.length > 0">
-        <hr/>
-        <div class="h agg-result">查询结果</div>
         <DataSampledWarning :isDataSampled="isRangeAggDataSampled" :dataSampleType="aggDataSampleType" :preciseSql="aggDataPreciseSql">
 
         </DataSampledWarning>
-        <div class='loader'>
-          <BarLoader :loading="dateRangeDataLoading" :color="'#bada55'" :size="30" :widthUnit="'%'"/>
-        </div>
+
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
@@ -408,9 +411,12 @@ export default {
         return
       }
 
+      // 清理界面
       var $disp = $(this.$refs.dateRangeAggDisp)
       $disp.empty()
+      this.isRangeAggDataSampled = false
       this.dateRangeDataLoading = true
+
       axios.post('/api/summary-query/date-range-agg', {
         dataSource: this.dataSource,
         filters: this.filters,
