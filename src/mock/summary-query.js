@@ -147,6 +147,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
   var ds = b.dataSource
   var groupByList = b.groupByList || []
   var filters = b.filters
+  var allowLimit = b.allowLimit
 
   var dataList = []
   var pv
@@ -197,6 +198,8 @@ export const getDateRangeAgg = ({ url, type, body }) => {
       return `and ${filter.dim} = '${filter.dimVal}'`
     } else if (filter.operator === 'like') {
       return `and lower(${filter.dim}) like '%${filter.dimVal.toLowerCase()}%'`
+    } else if (filter.operator === 'is_null') {
+      return `and ${filter.dim} is null`
     }
   }).join(' ')
 
@@ -207,18 +210,37 @@ export const getDateRangeAgg = ({ url, type, body }) => {
    ${groupByExprForGroupBy} ;
   `
 
+  var isLimited = false
+  var limitNum = null
+  const limitLength = 10000
+  if (allowLimit && groupByList.length > 0 && dataList.length > limitLength) {
+    isLimited = true
+    limitNum = limitLength
+    dataList = dataList.sort((a, b) => {
+      if (a.pv && b.pv) {
+        return b.pv - a.pv
+      } else {
+        return 0
+      }
+    }).slice(0, limitLength)
+  }
+
   debugger
   if (isSampled) {
     return {
       dateRangeAggData: dataList,
       isSampled,
       sampleType: '1/32',
-      preciseSql
+      preciseSql,
+      isLimited,
+      limitNum
     }
   } else {
     return {
       dateRangeAggData: dataList,
-      isSampled
+      isSampled,
+      isLimited,
+      limitNum
     }
   }
 }

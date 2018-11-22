@@ -44,6 +44,9 @@
           <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
           </DataSampledWarning>
+          <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
+
+          </DataLimitedWarning>
           <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
           </Table>
@@ -99,10 +102,12 @@ import { drawTable, drawChart } from '@/lib/custom-script.js'
 import $ from 'jquery'
 import { Input, Button } from 'iview'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
+import DataLimitedWarning from '_c/DataLimitedWarning.vue'
 
 export default {
   components: {
-    DataSampledWarning
+    DataSampledWarning,
+    DataLimitedWarning
   },
   data() {
     var toDate = moment().add(-1, 'days')
@@ -127,6 +132,7 @@ export default {
           key: this.curDim,
           width: 300,
           render: (h,params) => {
+            var currentIsNull = (params.row[this.curDim] === null)
             return h('span', {
               class: {
                 'dim-val-label': true,
@@ -134,11 +140,18 @@ export default {
               },
               on: {
                 click: () => {
-                  console.log('clicked dim val: ' + params.row.dim_val)
-                  this.addEqFilterWrapper({
-                    dim: this.curDim,
-                    dimVal: params.row[this.curDim]
-                  })
+                  if( !currentIsNull ) {
+                    console.log('clicked dim val: ' + params.row.dim_val)
+                    this.addEqFilterWrapper({
+                      dim: this.curDim,
+                      dimVal: params.row[this.curDim]
+                    })
+                  } else {
+                    console.log('clicked dim val: null')
+                    this.addIsNullFilterWrapper({
+                      dim: this.curDim
+                    })
+                  }
                 }
               },
               domProps: {
@@ -171,6 +184,8 @@ export default {
       curDim: '',
       showModalDimVals: false,
       dimValFilter: '',
+      isDimValsLimited: false,
+      dimValsLimitNum: 0,
       // date range
       isRangeAggDataSampled: false,
       aggDataSampleType: '',
@@ -303,6 +318,7 @@ export default {
             from: this.toDateStr,
             to: this.toDateStr
           },
+          allowLimit: true,
           //es6 map spread 语法
           ...this.basicAggsAndMtrs
         }
@@ -313,6 +329,9 @@ export default {
         this.dimValsSampleType = res.data.sampleType
         this.dimValsPreciseSql = res.data.preciseSql || ''
         this.dimValsAggData = res.data.dateRangeAggData
+
+        this.isDimValsLimited = res.data.isLimited
+        this.dimValsLimitNum = res.data.limitNum
         this.showModalDimVals = true
       })
     },
@@ -320,6 +339,17 @@ export default {
       this.addEqFilter({dim, dimVal})
       this.showModalDimVals = false
       this.dimNameFilter = ''
+    },
+    addIsNullFilterWrapper: function({dim}) {
+      this.addIsNullFilter({dim})
+      this.showModalDimVals = false
+      this.dimNameFilter = ''
+    },
+    addEqFilter: function({dim, dimVal}) {
+      this.filters.push({
+        dim: dim,
+        operator: 'is_null'
+      })
     },
     addEqFilter: function({dim, dimVal}) {
       this.filters.push({
