@@ -4,7 +4,7 @@
     <div class="line1">
       <div class="datasource-part">
         <div class="h">数据源</div>
-        <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:400px">
+        <Select filterable @on-change="onChangeDataSource" v-model="dataSource" style="width:300px">
               <Option v-for="item in dataSourceList"
               :value="item.value"
               :key="item.value">{{ item.value }}
@@ -13,11 +13,11 @@
       </div>
       <div class="daterange-part" v-if="dataSource != ''">
         <div class="h">日期</div>
-        <DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 400px"></DatePicker>
+        <DatePicker v-model="daterange" type="daterange" placeholder="Select date" style="width: 300px"></DatePicker>
       </div>
       <div class="uid-part" v-if="dataSource != '' && uidFieldList.length > 0">
         <span class="h">用户标识</span>
-        <Select filterable @on-change="onChangeUidField" v-model="uidField" style="width:400px">
+        <Select filterable @on-change="onChangeUidField" v-model="uidField" style="width:300px">
             <Option v-for="item in uidFieldList"
             :value="item.value"
             :key="item.value">{{ item.value }}
