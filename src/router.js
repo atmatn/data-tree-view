@@ -32,6 +32,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
+      path: '/exp-home',
+      name: 'exp-home',
+      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome.vue')
+    },
+    {
       path: '/summary-query',
       name: 'summary-query',
       // route level code-splitting
@@ -40,13 +45,10 @@ export default new Router({
       component: () => import(/* webpackChunkName: "summary-query" */ './views/SummaryQuery.vue')
     },
     {
-      path: '/exp-home',
-      name: 'exp-home',
-      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome.vue')
-    },
-    {
       path: '*',
-      redirect: { name: 'data-tree-home' }
+      // redirect: { name: 'data-tree-home' }
+      // 方便demo这个功能
+      redirect: { name: 'summary-query' }
     }
   ]
 })

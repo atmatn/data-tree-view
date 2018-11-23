@@ -2,7 +2,7 @@
 <div class="layout">
   <div class="extra">
     <div>
-      <router-link :to="{name: 'summary-query'}">数据源自助查询工具</router-link>
+      <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
     </div>
     <div>
