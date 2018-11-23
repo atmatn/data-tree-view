@@ -37,6 +37,7 @@
           <p class="filter-item" v-for="(item,idx) in filters" v-bind:key="item.idx">
             <span class="filter-dim">{{item.dim}}</span> :
             <span v-if="item.operator=='is_null'">is null</span>
+            <span v-if="item.operator=='is_not_null'">is not null</span>
             <span v-if="item.operator=='='">{{item.dimVal}}</span>
             <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
             <Button @click="filters.splice(idx, 1)" class="btn-del">移除</Button>
@@ -86,6 +87,10 @@
           <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
           </Table>
+          <div class="line1_in3">
+            <Button class="line1_in3-button" @click="addIsNullFilterWrapper({dim: curDim})">添加is null过滤条件</Button>
+            <Button class="line1_in3-button" @click="addIsNotNullFilterWrapper({dim: curDim})">添加is not null过滤条件</Button>
+          </div> <!-- line1_in3 -->
         </div>
       </Modal>
     </div> <!-- line3 -->
@@ -116,7 +121,7 @@
 <script>
 // import axios from 'axios'
 import HttpRequest from '@/lib/wrapped-axios'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 var axios = new HttpRequest()
 import moment from 'moment'
 import { drawTable, drawChart } from '@/lib/custom-script.js'
@@ -127,6 +132,7 @@ import { BarLoader, ClipLoader } from '@saeris/vue-spinners'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
 import DataLimitedWarning from '_c/DataLimitedWarning.vue'
 import SqlHint from '_c/SqlHint.vue'
+import deparam from 'deparam'
 
 export default {
   components: {
@@ -219,7 +225,9 @@ export default {
       aggDataSampleType: '',
       aggDataPreciseSql: '',
       dateRangeDataLoading: false,
-      dimValsLoading: true
+      dimValsLoading: true,
+      //reload
+      reloading: false
     }
   },
   computed: {
@@ -298,6 +306,7 @@ export default {
     // }, 500)
   },
   methods: {
+    ...mapActions(['updateSummaryQueryParams']),
     debug () {
       debugger
     },
@@ -312,10 +321,14 @@ export default {
     },
     onChangeDataSource: function(val){
       console.log("datasource changed to: " + val)
+      this.reloadDims()
+    },
+    reloadDims(){
+      console.log('reload dims')
       axios.post(
         '/api/summary-query/dims',
         {
-          dataSource: val
+          dataSource: this.dataSource
         }
       ).then( res => {
         // debugger
@@ -385,10 +398,21 @@ export default {
       this.showModalDimVals = false
       this.dimNameFilter = ''
     },
+    addIsNotNullFilterWrapper: function({dim}) {
+      this.addIsNotNullFilter({dim})
+      this.showModalDimVals = false
+      this.dimNameFilter = ''
+    },
     addIsNullFilter: function({dim, dimVal}) {
       this.filters.push({
         dim: dim,
         operator: 'is_null'
+      })
+    },
+    addIsNotNullFilter: function({dim, dimVal}) {
+      this.filters.push({
+        dim: dim,
+        operator: 'is_not_null'
       })
     },
     addEqFilter: function({dim, dimVal}) {
@@ -411,11 +435,24 @@ export default {
       })
     },
     updatePvUvList() {
+      if (this.reloading) {
+        console.log('reloading, skip update updatePvUvList')
+        return
+      }
       debugger
       console.log('update agg list')
       if( this.dataSource == '' ) {
         return
       }
+
+      // 更新参数
+      this.updateSummaryQueryParams({
+        dataSource: this.dataSource,
+        uidField: this.uidField,
+        filters: this.filters,
+        fromDate: this.fromDateStr,
+        toDate: this.toDateStr
+      })
 
       // 清理界面
       var $disp = $(this.$refs.dateRangeAggDisp)
@@ -479,6 +516,42 @@ export default {
       }).catch( err => {
         this.dateRangeDataLoading = false
       })
+    },
+    reload : function (payload) {
+      this.reloading = true
+      this.dataSource = payload.dataSource || ''
+      this.uidField = payload.uidField || ''
+      this.filters = payload.filters || []
+      debugger
+      if (payload.fromDate && payload.toDate){
+        var fromDate = moment(payload.fromDate, 'YYYY-MM-DD').toDate()
+        var toDate = moment(payload.toDate, 'YYYY-MM-DD').toDate()
+        this.daterange = [fromDate, toDate]
+      }
+      this.reloading = false
+      if( this.dataSource != '') {
+        this.reloadDims()
+        this.updatePvUvList()
+      }
+      // console.log(this.$route)
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    // debugger
+    if( to.name == 'summary-query' ) {
+      next( function(vm) {
+        // debugger
+        var pos = to.fullPath.indexOf('?')
+        if( pos >= 0) {
+          var toParse = to.fullPath.substring(pos+1)
+          var payload = deparam(toParse)
+          if (payload != undefined) {
+            vm.reload(payload)
+          }
+        }
+      })
+    } else {
+      next()
     }
   },
   watch: {
@@ -628,6 +701,15 @@ export default {
     border-width: 1px;
     padding: 1em 0.5em 0.5em 1em;
   }
+  .line1_in3 {
+    display: flex;
+    justify-content: start;
+    margin-top: 1em;
+  }
+  .line1_in3-button {
+    display: inline-block;
+    margin-right: 2em;
+  }
 </style>
 
 <style lang="less">
@@ -650,5 +732,4 @@ export default {
   .h1{
     font-size: 36px;
   }
-
 </style>

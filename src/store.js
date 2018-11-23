@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import router from './router'
 import axios from 'axios'
 import _ from 'lodash'
+import $ from 'jquery'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -72,6 +73,13 @@ export default new Vuex.Store({
     },
     incrementQueringCount ({ commit, state }, { val }) {
       commit('incrementQueringCount', { val })
+    },
+    updateSummaryQueryParams ({ commit, state}, payload) {
+      console.log('action: updateSummaryQueryParams' + JSON.stringify(payload))
+      const url = '/ui/summary-query?' + $.param(payload)
+      router.push({
+        path: url
+      })
     }
   }
 })

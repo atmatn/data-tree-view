@@ -2,7 +2,8 @@
   <div class="l1">
     <div>L1</div>
     <div>p1 = {{p1}}</div>
-    <div>d1 = {{d1}}</div>
+    <!-- <div>d1 = {{d1}}</div> -->
+    d1 = <Input v-model="d1"/>
     <L2 :p2="p1"></L2>
     <L2 :p2="d1"></L2>
   </div>
