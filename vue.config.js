@@ -40,6 +40,7 @@ module.exports = {
     }
   },
   devServer: {
-    index: 'index.html'
+    index: 'index.html',
+    disableHostCheck: true
   }
 }
