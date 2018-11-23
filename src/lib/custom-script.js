@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import Vue from 'Vue'
+import Vue from 'vue'
 import _ from 'underscore'
 import { downloadCsv } from '@/lib/tools'
 import { Table, Button } from 'iview'
