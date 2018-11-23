@@ -1,6 +1,6 @@
 <template>
   <div class="all">
-    <h1 class="h1">聚合查询工具</h1>
+    <h1 class="h1">明细查询工具</h1>
     <div class="line1">
       <div class="datasource-part">
         <div class="h">数据源</div>
@@ -99,10 +99,12 @@
     </div>
     <div class="line4" v-if="dataSource != ''">
       <div v-if="dateRangeAggData.length > 0">
+        <!-- aggDataPreciseSql = {{aggDataPreciseSql}} -->
         <DataSampledWarning :isDataSampled="isRangeAggDataSampled" :dataSampleType="aggDataSampleType" :preciseSql="aggDataPreciseSql">
 
         </DataSampledWarning>
 
+        <!-- <SqlHint :sql="aggDataPreciseSql"></SqlHint> -->
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
@@ -124,13 +126,15 @@ import { Input, Button } from 'iview'
 import { BarLoader, ClipLoader } from '@saeris/vue-spinners'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
 import DataLimitedWarning from '_c/DataLimitedWarning.vue'
+import SqlHint from '_c/SqlHint.vue'
 
 export default {
   components: {
     DataSampledWarning,
     DataLimitedWarning,
     BarLoader,
-    ClipLoader
+    ClipLoader,
+    SqlHint
   },
   data() {
     var toDate = moment().add(-1, 'days')
@@ -297,12 +301,12 @@ export default {
     debug () {
       debugger
     },
-    onPreciseLinkClick() {
-      // this.$Message.info('请在弹出页面中点击“查询”！');
-      var prefixMsg = "--请点击“执行”，之后过段时间点击“刷新”看看有没有出结果~\n"
-      var encodedeSql = encodeURIComponent(prefixMsg + this.aggDataPreciseSql)
-      window.open('http://analyzer2.corp.youdao.com/hive-async-query.html?sql=' + encodedeSql,'_blank');
-    },
+    // onPreciseLinkClick() {
+    //   // this.$Message.info('请在弹出页面中点击“查询”！');
+    //   var prefixMsg = "--请点击“执行”，之后过段时间点击“刷新”看看有没有出结果~\n"
+    //   var encodedeSql = encodeURIComponent(prefixMsg + this.aggDataPreciseSql)
+    //   window.open('http://analyzer2.corp.youdao.com/hive-async-query.html?sql=' + encodedeSql,'_blank');
+    // },
     clearUpModal(){
       this.dimValFilter = ''
     },

@@ -1,26 +1,41 @@
 <template>
-  <Alert v-if="isDataSampled" type="warning" :class="{'big-font': bigFont}">
-    <div>
-      <span class="warn-sampled">已采样{{dataSampleType}}计算
-      <Tooltip max-width="400" :transfer="true">
-        <Icon type="ios-help-circle-outline" />
-        <div slot="content">
-            <p align="center">什么是“采样计算”</p>
-            <p>为了提高查询速度，当前查询使用了 1/N 的用户数据来估算结果。</p>
-            <p>算法：</p>
-            <p>1. 取 1/N 用户的数据，计算出 PV 和 UV。</p>
-            <p>2. 计算结果再乘以 N 作为输出。</p>
-        </div>
-      </Tooltip>
-      <Button class="precise-button"><span class="precise-link" @click="onPreciseLinkClick">我想全量计算当前查询</span></Button>
-      </span>
+  <div>
+    <Alert v-if="isDataSampled" type="warning" :class="{'big-font': bigFont}">
+      <div>
+        <span class="warn-sampled">已采样{{dataSampleType}}计算
+        <Tooltip max-width="400" :transfer="true">
+          <Icon type="ios-help-circle-outline" />
+          <div slot="content">
+              <p align="center">什么是“采样计算”</p>
+              <p>为了提高查询速度，当前查询使用了 1/N 的用户数据来估算结果。</p>
+              <p>算法：</p>
+              <p>1. 取 1/N 用户的数据，计算出 PV 和 UV。</p>
+              <p>2. 计算结果再乘以 N 作为输出。</p>
+          </div>
+        </Tooltip>
+        <Button class="precise-button"><span class="precise-link" @click="onPreciseLinkClick">我想全量计算当前查询</span></Button>
+        </span>
+      </div>
+    </Alert>
+    <div v-if="!isDataSampled">
+      <!-- prop preciseSql = {{preciseSql}} -->
+      <SqlHint :sql="preciseSql"></SqlHint>
     </div>
-  </Alert>
+  </div>
 </template>
 
 <script>
 import { Input, Button } from 'iview'
+import SqlHint from '_c/SqlHint.vue'
 export default {
+  data: function(){
+    return {
+      sql: this.preciseSql
+    }
+  },
+  components: {
+    SqlHint
+  },
   props: {
     isDataSampled: Boolean,
     dataSampleType: String,

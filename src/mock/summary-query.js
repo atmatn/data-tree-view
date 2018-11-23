@@ -244,7 +244,8 @@ export const getDateRangeAgg = ({ url, type, body }) => {
       dateRangeAggData: dataList,
       isSampled,
       isLimited,
-      limitNum
+      limitNum,
+      preciseSql
     }
   }
 }

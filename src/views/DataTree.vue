@@ -2,6 +2,10 @@
 <div class="layout">
   <div class="extra">
     <div>
+      <router-link :to="{name: 'summary-query'}">数据源自助查询工具</router-link>
+      | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
+    </div>
+    <div>
       someData: <Input v-model="someData" style="width: 200px;"/>
       <Button @click="getSomeData">Get Some Data (ajax)</Button>
     </div>
