@@ -45,24 +45,7 @@
       </div>
 
       <div class="params-part">
-        <div class="line_in1">
-        <div class="h">请选择过滤条件</div>
-        <div>
-          <Input v-model="dimNameFilter" placeholder="搜索参数" style="width: 300px"/>
-        </div>
-        </div>
-
-        <div class="dim-cat-part" v-for="dimCat in dimCatList" v-bind:key="dimCat.value">
-          <div class="dim-cat-name">{{dimCat.value}}：</div>
-          <div class="dim-cat-value-part">
-            <span class="dim-cat-val"
-              v-for="item in dimCat.dimList"
-              v-if="item.indexOf(dimNameFilter.toLowerCase()) >= 0"
-              v-bind:key="item">
-              <a @click="dimClick(item)" class="dim-item">{{item}}</a>
-            </span>
-          </div>
-        </div>
+        <FilterSelector :dimCatList="dimCatList" @dimClick="dimClick"/>
       </div>
     </div>  <!-- line2 -->
 
@@ -134,6 +117,7 @@ import { Input, Button } from 'iview'
 import { BarLoader, ClipLoader } from '@saeris/vue-spinners'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
 import DataLimitedWarning from '_c/DataLimitedWarning.vue'
+import FilterSelector from '_c/FilterSelector.vue'
 import SqlHint from '_c/SqlHint.vue'
 import deparam from 'deparam'
 
@@ -143,7 +127,8 @@ export default {
     DataLimitedWarning,
     BarLoader,
     ClipLoader,
-    SqlHint
+    SqlHint,
+    FilterSelector
   },
   data() {
     var toDate = moment().add(-1, 'days')
@@ -154,7 +139,7 @@ export default {
       dataSource: '',
       uidFieldList: [],
       uidField: '',
-      dimNameFilter: '',
+      // dimNameFilter: '',
       daterange: [fromDate.toDate(), toDate.toDate()],
       dimList: [],
       dimCatList: [],
@@ -628,7 +613,7 @@ export default {
   .loader {
     height: 20px;
   }
-  .line1,.line2,.line_in1 {
+  .line1,.line2 {
     display: flex;
     margin: 1em;
   }
@@ -653,41 +638,7 @@ export default {
     flex-grow: 1;
     padding: 1em;
   }
-  .dim-cat-part {
-    display: inline-flex;
-    width: 90%;
-    margin-top: 0.5em;
-    // border-bottom-style: solid;
-    // border-bottom-width: 1px;
-  }
-  .dim-cat-name {
-    display: inline-box;
-    flex-basis: 15em;
-    // width: 20em;
-    margin-top: 5px;
-    // border-style: solid;
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .dim-cat-value-part {
-    display: flex;
-    // border-style: solid;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-  .dim-cat-value-part a:hover {
-    color: red;
-  }
-  .dim-cat-val {
-    display: inline-block;
-    flex-basis: 5%;
-    border-style: solid;
-    border-width: 1px;
-    border-color: lightgray;
-    margin-left: 1em;
-    margin-top: 5px;
-    text-align: center;
-  }
+
   .filter-dim {
     display: inline-block;
     color: blue;
