@@ -31,7 +31,7 @@ export const getDataSourceDimList = ({ url, type, body }) => {
   // debugger
   var ds = JSON.parse(body).dataSource;
   var m = [ ds + '_d1' ]
-  var dimList = ['visitkey', 'key', 'keyfrom', 'type',
+  var dimValues = ['visitkey', 'key', 'keyfrom', 'type',
     'basepath', 'model', 'mid', 'vendor', 'block', 'le',
     'phoneversion', 'localversion', 'os', 'action', 'show',
     'setting', 'other', '_request', 'clipboard_query',
@@ -62,7 +62,7 @@ export const getDataSourceDimList = ({ url, type, body }) => {
   }
 
   if (ds === 'mobiledictclient_perf') {
-    dimList = ['visitkey', 'action', 'other', 'type', 'network',
+    dimValues = ['visitkey', 'action', 'other', 'type', 'network',
       'keyfrom', 'isdurationvalid', 'platform', 'device', 'browser',
       'iplocation', 'ipcom', 'ipcountry', 'ipprovince', 'ip', 'referer',
       'url', 'username_type', 'ts', 'duration', 'q', 'client_ts']
@@ -72,19 +72,27 @@ export const getDataSourceDimList = ({ url, type, body }) => {
     }
   }
 
-  var dimCatList = ['常用参数', '设备、浏览器相关参数', '地域相关参数', 'analyzer2自扩展参数', '自定义参数']
-  var moreInfoDimList = dimList.map(x => {
-    var idx = Math.round(Math.random() * dimCatList.length)
+  var dimCatList = [
+    '常用参数', '设备、浏览器相关参数', '地域相关参数',
+    'analyzer2自扩展参数', '自定义参数'].map(x => {
     return {
       value: x,
-      category: dimCatList[idx]
+      dimList: []
     }
-  }
-  )
+  })
+
+  var dimList = []
+  dimValues.forEach(x => {
+    var idx = Math.floor(Math.random() * dimCatList.length)
+    dimCatList[idx].dimList.push(x)
+    dimList.push({
+      value: x
+    })
+  })
 
   return {
-    dimList: moreInfoDimList,
-    dimCatList: dimCatList,
+    dimList,
+    dimCatList,
     uidConf: uidConf
   }
 }

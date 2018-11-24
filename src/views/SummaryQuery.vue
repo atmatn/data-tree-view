@@ -52,11 +52,14 @@
         </div>
         </div>
 
-        <div class="dim-cat-part" v-for="dimCat in dimCatList" v-bind:key="dimCat">
-          <div class="dim-cat-name">{{dimCat}}：</div>
+        <div class="dim-cat-part" v-for="dimCat in dimCatList" v-bind:key="dimCat.value">
+          <div class="dim-cat-name">{{dimCat.value}}：</div>
           <div class="dim-cat-value-part">
-            <span class="dim-cat-val" v-if="item.category == dimCat && item.value.indexOf(dimNameFilter.toLowerCase()) >= 0" v-for="item in dimList" v-bind:key="item.value">
-              <a @click="dimClick(item.value)" class="dim-item">{{item.value}}</a>
+            <span class="dim-cat-val"
+              v-for="item in dimCat.dimList"
+              v-if="item.indexOf(dimNameFilter.toLowerCase()) >= 0"
+              v-bind:key="item">
+              <a @click="dimClick(item)" class="dim-item">{{item}}</a>
             </span>
           </div>
         </div>

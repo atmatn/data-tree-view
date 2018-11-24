@@ -34,7 +34,7 @@ export default new Router({
     {
       path: '/exp-home',
       name: 'exp-home',
-      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome.vue')
+      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome2.vue')
     },
     {
       path: '/summary-query',
