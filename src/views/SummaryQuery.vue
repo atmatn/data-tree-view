@@ -45,7 +45,7 @@
       </div>
 
       <div class="params-part">
-        <FilterSelector :dimCatList="dimCatList" @dimClick="dimClick"/>
+        <FilterSelector :dimCatList="dimCatList" @dimClick="dimClick" @updateDimCatList = "updateDimCatList"/>
       </div>
     </div>  <!-- line2 -->
 
@@ -522,6 +522,9 @@ export default {
         this.updatePvUvList()
       }
       // console.log(this.$route)
+    },
+    updateDimCatList (newDimCatList) {
+      console.log("update dim cat list to :" + JSON.stringify(newDimCatList, null, 4))
     }
   },
   beforeRouteEnter (to, from, next) {
