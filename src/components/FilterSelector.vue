@@ -8,18 +8,29 @@
     </div>
 
     <div v-if="arranging" class="arranging">
-      <div class="dim-cat-part" v-for="dimCat in editingDimCatList" v-bind:key="dimCat.value">
-        <div class="dim-cat-name"><label-edit v-bind:text="dimCat.value" placeholder="(请输入分类名)" v-on:text-updated-blur="dimCat.value = $event" v-on:text-updated-enter="dimCat.value = $event"></label-edit></div>
-        <draggable v-if="true" class="dim-cat-value-part"  v-model="dimCat.dimList" :options="{group:'people'}"
-            @end="datadragEnd($event, dimCat)">
-              <transition-group>
-                  <div v-for="item in dimCat.dimList" :key="item" class = "drag-item dim-cat-val">
-                    <Icon type="ios-move" />
-                    <a class="dim-item">{{item}}</a>
-                  </div>
-              </transition-group>
-        </draggable>
-      </div>
+      <draggable v-if="true" v-model="editingDimCatList" :options="{group:'country'}"
+              @end="catDragEnd($event, editingDimCatList)">
+        <transition-group>
+          <div class="dim-cat-part" v-for="(dimCat, idx) in editingDimCatList" v-bind:key="dimCat.value">
+            <div class="dim-cat-name">
+              <Icon type="ios-move" />
+              <label-edit v-bind:text="dimCat.value" placeholder="(请输入分类名)"
+                v-on:text-updated-blur="dimCat.value = $event"
+                v-on:text-updated-enter="dimCat.value = $event"></label-edit>
+              <Button v-if="dimCat.dimList.length == 0" @click="editingDimCatList.splice(idx, 1)">删除分类</Button>
+            </div>
+            <draggable v-if="true" class="dim-cat-value-part"  v-model="dimCat.dimList" :options="{group:'people'}"
+                @end="dataDragEnd($event, dimCat)">
+                  <transition-group>
+                      <div v-for="item in dimCat.dimList" :key="item" class = "drag-item dim-cat-val">
+                        <Icon type="ios-move" />
+                        <a class="dim-item">{{item}}</a>
+                      </div>
+                  </transition-group>
+            </draggable>
+          </div>
+        </transition-group>
+      </draggable>
     </div> <!-- arranging -->
 
     <div v-if="!arranging" class="not-arranging">
@@ -78,7 +89,14 @@ export default {
       this.editingDimCatList = JSON.parse(JSON.stringify(this.dimCatList))
       this.arranging = true
     },
-    datadragEnd (evt, dimCat) {
+    catDragEnd (evt, dimCat) {
+      debugger
+      evt.preventDefault()
+      console.log('拖动前的索引 :' + evt.oldIndex)
+      console.log('拖动后的索引 :' + evt.newIndex)
+      console.log(this.dimCatList)
+   },
+    dataDragEnd (evt, dimCat) {
       debugger
       evt.preventDefault()
       console.log('拖动前的索引 :' + evt.oldIndex)
@@ -129,6 +147,7 @@ export default {
   width: 90%;
   margin-top: 0.5em;
   border-bottom-style: solid;
+  padding-bottom: 0.5em;
   border-bottom-width: 1px;
 }
 .dim-cat-name {
@@ -174,6 +193,12 @@ export default {
   cursor: move;
 }
 .arranging .dim-item:hover {
+  cursor: move;
+}
+.arranging .dim-cat-name {
+  display: flex;
+}
+.arranging .dim-cat-name {
   cursor: move;
 }
 

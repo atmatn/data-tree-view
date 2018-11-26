@@ -30,7 +30,7 @@ class HttpRequest {
   }
 
   post (url, payload) {
-    debugger
+    // debugger
     incrementBy(1)
     return new Promise(function (resolve, reject) {
       setTimeout(() => {

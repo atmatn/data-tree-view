@@ -427,7 +427,7 @@ export default {
         console.log('reloading, skip update updatePvUvList')
         return
       }
-      debugger
+      // debugger
       console.log('update agg list')
       if( this.dataSource == '' ) {
         return
@@ -510,7 +510,7 @@ export default {
       this.dataSource = payload.dataSource || ''
       this.uidField = payload.uidField || ''
       this.filters = payload.filters || []
-      debugger
+      // debugger
       if (payload.fromDate && payload.toDate){
         var fromDate = moment(payload.fromDate, 'YYYY-MM-DD').toDate()
         var toDate = moment(payload.toDate, 'YYYY-MM-DD').toDate()
