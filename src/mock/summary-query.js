@@ -3,21 +3,21 @@ export const getDataSourceList = ({ url, type, body }) => {
   return {
     dataSources: [
       {
-        value: 'mobileDictClient_android'.toLowerCase(),
+        value: 'mobileDictClient_android'.toLowerCase()
         // uidConf: {
         //   uidFieldList: ['imei', 'login_user'],
         //   defaultUidField: 'imei'
         // }
       },
       {
-        value: 'FANYIAPP_iphone'.toLowerCase(),
+        value: 'FANYIAPP_iphone'.toLowerCase()
         // uidConf: {
         //   uidFieldList: ['imei'],
-        //   defaultUidField: 'imei'
+        //   defaultUidFizheeld: 'imei'
         // }
       },
       {
-        value: 'mobiledictclient_perf',
+        value: 'mobiledictclient_perf'
         // uidConf: {
         //   uidFieldList: [],
         //   defaultUidField: null
@@ -257,5 +257,12 @@ export const getDateRangeAgg = ({ url, type, body }) => {
       limitNum,
       preciseSql
     }
+  }
+}
+
+export const updateDimCatList = ({ url, type, body }) => {
+  // 啥也不干
+  return {
+
   }
 }

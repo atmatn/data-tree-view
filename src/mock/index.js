@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 import { getDataTree } from './data-tree'
-import { getDataSourceList, getDataSourceDimList, getDateRangeAgg } from './summary-query'
+import { getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
   return {
@@ -26,6 +26,8 @@ Mock.mock(/\/api\/summary-query\/dims/, 'post', getDataSourceDimList)
 // Mock.mock(/\/api\/summary-query\/dim-group-by-agg/, 'post', getDimGroupByAgg)
 
 Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)
+
+Mock.mock(/\/api\/summary-query\/update-dim-cat-list/, 'post', updateDimCatList)
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
 

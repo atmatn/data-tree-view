@@ -524,7 +524,18 @@ export default {
       // console.log(this.$route)
     },
     updateDimCatList (newDimCatList) {
-      console.log("update dim cat list to :" + JSON.stringify(newDimCatList, null, 4))
+      console.log("update dim cat list to :" + JSON.stringify(newDimCatList))
+      axios.post('/api/summary-query/update-dim-cat-list', {
+        dimCatList: newDimCatList
+      }).then( res => {
+        // 成功，直接置换
+        this.dimCatList = newDimCatList
+        this.$Message.success('参数列表保存成功');
+      }).catch( err => {
+        // 失败
+        console.log('参数列表保存失败！' + JSON.stringify(err, null, 4))
+        this.$Message.error('参数列表保存失败！')
+      })
     }
   },
   beforeRouteEnter (to, from, next) {
