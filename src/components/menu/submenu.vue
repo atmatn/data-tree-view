@@ -13,11 +13,12 @@
   </div>
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
     <div v-if="model.currentUserExecutable=== false">
-      <MenuItem :name="model.id">
+      <!-- <MenuItem :name="model.id">
           <Poptip title="缺少下列权限" :content="model.executable_perms.toString()" placement="right">
               {{model.title}}<icon type="md-lock"/>
           </Poptip>
-      </MenuItem>
+      </MenuItem> -->
+      <locks :model="model"></locks>
     </div>
     <div v-else>
       <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
@@ -40,9 +41,12 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import locks from '@/components/menu/lock.vue'
+
 export default {
  name: 'treeMenu',
  props: ['model'],
+ components:{locks},
  computed: {
 //  check(){
 //     for(var i=0;i<this.model.executable_perms.length;i+=1){
