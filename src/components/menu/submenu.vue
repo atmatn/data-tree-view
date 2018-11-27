@@ -1,11 +1,7 @@
 <template>
   <div v-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='args-script'">
     <div v-if="model.currentUserExecutable=== false">
-        <MenuItem :name="model.id">
-            <Poptip  title="缺少下列权限":content="model.computed_executable_perms.toString()" placement="right">
-                {{model.title}}<icon type="md-lock"/>
-            </Poptip>
-        </MenuItem>
+        <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
         <MenuItem :name="model.id" @click.native="openScript({scriptId: model.id, params: {'param_a': model.scriptParams.param_a, 'param_b': model.scriptParams.param_b }})">{{model.title}}</MenuItem>
@@ -18,7 +14,7 @@
               {{model.title}}<icon type="md-lock"/>
           </Poptip>
       </MenuItem> -->
-      <locks :model="model"></locks>
+      <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
       <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
@@ -57,7 +53,10 @@ export default {
 //   },
  isFolder() {
  return this.model.children && this.model.children.length
-                      }
+                      },
+ ...mapState({
+      wichToShow: "wichToShow"
+    })
           },
   methods:{
     childClick () {
