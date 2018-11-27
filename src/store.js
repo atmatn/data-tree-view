@@ -12,7 +12,7 @@ export default new Vuex.Store({
     currentScriptId: '',
     currentScriptParams: {},
     dataTreeNodes: [],
-    wichToShow: true //决定是否显示无可执行权限的项
+    wichToShow: false //决定是否显示无可执行权限的项
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
