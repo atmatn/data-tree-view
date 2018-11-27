@@ -2,7 +2,7 @@
   <div v-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='args-script'">
     <div v-if="model.currentUserExecutable=== false">
         <MenuItem :name="model.id">
-            <Poptip  title="缺少下列权限":content="model.executable_perms.toString()" placement="right">
+            <Poptip  title="缺少下列权限":content="model.computed_executable_perms.toString()" placement="right">
                 {{model.title}}<icon type="md-lock"/>
             </Poptip>
         </MenuItem>
@@ -14,7 +14,7 @@
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
     <div v-if="model.currentUserExecutable=== false">
       <!-- <MenuItem :name="model.id">
-          <Poptip title="缺少下列权限" :content="model.executable_perms.toString()" placement="right">
+          <Poptip title="缺少下列权限" :content="model.computed_executable_perms.toString()" placement="right">
               {{model.title}}<icon type="md-lock"/>
           </Poptip>
       </MenuItem> -->
@@ -49,8 +49,8 @@ export default {
  components:{locks},
  computed: {
 //  check(){
-//     for(var i=0;i<this.model.executable_perms.length;i+=1){
-//         if(this.model.executable_perms[i]==='ke_core'){
+//     for(var i=0;i<this.model.computed_executable_perms.length;i+=1){
+//         if(this.model.computed_executable_perms[i]==='ke_core'){
 //           return true;
 //         }
 //     }
