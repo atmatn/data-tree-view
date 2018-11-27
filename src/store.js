@@ -11,7 +11,8 @@ export default new Vuex.Store({
     someMsg: '',
     currentScriptId: '',
     currentScriptParams: {},
-    dataTreeNodes: []
+    dataTreeNodes: [],
+    wichToShow: true //决定是否显示无可执行权限的项
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -28,6 +29,9 @@ export default new Vuex.Store({
 
     updateDataTreeNodes: (state, { treeNodes }) => {
       state.dataTreeNodes = _.cloneDeep(treeNodes)
+    },
+    updateWichToShow: (state, { status }) => {
+      state.wichToShow = status
     }
   },
   actions: {
@@ -63,6 +67,15 @@ export default new Vuex.Store({
         method: 'get'
       }).then(res => {
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
+      })
+    },
+    changeWichToShow ({ commit }, { status }) {
+      commit('updateWichToShow', { status })
+      router.push({
+        name: 'run-script',
+        query: {
+          status: status
+        }
       })
     }
   }
