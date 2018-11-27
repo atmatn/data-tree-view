@@ -526,6 +526,7 @@ export default {
     updateDimCatList (newDimCatList) {
       console.log("update dim cat list to :" + JSON.stringify(newDimCatList))
       axios.post('/api/summary-query/update-dim-cat-list', {
+        dataSource: this.dataSource,
         dimCatList: newDimCatList
       }).then( res => {
         // 成功，直接置换

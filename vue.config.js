@@ -41,6 +41,15 @@ module.exports = {
   },
   devServer: {
     index: 'index.html',
-    disableHostCheck: true
+    disableHostCheck: true,
+    proxy: {
+      // 参考 https://cli.vuejs.org/zh/config/#devserver-proxy
+      // 参考 https://github.com/chimurai/http-proxy-middleware#proxycontext-config
+      '/api/summary-query': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      }
+    }
   }
 }

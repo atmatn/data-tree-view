@@ -17,7 +17,7 @@
               <label-edit v-bind:text="dimCat.value" placeholder="(请输入分类名)"
                 v-on:text-updated-blur="dimCat.value = $event"
                 v-on:text-updated-enter="dimCat.value = $event"></label-edit>
-              <Button v-if="dimCat.dimList.length == 0" @click="editingDimCatList.splice(idx, 1)">删除分类</Button>
+              <Button class="remove-cat-button" v-if="dimCat.dimList.length == 0" @click="editingDimCatList.splice(idx, 1)">删除分类</Button>
             </div>
             <draggable v-if="true" class="dim-cat-value-part"  v-model="dimCat.dimList" :options="{group:'people'}"
                 @end="dataDragEnd($event, dimCat)">
@@ -48,12 +48,16 @@
       </div>
     </div> <!-- not arranging -->
 
-    <div v-if="!arranging"><Button @click="switchToArranging">整理参数</Button></div>
+    <div class="switch-to-arranging-line" v-if="!arranging"><Button @click="switchToArranging">整理参数</Button></div>
 
-    <div v-if="arranging">
-      <Button @click="doAddCat">添加分类</Button>
-      <Button @click="doSave">保存</Button>
-      <Button @click="doCancel">取消</Button>
+    <div v-if="arranging" class="control-line">
+      <div class="add-cat">
+        <Button @click="doAddCat">添加分类</Button>
+      </div>
+      <div class="save-cancel">
+        <Button @click="doSave">保存</Button>
+        <Button @click="doCancel">取消</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -158,6 +162,7 @@ export default {
   // border-style: solid;
   text-align: right;
   flex-shrink: 0;
+  align-items: center;
 }
 .dim-cat-value-part {
   display: flex;
@@ -166,11 +171,13 @@ export default {
   // border-style: solid;
   flex-wrap: wrap;
   justify-content: flex-start;
+  flex-basis: 90%;
 }
 // vuedraggable在这里会自动生成一个span，把它变大方便拖入
 .dim-cat-value-part>span{
   min-height: 1em;
   min-width: 10em;
+  padding-right: 10em;
   // border-style: solid;
 }
 .dim-cat-value-part a:hover {
@@ -201,5 +208,22 @@ export default {
 .arranging .dim-cat-name {
   cursor: move;
 }
+.control-line {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-between;
+}
 
+.save-cancel {
+  margin-right: 15em;
+}
+.save-cancel button {
+  margin-right: 2em;
+}
+.remove-cat-button {
+  margin-left: 2em;
+}
+.switch-to-arranging-line {
+  margin-top: 1em;
+}
 </style>
