@@ -11,8 +11,8 @@
         <h1 style="color:red">暂无数据</br>请联系管理员！</h1>
     </div>
   </Menu>
-  <!-- <h3>查看无执行权限的项</h3><Switch size="large" v-model="this.switch" @on-change="change()"/> -->
-    <switchs></switchs>
+    <switchs></switchs><!--转换开关-->
+    <modals></modals><!--模态框-->
 </div>
 </template>
 
@@ -22,18 +22,15 @@ import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import selects from '@/components/select/select.vue'
 import switchs from '@/components/switch/switch.vue'
+import modals from '@/components/modal/modal.vue'
 export default {
     data(){
             return{
-              //switch: false,
               dataTreeNodes:this.$store.dispatch('reloadDataTree')
             }
           },
-    components:{submenu,selects,switchs},
+    components:{submenu,selects,switchs,modals},
     computed:{
-          // change (status) {
-          //       this.$Message.info('开关状态：' + status);
-          //   },
          ...mapState({
       TreeNodes: "dataTreeNodes"
     })

@@ -1,17 +1,22 @@
 <template>
-    <Button type="primary" @click="modal1 = true">Display dialog box</Button>
+  <div>
+    <Button type="primary" @click="modal1 = true">编辑模式</Button>
     <Modal
         v-model="modal1"
-        title="Common Modal dialog box title"
+        draggable
+        scrollable
+        title="编辑数据"
         @on-ok="ok"
         @on-cancel="cancel">
-        <p>Content of dialog</p>
-        <p>Content of dialog</p>
-        <p>Content of dialog</p>
+        <edits></edits>
     </Modal>
+  </div>
 </template>
 <script>
-    export default {
+import edits from '@/components/modal/edit.vue'
+
+export default {
+        components:{edits},
         data () {
             return {
                 modal1: false
@@ -19,10 +24,10 @@
         },
         methods: {
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('保存成功');
             },
             cancel () {
-                this.$Message.info('Clicked cancel');
+                this.$Message.info('取消保存');
             }
         }
     }
