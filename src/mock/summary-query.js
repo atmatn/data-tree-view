@@ -208,7 +208,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
   var whereExprForFilters = filters.map(filter => {
     if (filter.operator === '=') {
       return `and \`${filter.dim}\` = '${filter.dimVal}'`
-    } else if (filter.operator === 'like') {
+    } else if (filter.operator === 'ignore_case_like') {
       return `and lower(\`${filter.dim}\`) like '%${filter.dimVal.toLowerCase()}%'`
     } else if (filter.operator === 'is_null') {
       return `and \`${filter.dim}\` is null`

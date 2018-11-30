@@ -39,7 +39,7 @@
             <span v-if="item.operator=='is_null'">is null</span>
             <span v-if="item.operator=='is_not_null'">is not null</span>
             <span v-if="item.operator=='='">{{item.dimVal}}</span>
-            <span v-if="item.operator=='like'">包含“{{item.dimVal}}”（忽略大小写）</span>
+            <span v-if="item.operator=='ignore_case_like'">包含“{{item.dimVal}}”（忽略大小写）</span>
             <Button @click="filters.splice(idx, 1)" class="btn-del">移除</Button>
           </p>
       </div>
@@ -419,7 +419,7 @@ export default {
       this.filters.push({
         dim: dim,
         dimVal: dimVal,
-        operator: 'like'
+        operator: 'ignore_case_like'
       })
     },
     updatePvUvList() {

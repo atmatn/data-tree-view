@@ -23,12 +23,11 @@ Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
 var integrationTest = false
 
 if (!integrationTest) {
-  Mock.mock(/\/api\/summary-query\/datasources/, 'get', getDataSourceList)
-  Mock.mock(/\/api\/summary-query\/dims/, 'post', getDataSourceDimList)
-  Mock.mock(/\/api\/summary-query\/update-dim-cat-list/, 'post', updateDimCatList)
+  Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)
 }
-
-Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)
+Mock.mock(/\/api\/summary-query\/datasources/, 'get', getDataSourceList)
+Mock.mock(/\/api\/summary-query\/dims/, 'post', getDataSourceDimList)
+Mock.mock(/\/api\/summary-query\/update-dim-cat-list/, 'post', updateDimCatList)
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
 
