@@ -64,19 +64,25 @@
           </div>
         </div>
         <div v-if="!dimValsLoading">
-          <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
+          <div v-if="loadDimValDataFail">
+            <div class="fetch-data-fail-title">获取数据失败！请稍侯重试。</div>
+            <Input v-model="loadDimValDataFailMessage" type="textarea" :autosize="{minRows: 2,maxRows: 10}" :readonly="true" />
+          </div>
+          <template v-if="!loadDimValDataFail">
+            <DataSampledWarning :isDataSampled="isDimValsSampled" :dataSampleType="dimValsSampleType" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
-          </DataSampledWarning>
-          <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
+            </DataSampledWarning>
+            <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
-          </DataLimitedWarning>
-          <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
+            </DataLimitedWarning>
+            <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
-          </Table>
-          <div class="line1_in3">
-            <Button class="line1_in3-button" @click="addIsNullFilterWrapper({dim: curDim})">添加is null过滤条件</Button>
-            <Button class="line1_in3-button" @click="addIsNotNullFilterWrapper({dim: curDim})">添加is not null过滤条件</Button>
-          </div> <!-- line1_in3 -->
+            </Table>
+            <div class="line1_in3">
+              <Button class="line1_in3-button" @click="addIsNullFilterWrapper({dim: curDim})">添加is null过滤条件</Button>
+              <Button class="line1_in3-button" @click="addIsNotNullFilterWrapper({dim: curDim})">添加is not null过滤条件</Button>
+            </div> <!-- line1_in3 -->
+          </template>
         </div>
       </Modal>
     </div> <!-- line3 -->
@@ -99,6 +105,10 @@
         <div ref="dateRangeAggDisp" :class="{'date-range-agg-disp':true,'sampled-data':isRangeAggDataSampled}">
 
         </div>
+      </div>
+      <div v-if="loadDateRangeDataFail">
+        <div class="fetch-data-fail-title">获取数据失败！请稍侯重试。</div>
+        <Input v-model="loadDateRangeDataFailMessage" type="textarea" :autosize="{minRows: 2,maxRows: 10}" :readonly="true" />
       </div>
     </div> <!-- line4 -->
   </div> <!-- all -->
@@ -217,7 +227,11 @@ export default {
       dateRangeDataLoading: false,
       dimValsLoading: true,
       //reload
-      reloading: false
+      reloading: false,
+      loadDateRangeDataFail: false,
+      loadDateRangeDataFailMessage: '',
+      loadDimValDataFail: false,
+      loadDimValDataFailMessage: ''
     }
   },
   computed: {
@@ -342,6 +356,8 @@ export default {
         }
         this.updatePvUvList()
       }).catch(e => {
+        console.log('获取参数列表失败！' + JSON.stringify(e, null, 4))
+        this.$Message.error('获取参数列表失败！')
         timeTransaction.enableCounting()
       })
     },
@@ -356,6 +372,7 @@ export default {
       this.dimValsLoading = true
       this.showModalDimVals = true
       // update: this.dimValData
+      this.loadDimValDataFail = false
       axios.post(
         '/api/summary-query/date-range-agg',
         {
@@ -383,6 +400,8 @@ export default {
         this.dimValsLimitNum = res.data.limitNum
         this.dimValsLoading = false
       }).catch( err => {
+        this.loadDimValDataFail = true
+        this.loadDimValDataFailMessage = JSON.stringify(JSON.parse(err.request.responseText), null, 4)
         this.dimValsLoading = false
       })
     },
@@ -477,7 +496,7 @@ export default {
         this.dateRangeDataLoading = true
 
 
-        this.requestingParams = params
+        this.loadDateRangeDataFail = false
         axios.post('/api/summary-query/date-range-agg', params).then( res => {
           this.dateRangeDataLoading = false
           // debugger
@@ -520,7 +539,11 @@ export default {
           this.aggDataSampleType = res.data.sampleType
           this.aggDataPreciseSql = res.data.preciseSql || ''
         }).catch( err => {
+          console.log("获取数据失败！")
           this.dateRangeDataLoading = false
+          this.loadDateRangeDataFail = true
+          // debugger
+          this.loadDateRangeDataFailMessage = JSON.stringify(JSON.parse(err.request.responseText), null, 4)
         })
       })
 
@@ -701,6 +724,10 @@ export default {
     display: inline-block;
     margin-right: 2em;
   }
+  .fetch-data-fail-title {
+    color: red;
+    font-size: 2em;
+  }
 </style>
 
 <style lang="less">
@@ -723,4 +750,5 @@ export default {
   .h1{
     font-size: 36px;
   }
+
 </style>
