@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import router from './router'
 import axios from 'axios'
 import _ from 'lodash'
+import $ from 'jquery'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -13,7 +14,8 @@ export default new Vuex.Store({
     currentScriptParams: {},
     dataTreeNodes: [],
     wichToShow: false ,//决定是否显示无可执行权限的项
-    allow:false //确定按钮是否可以关闭model
+    allow:false, //确定按钮是否可以关闭model
+    queryingCount: 0
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -36,6 +38,9 @@ export default new Vuex.Store({
     },
     updateAllow:(state,{status}) => {
       state.allow = status
+    },
+    incrementQueringCount: (state, { val }) => {
+      state.queryingCount += val
     }
   },
   actions: {
@@ -80,6 +85,16 @@ export default new Vuex.Store({
         query: {
           status: status
         }
+      })
+    },
+    incrementQueringCount ({ commit, state }, { val }) {
+      commit('incrementQueringCount', { val })
+    },
+    updateSummaryQueryParams ({ commit, state}, payload) {
+      console.log('action: updateSummaryQueryParams' + JSON.stringify(payload))
+      const url = '/ui/summary-query?' + $.param(payload)
+      router.push({
+        path: url
       })
     }
   }

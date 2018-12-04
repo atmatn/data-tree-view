@@ -51,7 +51,7 @@ export default {
          axios.request({
               url: '/api/data-tree/edit/add',
               method: 'post',
-              params:{
+              data:{
                   parent_id:this.id,
                   type:this.type,
                   name:this.itemName

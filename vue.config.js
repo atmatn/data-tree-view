@@ -4,7 +4,13 @@ const BASE_URL = process.env.NODE_ENV === 'production' ? '/ui' : '/ui'
 
 module.exports = {
   lintOnSave: false,
+  runtimeCompiler: true,
   baseUrl: BASE_URL,
+  // resolve: {
+  //   alias: {
+  //     'vue$': 'vue/dist/vue.esm.js' // 'vue/dist/vue.common.js' for webpack 1
+  //   }
+  // },
   chainWebpack: config => {
     config.resolve.alias
       .set('@', resolve('src'))
@@ -20,9 +26,11 @@ module.exports = {
           jquery: 'jquery',
           jQuery: 'jquery',
           'window.jQuery': 'jquery'
-        }, {
-          Vue: 'vue'
-        }])
+        }
+        // , {
+        //   Vue: 'vue'
+        // }
+      ])
   },
   pages: {
     index: {
@@ -32,6 +40,16 @@ module.exports = {
     }
   },
   devServer: {
-    index: 'index.html'
+    index: 'index.html',
+    disableHostCheck: true,
+    proxy: {
+      // 参考 https://cli.vuejs.org/zh/config/#devserver-proxy
+      // 参考 https://github.com/chimurai/http-proxy-middleware#proxycontext-config
+      '/api/summary-query': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      }
+    }
   }
 }
