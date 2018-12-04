@@ -5,6 +5,11 @@ var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
     msg: 'mock hello world!'
   }
 }
+var getRequest = function getRequest ({ url, type, body }) {
+  return {
+    id: 'someid'
+  }
+}
 
 var getDataTree = function getDataTree ({ url, type, body }) {
   // 注意：
@@ -155,6 +160,9 @@ var getDataTree = function getDataTree ({ url, type, body }) {
 Mock.mock(/\/getWelcomeMsg/, 'get', getWelcomeMsg)
 
 Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
+
+Mock.mock(/\/api\/data\-tree\/edit\/add/, 'post',getRequest)
+    //url: '/api /data-tree /edit /add',
 
 Mock.setup({
   timeout: 0

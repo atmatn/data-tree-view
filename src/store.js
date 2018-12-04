@@ -12,7 +12,8 @@ export default new Vuex.Store({
     currentScriptId: '',
     currentScriptParams: {},
     dataTreeNodes: [],
-    wichToShow: false //决定是否显示无可执行权限的项
+    wichToShow: false ,//决定是否显示无可执行权限的项
+    allow:true //确定按钮是否可以关闭model
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -32,6 +33,9 @@ export default new Vuex.Store({
     },
     updateWichToShow: (state, { status }) => {
       state.wichToShow = status
+    },
+    updateAllow:(state,{status}) => {
+      state.allow = status
     }
   },
   actions: {

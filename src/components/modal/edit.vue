@@ -1,10 +1,20 @@
 <
 <template>
-<div>editer</div>
+<div>
+<menuTrees ></menuTrees>
+</div>
 </template>
 <script>
-export default {
+import menuTrees from '@/components/modal/menuTreeEdit.vue'
 
+export default {
+    components: {menuTrees},
+    data(){
+        return{
+
+        }
+    }
 }
 </script>
+
 

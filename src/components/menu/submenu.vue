@@ -44,17 +44,10 @@ export default {
  props: ['model'],
  components:{locks},
  computed: {
-//  check(){
-//     for(var i=0;i<this.model.computed_executable_perms.length;i+=1){
-//         if(this.model.computed_executable_perms[i]==='ke_core'){
-//           return true;
-//         }
-//     }
-//   },
- isFolder() {
- return this.model.children && this.model.children.length
+    isFolder() {
+          return this.model.children && this.model.children.length
                       },
- ...mapState({
+    ...mapState({
       wichToShow: "wichToShow"
     })
           },
