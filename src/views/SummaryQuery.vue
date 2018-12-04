@@ -255,7 +255,7 @@ export default {
       this.dimValFilter.match(/^\s*is\s*null\s*$/i) != null)
     },
     filterdDimValsAggData: function(){
-      debugger
+      // debugger
       if( this.dimValFilter.length > 0 ) {
         // 写了过滤条件
         if (this.dimValFilterIsNull){
@@ -319,12 +319,14 @@ export default {
     },
     reloadDims(){
       console.log('reload dims')
+      timeTransaction.disableCounting()
       axios.post(
         '/api/summary-query/dims',
         {
           dataSource: this.dataSource
         }
       ).then( res => {
+        timeTransaction.enableCounting()
         // debugger
         var dimList = res.data.dimList
         this.dimList = dimList
@@ -339,6 +341,8 @@ export default {
           this.uidField = ''
         }
         this.updatePvUvList()
+      }).catch(e => {
+        timeTransaction.enableCounting()
       })
     },
     onChangeUidField: function(val) {
