@@ -52,7 +52,8 @@
     <div class="line3" v-if="dataSource != ''">
       <Modal v-model="showModalDimVals"
         :title="(curDim + '参数值 （'+ toDateStr + '）')"
-        @on-visible-change="clearUpModal">
+        @on-visible-change="clearUpModal"
+        width="800">
         <div v-if="dimValsLoading">
           <div class='loader'>
             <ClipLoader
@@ -210,8 +211,8 @@ export default {
             )
           }
         },
-        {title: 'UV', key: 'uv'},
-        {title: 'PV', key: 'pv'}
+        {title: 'UV', key: 'uv', width: 200},
+        {title: 'PV', key: 'pv', width: 200}
       ],
       filters: [],
       dimValsAggData: [],

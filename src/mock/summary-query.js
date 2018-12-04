@@ -190,7 +190,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
 
   dataList.forEach(item => {
     b.aggs.forEach(agg => {
-      item[agg.name] = Math.round(10000 * Math.random())
+      item[agg.name] = Math.round(10000000000 * Math.random())
     })
     // 保证UV小于UV
     if (item['pv'] !== undefined && item['pv'] > 0) {
@@ -284,6 +284,96 @@ export const getQueries = () => {
     'status': 'running',
     'statusText': null
   }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
     'queryId': 'lisn_20181204_164350_1',
     'disableCache': false,
     'allowSample': true,
@@ -299,5 +389,4 @@ export const getQueries = () => {
     'status': 'success',
     'statusText': null
   }]
-
 }

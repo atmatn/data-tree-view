@@ -20,7 +20,7 @@ Mock.mock(/\/getWelcomeMsg/, 'get', getWelcomeMsg)
 Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
 
 // 集成测试时，暂时手工设置为true
-var integrationTest = true
+var integrationTest = false
 
 if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)
