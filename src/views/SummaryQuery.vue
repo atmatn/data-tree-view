@@ -427,12 +427,32 @@ export default {
         console.log('reloading, skip update updatePvUvList')
         return
       }
+
       // debugger
       console.log('update agg list')
       if( this.dataSource == '' ) {
         return
       }
 
+
+      var params = {
+        dataSource: this.dataSource,
+        filters: this.filters,
+        dateRange: {
+          from: moment(this.daterange[0]).format('YYYY-MM-DD'),
+          to: moment(this.daterange[1]).format('YYYY-MM-DD'),
+        },
+        groupByList: [],
+        allowSample: true,
+        allowLimit: false,
+        //es6 map spread 语法
+        ...this.basicAggsAndMtrs
+      }
+      if (JSON.stringify(this.requestingParams) === JSON.stringify(params)) {
+        console.log('skip dup reloading')
+        return;
+      }
+      
       // 更新参数
       this.updateSummaryQueryParams({
         dataSource: this.dataSource,
@@ -448,19 +468,9 @@ export default {
       this.isRangeAggDataSampled = false
       this.dateRangeDataLoading = true
 
-      axios.post('/api/summary-query/date-range-agg', {
-        dataSource: this.dataSource,
-        filters: this.filters,
-        dateRange: {
-          from: moment(this.daterange[0]).format('YYYY-MM-DD'),
-          to: moment(this.daterange[1]).format('YYYY-MM-DD'),
-        },
-        groupByList: [],
-        allowSample: true,
-        allowLimit: false,
-        //es6 map spread 语法
-        ...this.basicAggsAndMtrs
-      }).then( res => {
+
+      this.requestingParams = params
+      axios.post('/api/summary-query/date-range-agg', params).then( res => {
         this.dateRangeDataLoading = false
         // debugger
         var list = res.data.dateRangeAggData
