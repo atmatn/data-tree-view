@@ -136,6 +136,8 @@ var mockTreeNodes = [
   }
 ]
 
+var maxId = 100
+
 export const getDataTree = ({ url, type, body }) => {
   // 注意：
   //   product 只有 “visible_perms”，没有 “executable_perms”
@@ -147,6 +149,106 @@ export const getDataTree = ({ url, type, body }) => {
   }
 }
 
+var isInserted = false
+function addTo (target, { parentId, type, title }) {
+  console.log('try add to id = ' + target.id)
+  if (Array.isArray(target)) {
+    // root
+    if (parentId === -1) {
+      // 插入到root
+      if (type !== 'product') {
+        let err = { msg: 'parentId==-1，只能插入product节点！' }
+        throw err
+      }
+      let newNode = {
+        type,
+        id: (++maxId),
+        title,
+        visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+        currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+        containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+        creator: 'bob' // 创建者
+      }
+      isInserted = true
+      target.push(newNode)
+    }
+    target.forEach(item => {
+      addTo(item, { parentId, type, title })
+    })
+  } else if (target.type === 'product' || target.type === 'folder') {
+    // product / folder
+    // 当前节点上加
+    if (target.id === parentId) {
+      var newNode = {}
+      newNode.type = type
+      newNode.title = title
+      newNode.id = (++maxId)
+      if (type === 'folder') {
+        let needCopy = [
+          'currentUserExecutable',
+          'containsExecutableForCurrentUser',
+          'computed_executable_perms',
+          'currentUserManageable',
+          'creator']
+        needCopy.forEach(x => {
+          newNode[x] = target[x]
+        })
+        newNode.children = []
+      } else {
+        // 插入leaf
+        newNode.currentUserExecutable = true
+        newNode.containsExecutableForCurrentUser = true
+        newNode.computed_executable_perms = ['ke_general']
+        newNode.currentUserManageable = true
+        newNode.creator = 'bob'
+        if (type === 'direct-link') {
+          newNode.linkUrl = 'http://analyzer2.corp.youdao.com/'
+        } else if (type === 'args-script') {
+          newNode.scriptId = '456'
+          newNode.scriptParams = {
+            param_a: 4,
+            param_b: 5
+          }
+        } else {
+          let err = {
+            msg: '插入leaf type=' + type + '不合法！'
+          }
+          throw err
+        }
+      }
+      isInserted = true
+      target.children.push(newNode)
+    } else {
+      // 递归往下
+      if (target.children === undefined) {
+        // 可能是无权限节点，return
+        return
+      }
+      target.children.forEach(item => {
+        addTo(item, { parentId, type, title })
+      })
+    }
+  } else {
+    // leaf
+    // 不用操作
+  }
+}
 export const addTreeNode = ({ url, type, body }) => {
   debugger
+  isInserted = false
+  var j = JSON.parse(body)
+  console.log('inserting ' + JSON.stringify(j))
+  addTo(mockTreeNodes, j)
+  if (!isInserted) {
+    console.log('插入节点失败！')
+    return {
+      status: 'error',
+      msg: '插入失败！'
+    }
+  } else {
+    console.log('插入节点成功！ id=' + maxId)
+    return {
+      id: maxId
+    }
+  }
 }

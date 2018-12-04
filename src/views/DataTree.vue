@@ -17,6 +17,11 @@
       data-tree-json: <Input type="textarea" :rows="4" v-bind:value="JSON.stringify(dataTreeNodes, null, 4)" style="width: 800px;"/>
       <Button @click="reloadDataTree">Reload Data Tree</Button>
     </div>
+    <div>
+      <Button @click="testAddToFolderNode">Add DirectLink To Folder Node</Button>
+      <Button @click="testAddToProductNode">Add DirectLink To Product Node</Button>
+      <Button @click="testAddProductNode">Add Product Node</Button>
+    </div>
   </div>
         <Layout>
             <Header>
@@ -93,7 +98,28 @@ export default {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     },
     // 通过vuex的处理reload data tree
-    ...mapActions(["reloadDataTree"])
+    ...mapActions(["reloadDataTree"]),
+    testAddToFolderNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: 15,
+        type: 'direct-link',
+        title: '新增1'
+      })
+    },
+    testAddToProductNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: 1,
+        type: 'folder',
+        title: '新增2'
+      })
+    },
+    testAddProductNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: -1,
+        type: 'product',
+        title: '新增3'
+      })
+    }
   },
   computed: {
     ...mapState({

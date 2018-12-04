@@ -52,7 +52,7 @@ export default {
               url: '/api/data-tree/edit/add',
               method: 'post',
               data:{
-                  parent_id:this.id,
+                  parentId:this.id,
                   type:this.type,
                   name:this.itemName
               }
