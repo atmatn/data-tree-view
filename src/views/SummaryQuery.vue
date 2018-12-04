@@ -120,6 +120,8 @@ import DataLimitedWarning from '_c/DataLimitedWarning.vue'
 import FilterSelector from '_c/FilterSelector.vue'
 import SqlHint from '_c/SqlHint.vue'
 import deparam from 'deparam'
+import TimeTransaction from '@/lib/TimeTransaction'
+var timeTransaction = new TimeTransaction()
 
 export default {
   components: {
@@ -309,6 +311,10 @@ export default {
     },
     onChangeDataSource: function(val){
       console.log("datasource changed to: " + val)
+      // 可能有多个中间状态，只对时间段内最后一个状态更新
+      timeTransaction.startTransaction()
+      // 清空filters
+      this.filters = []
       this.reloadDims()
     },
     reloadDims(){
@@ -428,95 +434,97 @@ export default {
         return
       }
 
+
       // debugger
       console.log('update agg list')
       if( this.dataSource == '' ) {
         return
       }
 
-
-      var params = {
-        dataSource: this.dataSource,
-        filters: this.filters,
-        dateRange: {
-          from: moment(this.daterange[0]).format('YYYY-MM-DD'),
-          to: moment(this.daterange[1]).format('YYYY-MM-DD'),
-        },
-        groupByList: [],
-        allowSample: true,
-        allowLimit: false,
-        //es6 map spread 语法
-        ...this.basicAggsAndMtrs
-      }
-      if (JSON.stringify(this.requestingParams) === JSON.stringify(params)) {
-        console.log('skip dup reloading')
-        return;
-      }
-      
-      // 更新参数
-      this.updateSummaryQueryParams({
-        dataSource: this.dataSource,
-        uidField: this.uidField,
-        filters: this.filters,
-        fromDate: this.fromDateStr,
-        toDate: this.toDateStr
-      })
-
-      // 清理界面
-      var $disp = $(this.$refs.dateRangeAggDisp)
-      $disp.empty()
-      this.isRangeAggDataSampled = false
-      this.dateRangeDataLoading = true
+      timeTransaction.addCallback( () => {
+        var params = {
+          dataSource: this.dataSource,
+          filters: this.filters,
+          dateRange: {
+            from: moment(this.daterange[0]).format('YYYY-MM-DD'),
+            to: moment(this.daterange[1]).format('YYYY-MM-DD'),
+          },
+          groupByList: [],
+          allowSample: true,
+          allowLimit: false,
+          //es6 map spread 语法
+          ...this.basicAggsAndMtrs
+        }
 
 
-      this.requestingParams = params
-      axios.post('/api/summary-query/date-range-agg', params).then( res => {
-        this.dateRangeDataLoading = false
-        // debugger
-        var list = res.data.dateRangeAggData
-        this.dateRangeAggData = list.sort( (a,b) => {
-          if( a.day > b.day ) return -1
-          else if( a.day < b.day ) return 1
-          else return 0
+        // 更新参数
+        this.updateSummaryQueryParams({
+          dataSource: this.dataSource,
+          uidField: this.uidField,
+          filters: this.filters,
+          fromDate: this.fromDateStr,
+          toDate: this.toDateStr
         })
 
-        this.$nextTick( () => {
-          var $disp = $(this.$refs.dateRangeAggDisp)
-          $disp.empty()
+        // 清理界面
+        var $disp = $(this.$refs.dateRangeAggDisp)
+        $disp.empty()
+        this.isRangeAggDataSampled = false
+        this.dateRangeDataLoading = true
 
+
+        this.requestingParams = params
+        axios.post('/api/summary-query/date-range-agg', params).then( res => {
+          this.dateRangeDataLoading = false
           // debugger
-          drawChart({
-            title: '',
-            source: {
-              //es6 array spread 语法
-              cols: ['day', ...this.basicAggsAndMtrs.mtrs],
-              data: list
-            },
-            x: 'day',
-            yList: this.basicAggsAndMtrs.mtrs,
-            $target: $disp
+          var list = res.data.dateRangeAggData
+          this.dateRangeAggData = list.sort( (a,b) => {
+            if( a.day > b.day ) return -1
+            else if( a.day < b.day ) return 1
+            else return 0
           })
-          drawTable({
-            title: '',
-            source: {
-              //es6 array spread 语法
-              cols: ['day', ...this.basicAggsAndMtrs.mtrs],
-              data: list
-            },
-            $target: $disp,
-            simple: false
-          })
-        })
 
-        this.isRangeAggDataSampled = res.data.isSampled
-        this.aggDataSampleType = res.data.sampleType
-        this.aggDataPreciseSql = res.data.preciseSql || ''
-      }).catch( err => {
-        this.dateRangeDataLoading = false
+          this.$nextTick( () => {
+            var $disp = $(this.$refs.dateRangeAggDisp)
+            $disp.empty()
+
+            // debugger
+            drawChart({
+              title: '',
+              source: {
+                //es6 array spread 语法
+                cols: ['day', ...this.basicAggsAndMtrs.mtrs],
+                data: list
+              },
+              x: 'day',
+              yList: this.basicAggsAndMtrs.mtrs,
+              $target: $disp
+            })
+            drawTable({
+              title: '',
+              source: {
+                //es6 array spread 语法
+                cols: ['day', ...this.basicAggsAndMtrs.mtrs],
+                data: list
+              },
+              $target: $disp,
+              simple: false
+            })
+          })
+
+          this.isRangeAggDataSampled = res.data.isSampled
+          this.aggDataSampleType = res.data.sampleType
+          this.aggDataPreciseSql = res.data.preciseSql || ''
+        }).catch( err => {
+          this.dateRangeDataLoading = false
+        })
       })
+
     },
     reload : function (payload) {
       this.reloading = true
+      // 可能有多个中间状态，只对时间段内最后一个状态更新
+      timeTransaction.startTransaction()
       this.dataSource = payload.dataSource || ''
       this.uidField = payload.uidField || ''
       this.filters = payload.filters || []
