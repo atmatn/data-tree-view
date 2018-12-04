@@ -63,6 +63,8 @@ export default {
                     this.success='已添加';
                     this.$store.commit('updateAllow',{status:true});
                     this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
+              }else if(res.data.id === temp){
+
               }else{
                 this.$store.commit('updateAllow',{status:false});
                 this.$Message.info('添加失败');

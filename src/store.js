@@ -13,7 +13,7 @@ export default new Vuex.Store({
     currentScriptParams: {},
     dataTreeNodes: [],
     wichToShow: false ,//决定是否显示无可执行权限的项
-    allow:true //确定按钮是否可以关闭model
+    allow:false //确定按钮是否可以关闭model
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html

@@ -23,8 +23,10 @@
 import edits from '@/components/modal/edit.vue'
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
+import Router from 'vue-router'
 export default {
         components:{edits},
+        inject:['reload'],
         data () {
             return {
                 modal1: false,
@@ -41,6 +43,9 @@ export default {
               if(this.allow === true){
                 this.$Message.info('保存成功');
                 this.modal1=false;
+                //this.$router.go(0);
+                this.$store.commit('updateAllow',{status:false});
+                this.reload();
               }
             },
             cancel () {

@@ -2,7 +2,7 @@
 <div>
   <Tree :data="TreeNodes" :render="renderContent"></Tree>
   <h3>{{tips}}</h3>
-  <forms :model="addForm" v-model="model" :functions="functions"></forms>
+  <forms  :model="addForm" v-model="model" :functions="functions"></forms>
 </div>
 </template>
 <script>
