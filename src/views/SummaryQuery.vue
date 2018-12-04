@@ -111,6 +111,9 @@
         <Input v-model="loadDateRangeDataFailMessage" type="textarea" :autosize="{minRows: 2,maxRows: 10}" :readonly="true" />
       </div>
     </div> <!-- line4 -->
+    <SummaryQueryStatus>
+
+    </SummaryQueryStatus>
   </div> <!-- all -->
 </template>
 
@@ -127,6 +130,7 @@ import { Input, Button } from 'iview'
 import { BarLoader, ClipLoader } from '@saeris/vue-spinners'
 import DataSampledWarning from '_c/DataSampledWarning.vue'
 import DataLimitedWarning from '_c/DataLimitedWarning.vue'
+import SummaryQueryStatus from '_c/SummaryQueryStatus.vue'
 import FilterSelector from '_c/FilterSelector.vue'
 import SqlHint from '_c/SqlHint.vue'
 import deparam from 'deparam'
@@ -140,7 +144,8 @@ export default {
     BarLoader,
     ClipLoader,
     SqlHint,
-    FilterSelector
+    FilterSelector,
+    SummaryQueryStatus
   },
   data() {
     var toDate = moment().add(-1, 'days')

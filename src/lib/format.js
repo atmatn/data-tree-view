@@ -6,7 +6,7 @@ const forceRatioPattern = /%$/
 const ratioPattern = /ratio|率|比例/i
 const intPattern = /uv|session(?!_avg_action)|用户数/i
 
-var limitFraction = function limitFraction (data) {
+export const limitFraction = function limitFraction (data) {
   if ((data + '').indexOf('.') < 0) {
     return data
   }

@@ -266,3 +266,38 @@ export const updateDimCatList = ({ url, type, body }) => {
 
   }
 }
+
+export const getQueries = () => {
+  return [{
+    'queryId': 'lisn_20181204_164371_2',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': false,
+    'sampleType': 0,
+    'user': 'lisn',
+    'startTs': 1543913039717,
+    'completedItems': 2,
+    'waitingItems': 5,
+    'elapsedSecs': 2,
+    'maxWaitSecs': 120,
+    'status': 'running',
+    'statusText': null
+  }, {
+    'queryId': 'lisn_20181204_164350_1',
+    'disableCache': false,
+    'allowSample': true,
+    'planOnly': false,
+    'sampled': true,
+    'sampleType': 8,
+    'user': 'lisn',
+    'startTs': 1543913037499,
+    'completedItems': 0,
+    'waitingItems': 0,
+    'elapsedSecs': 0,
+    'maxWaitSecs': 120,
+    'status': 'success',
+    'statusText': null
+  }]
+
+}
