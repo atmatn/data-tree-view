@@ -55,10 +55,10 @@ export default {
           console.log('hasRunning = ' + this.hasRunning)
         }
       })
-      setTimeout (cb, this.hasRunning ? 1000:Math.min(60000, this.noRunningTimes * 5000 + 1000))
+      setTimeout (cb, this.hasRunning ? 1000: 5000)
     }
 
-    setTimeout( cb, this.hasRunning ? 1000:5000)
+    setTimeout( cb, 5000)
   },
   methods: {
     closePanel: function () {
