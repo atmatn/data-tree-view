@@ -20,8 +20,10 @@
     <div>
       <Button @click="testAddToFolderNode">Add DirectLink To Folder Node</Button>
       <Button @click="testAddToProductNode">Add DirectLink To Product Node</Button>
-      <Button @click="testAddProductNode">Add Product Node</Button>
-    </div>
+      <Button @click="testAddProductNode">Add Product Node</Button>    </div>
+      <Button @click="testRenameProductNode">Rename Product Node</Button>
+      <Button @click="testRenameFolderNode">Rename Folder Node</Button>
+      <Button @click="testRenameLeafNode">Rename Leaf Node</Button>
   </div>
         <Layout>
             <Header>
@@ -118,6 +120,24 @@ export default {
         parentId: -1,
         type: 'product',
         title: '新增3'
+      })
+    },
+    testRenameProductNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 1,
+        title: '更名1'
+      })
+    },
+    testRenameFolderNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 15,
+        title: '更名2'
+      })
+    },
+    testRenameLeafNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 16,
+        title: '更名3'
       })
     }
   },

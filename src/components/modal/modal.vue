@@ -52,6 +52,7 @@ export default {
               // if(this.allow === true){
                 this.$Message.info('取消保存');
                  this.modal1=false;
+                 this.reload();
               // }
             }
         }

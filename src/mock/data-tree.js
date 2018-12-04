@@ -252,3 +252,46 @@ export const addTreeNode = ({ url, type, body }) => {
     }
   }
 }
+
+export const renameTreeNode = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('renaming ' + JSON.stringify(j))
+  var isRenamed = false
+  function rename (target, params) {
+    if (Array.isArray(target)) {
+      // root
+      target.forEach(item => {
+        rename(item, params)
+      })
+    } else {
+      // product / folder
+      if (target.id === params.id) {
+        target.title = params.title
+        isRenamed = true
+      } else {
+        if (target.type === 'product' || target.type === 'folder') {
+          // 递归往下
+          if (target.children === undefined) {
+            // 可能是无权限节点，return
+            return
+          }
+          target.children.forEach(item => {
+            rename(item, params)
+          })
+        }
+      }
+    }
+  }
+
+  rename(mockTreeNodes, j)
+
+  if (isRenamed) {
+    console.log('更名成功！')
+    return {
+    }
+  } else {
+    console.log('更名失败！')
+    let err = { msg: '更名失败!' }
+    throw err
+  }
+}
