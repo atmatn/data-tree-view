@@ -7,7 +7,13 @@ var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
 }
 var getRequest = function getRequest ({ url, type, body }) {
   return {
-    id: 'someid'
+    id: 'someid',
+    isAddSuc: true
+  }
+}
+var getRenameRequest = function getRequest ({ url, type, body }) {
+  return {
+    isReSuc: true
   }
 }
 
@@ -162,7 +168,8 @@ Mock.mock(/\/getWelcomeMsg/, 'get', getWelcomeMsg)
 Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
 
 Mock.mock(/\/api\/data\-tree\/edit\/add/, 'post',getRequest)
-    //url: '/api /data-tree /edit /add',
+
+Mock.mock(/\/api\/data\-tree\/edit\/rename/, 'post',getRenameRequest)
 
 Mock.setup({
   timeout: 0
