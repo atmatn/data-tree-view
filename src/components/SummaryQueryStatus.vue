@@ -7,8 +7,8 @@
         <button @click="closePanel">关闭</button>
       </div>
       <ul>
-        <li class="q-line" v-for="q in queryList">
-          <a>{{q.queryId}}</a>
+        <li class="q-line" v-for="(q, idx) in queryList">
+          <a @click="clickQuery(idx)">{{q.queryId}}</a>
           <Progress
             v-bind:status="q.status"
             :percent="q.percent"></Progress>
@@ -17,6 +17,10 @@
           </span>
         </li>
       </ul>
+      <Modal v-model="showQueryDetail">
+        <div>查询详情</div>
+        <Input type="textarea" :autosize="{minRows: 2,maxRows: 20}" :readonly="true"  v-model="showingQuery"/>
+      </Modal>
   </div>
 </template>
 
@@ -31,7 +35,9 @@ export default {
       show: true,
       firstQueryId: '',
       hasRunning: false,
-      noRunningTimes: 0
+      noRunningTimes: 0,
+      showQueryDetail: false,
+      showingQuery: ''
     }
   },
   mounted: function () {
@@ -63,6 +69,10 @@ export default {
   methods: {
     closePanel: function () {
       this.show = false
+    },
+    clickQuery: function (idx) {
+      this.showingQuery = JSON.stringify(this.queries[idx], null, 4)
+      this.showQueryDetail = true
     }
   },
   computed: {
@@ -87,12 +97,14 @@ export default {
           elapsed =`${limitFraction(x.elapsedSecs / 60)} 分`
         }
 
-        var percent = limitFraction(x.completedItems / (x.waitingItems + x.completedItems) * 100)
+        var started = (x.waitingItems + x.completedItems) > 0
+        var percent = started ? limitFraction(x.completedItems / (x.waitingItems + x.completedItems) * 100) : 0
         return {
             queryId: x.queryId,
             status: st,
             percent,
-            elapsed
+            elapsed,
+            started
         }
       })
       return retList

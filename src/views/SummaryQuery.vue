@@ -76,7 +76,7 @@
             <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
             </DataLimitedWarning>
-            <Table height="500" :columns="dimValCols" :data="filterdDimValsAggData">
+            <Table class="dim-val-tbl" height="500" :columns="dimValCols" :data="filterdDimValsAggData">
 
             </Table>
             <div class="line1_in3">
@@ -204,15 +204,15 @@ export default {
             return (
               <span>
               <span>{col.column.title}</span>
-              <Input style="width:200px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
+              <Input style="width:150px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
               {(this.dimValFilter != '' && !this.dimValFilterIsNull)?<Button on-click={this.addLikeFilterWrapper.bind(this, {dim: this.curDim, dimVal: this.dimValFilter})}>将【包含“{this.dimValFilter.toLowerCase()}”（忽略大小写）】<br/>添加到【过滤条件】</Button>:<span></span>}
               </span>
 
             )
           }
         },
-        {title: 'UV', key: 'uv', width: 200},
-        {title: 'PV', key: 'pv', width: 200}
+        {title: 'UV', sortable: true, key: 'uv', width: 200},
+        {title: 'PV', sortable: true, key: 'pv', width: 200}
       ],
       filters: [],
       dimValsAggData: [],
@@ -756,5 +756,7 @@ export default {
   .h1{
     font-size: 36px;
   }
-
+  .dim-val-tbl {
+    font-size: 2em;
+  }
 </style>
