@@ -15,7 +15,7 @@
         您当前选择了:{{this.type}}&nbsp;,&nbsp;parentId:{{model.id}}&nbsp;,&nbsp;itemName:{{this.itemName}}
       </div>
       <br/>
-    <Button @click="save()"type="primary">保存</Button>
+    <Button v-if="allow===false" @click="save()"type="primary">保存</Button>
     <div v-if ="allow===false" style="color:red">{{this.success}}</div>
     <div v-if ="allow===true" style="color:green">{{this.success}}</div>
   </formItem>
@@ -25,7 +25,7 @@
     请输入要添加的新产品名称：<input v-model.trim="productName"/>
   </formItem>
   <formItem>
-    <Button type="primary" @click="save()">添加产品</Button>
+    <Button type="primary" v-if="allow===false" @click="save()">添加产品</Button>
     <div v-if ="allow===false" style="color:red">{{this.success}}</div>
     <div v-if ="allow===true" style="color:green">{{this.success}}</div>
   </formItem>
@@ -35,7 +35,7 @@
       原名称:{{model.title}}<br/>
         <Input v-model.trim="itemName" placeholder="请输入要更改的新的名称..." style="width: 300px" />
       <br/>
-    <Button @click="rename()"type="primary">更改</Button>
+    <Button v-if="allow===false" @click="rename()"type="primary">更改</Button>
     <div v-if ="allow===false" style="color:red">{{this.success}}</div>
     <div v-if ="allow===true" style="color:green">{{this.success}}</div>
   </formItem>
