@@ -5,9 +5,9 @@
       请选择要添加的类型:
         <RadioGroup v-model="type">
            <!-- <Radio label='product'/> -->
-           <Radio v-if="model.type==='product'" label='folder'/>
-           <Radio v-if="model.type==='product'||model.type==='folder'"label='direct-link'/>
-           <Radio v-if="model.type==='product'||model.type==='folder'"label='args-script'/>
+           <Radio v-if="model.type==='product'||model.type==='folder'"label='folder'/>
+           <Radio v-if="model.type==='folder'"label='direct-link'/>
+           <Radio v-if="model.type==='folder'"label='args-script'/>
         </RadioGroup>
         <br/>
         <Input v-model.trim="itemName" placeholder="请输入要添加的名称..." style="width: 300px" />
@@ -25,7 +25,7 @@
     请输入要添加的新产品名称：<input v-model.trim="productName"/>
   </formItem>
   <formItem>
-    <Button type="primary" @click="addProduct()">添加产品</Button>
+    <Button type="primary" @click="save()">添加产品</Button>
     <div v-if ="allow===false" style="color:red">{{this.success}}</div>
     <div v-if ="allow===true" style="color:green">{{this.success}}</div>
   </formItem>
@@ -64,6 +64,30 @@ export default {
     },
     methods:{
       save(){
+        if(this.productName !==null&&this.productName!==''){
+           axios.request({
+              url: '/api/data-tree/edit/add',
+              method: 'post',
+              data:{
+                  parentId:-1,
+                  type:'product',
+                  title:this.productName
+              }
+              }).then(res => {
+              //this.$Message.info('新增项的id：'+res.data.id);//测试用
+              if(res.data.status === 'error'){
+                this.$store.commit('updateAllow',{status:false});
+                this.$Message.info(res.data.msg);
+                this.success='添加失败';
+              }else{
+                 this.$Message.info('添加成功');
+                 // this.$Message.info(res.data.id);
+                 this.success='已添加';
+                 this.$store.commit('updateAllow',{status:true});
+                 this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
+              }
+                            })
+        }else{
         if(this.type===''||(this.itemName===''||this.itemName.length===0)){
             this.$Message.info('未选择类型或输入的名称为空');
             this.success='未选择类型或输入的名称为空';
@@ -73,50 +97,26 @@ export default {
               url: '/api/data-tree/edit/add',
               method: 'post',
               data:{
-                  parentId:this.id,
+                  parentId:this.model.id,
                   type:this.type,
-                  name:this.itemName
+                  title:this.itemName
               }
               }).then(res => {
               //this.$Message.info('新增项的id：'+res.data.id);//测试用
-              if(res.data.id !== null&&res.data.id !==''&&res.data.id !==undefined){
-                    this.$Message.info('添加成功');
-                    this.success='已添加';
-                    this.$store.commit('updateAllow',{status:true});
-                    this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
-              }else{
+              if(res.data.status === 'error'){
                 this.$store.commit('updateAllow',{status:false});
-                this.$Message.info('添加失败');
+                this.$Message.info(res.data.msg);
                 this.success='添加失败';
+              }else{
+                 this.$Message.info('添加成功'+'id:'+res.data.id);
+                 // this.$Message.info(res.data.id);
+                 this.success='已添加';
+                 this.$store.commit('updateAllow',{status:true});
+                 this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
               }
                             })
          }
-      },
-      addProduct(){
-            if(this.productName !==null&&this.productName!==''){
-              axios.request({
-              url: '/api/data-tree/edit/add',
-              method: 'post',
-              params:{
-                  name:this.productName
-              }
-              }).then(res => {
-              if(res.data.isAddSuc === true){
-                    this.$Message.info('添加成功');
-                    this.success='已添加';
-                    this.$store.commit('updateAllow',{status:true});
-                    this.$store.dispatch('reloadDataTree')
-              }else{
-                this.$store.commit('updateAllow',{status:false});
-                this.$Message.info('添加失败');
-                this.success='添加失败';
-              }
-                            })
-            }else{
-            this.$Message.info('输入的名称为空');
-            this.success='输入的名称为空';
-            this.$store.commit('updateAllow',{status:false});
-            }
+         }
       },
       rename(){
             if(this.itemName===''||this.itemName.length===0){
@@ -124,14 +124,15 @@ export default {
             this.success='输入的名称为空';
             this.$store.commit('updateAllow',{status:false});
             }else{
-                 axios.request({
+             axios.request({
               url: '/api/data-tree/edit/rename',
               method: 'post',
-              params:{
-                  name:this.itemName
+              data:{
+                  id:this.model.id,
+                  title:this.itemName
               }
               }).then(res => {
-              if(res.data.isReSuc === true){
+              if(res.data.isRenamed === true){
                     this.$Message.info('修改成功');
                     this.success='已修改';
                     this.$store.commit('updateAllow',{status:true});

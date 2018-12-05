@@ -1,7 +1,11 @@
 <template>
   <Row>
-    是否显示无执行权限的项:
-    <i-Switch class="form-inline" @on-change="changeWichToShow({status: !wichToShow})"/>
+    <Col span=20>
+    显示无执行权限的项:
+    </Col>
+    <Col span="4">
+    <i-Switch class="form-inline"  @on-change="changeWichToShow({status: !wichToShow})"/>
+    </Col>
   </Row>
 </template>
 <script>

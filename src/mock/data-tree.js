@@ -152,6 +152,7 @@ export const getDataTree = ({ url, type, body }) => {
 var isInserted = false
 function addTo (target, { parentId, type, title }) {
   console.log('try add to id = ' + target.id)
+  console.log(parentId)
   if (Array.isArray(target)) {
     // root
     if (parentId === -1) {
@@ -236,6 +237,7 @@ function addTo (target, { parentId, type, title }) {
 export const addTreeNode = ({ url, type, body }) => {
   debugger
   isInserted = false
+  console.log(body)
   var j = JSON.parse(body)
   console.log('inserting ' + JSON.stringify(j))
   addTo(mockTreeNodes, j)
@@ -288,6 +290,7 @@ export const renameTreeNode = ({ url, type, body }) => {
   if (isRenamed) {
     console.log('更名成功！')
     return {
+      isRenamed
     }
   } else {
     console.log('更名失败！')
