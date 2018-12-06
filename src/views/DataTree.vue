@@ -24,6 +24,8 @@
       <Button @click="testRenameProductNode">Rename Product Node</Button>
       <Button @click="testRenameFolderNode">Rename Folder Node</Button>
       <Button @click="testRenameLeafNode">Rename Leaf Node</Button>
+      <Button @click="testMoveFolderNode">Move Folder Node</Button>
+      <Button @click="testMoveLeafNode">Move Leaf Node</Button>
   </div>
         <Layout>
             <Header>
@@ -138,6 +140,18 @@ export default {
       axios.post('/api/data-tree/edit/rename', {
         id: 16,
         title: '更名3'
+      })
+    },
+    testMoveFolderNode(){
+      axios.post('/api/data-tree/edit/move', {
+        id: 6,
+        parentId: 15
+      })
+    },
+    testMoveLeafNode(){
+      axios.post('/api/data-tree/edit/move', {
+        id: 16,
+        parentId: 5
       })
     }
   },

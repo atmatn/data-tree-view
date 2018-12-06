@@ -138,6 +138,40 @@ var mockTreeNodes = [
 
 var maxId = 100
 
+// id -> node
+var indexMap = {}
+
+// id -> parentId
+var indexParentMap = {}
+
+function doIndex (target, parentId) {
+  if (target === undefined) {
+    // 无参数调用，直接处理root array
+    doIndex(mockTreeNodes, -1)
+  } else if (Array.isArray(target)) {
+    // 清空索引，因为要重建
+    indexMap = {}
+    indexParentMap = {}
+    // root array
+    target.forEach(item => {
+      doIndex(item, -1)
+    })
+  } else {
+    // 索引当前节点
+    indexMap[target.id] = target
+    indexParentMap[target.id] = parentId
+    // 递归往下
+    if (target.type === 'product' || target.type === 'folder') {
+      if (target.children !== undefined) {
+        target.children.forEach(item => {
+          doIndex(item, target.id)
+        })
+      }
+    }
+  }
+}
+doIndex()
+
 export const getDataTree = ({ url, type, body }) => {
   // 注意：
   //   product 只有 “visible_perms”，没有 “executable_perms”
@@ -149,152 +183,160 @@ export const getDataTree = ({ url, type, body }) => {
   }
 }
 
-var isInserted = false
-function addTo (target, { parentId, type, title }) {
-  console.log('try add to id = ' + target.id)
+function addNode ({ parentId, type, title }) {
   console.log(parentId)
-  if (Array.isArray(target)) {
-    // root
-    if (parentId === -1) {
-      // 插入到root
-      if (type !== 'product') {
-        let err = { msg: 'parentId==-1，只能插入product节点！' }
+
+  if (parentId === -1) {
+    // 插入到root，插入的肯定是product类型
+    if (type !== 'product') {
+      let err = { msg: 'parentId==-1，只能插入product节点！' }
+      throw err
+    }
+    let newNode = {
+      type,
+      id: (++maxId),
+      title,
+      visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+      currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+      containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+      creator: 'bob' // 创建者
+    }
+    mockTreeNodes.push(newNode)
+    doIndex()
+  } else {
+    let target = indexMap[parentId]
+    if (target === undefined) {
+      let err = { msg: `parentId===${parentId}没找到！` }
+      throw err
+    }
+
+    if (target.type === 'folder' || target.type === 'product') {
+      // ok
+    } else {
+      // error
+      let err = { msg: `parentId===${parentId} type === ${target.type}，不能插入子节点！` }
+      throw err
+    }
+
+    // 插入folder / leaf 节点
+    var newNode = {}
+    newNode.type = type
+    newNode.title = title
+    newNode.id = (++maxId)
+    if (type === 'folder') {
+      let needCopy = [
+        'currentUserExecutable',
+        'containsExecutableForCurrentUser',
+        'computed_executable_perms',
+        'currentUserManageable',
+        'creator']
+      needCopy.forEach(x => {
+        newNode[x] = target[x]
+      })
+      newNode.children = []
+    } else {
+      // 插入leaf
+      newNode.currentUserExecutable = true
+      newNode.containsExecutableForCurrentUser = true
+      newNode.computed_executable_perms = ['ke_general']
+      newNode.currentUserManageable = true
+      newNode.creator = 'bob'
+      if (type === 'direct-link') {
+        newNode.linkUrl = 'http://analyzer2.corp.youdao.com/'
+      } else if (type === 'args-script') {
+        newNode.scriptId = '456'
+        newNode.scriptParams = {
+          param_a: 4,
+          param_b: 5
+        }
+      } else {
+        let err = {
+          msg: '插入leaf type=' + type + '不合法！'
+        }
         throw err
       }
-      let newNode = {
-        type,
-        id: (++maxId),
-        title,
-        visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
-        currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
-        containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
-        creator: 'bob' // 创建者
-      }
-      isInserted = true
-      target.push(newNode)
-    }
-    target.forEach(item => {
-      addTo(item, { parentId, type, title })
-    })
-  } else if (target.type === 'product' || target.type === 'folder') {
-    // product / folder
-    // 当前节点上加
-    if (target.id === parentId) {
-      var newNode = {}
-      newNode.type = type
-      newNode.title = title
-      newNode.id = (++maxId)
-      if (type === 'folder') {
-        let needCopy = [
-          'currentUserExecutable',
-          'containsExecutableForCurrentUser',
-          'computed_executable_perms',
-          'currentUserManageable',
-          'creator']
-        needCopy.forEach(x => {
-          newNode[x] = target[x]
-        })
-        newNode.children = []
-      } else {
-        // 插入leaf
-        newNode.currentUserExecutable = true
-        newNode.containsExecutableForCurrentUser = true
-        newNode.computed_executable_perms = ['ke_general']
-        newNode.currentUserManageable = true
-        newNode.creator = 'bob'
-        if (type === 'direct-link') {
-          newNode.linkUrl = 'http://analyzer2.corp.youdao.com/'
-        } else if (type === 'args-script') {
-          newNode.scriptId = '456'
-          newNode.scriptParams = {
-            param_a: 4,
-            param_b: 5
-          }
-        } else {
-          let err = {
-            msg: '插入leaf type=' + type + '不合法！'
-          }
-          throw err
-        }
-      }
-      isInserted = true
-      target.children.push(newNode)
-    } else {
-      // 递归往下
-      if (target.children === undefined) {
-        // 可能是无权限节点，return
-        return
-      }
-      target.children.forEach(item => {
-        addTo(item, { parentId, type, title })
-      })
-    }
-  } else {
-    // leaf
-    // 不用操作
+    } // leaf
+    // 插入
+    target.children.push(newNode)
+    doIndex()
   }
 }
+
 export const addTreeNode = ({ url, type, body }) => {
-  debugger
-  isInserted = false
   console.log(body)
   var j = JSON.parse(body)
   console.log('inserting ' + JSON.stringify(j))
-  addTo(mockTreeNodes, j)
-  if (!isInserted) {
-    console.log('插入节点失败！')
-    return {
-      status: 'error',
-      msg: '插入失败！'
-    }
-  } else {
-    console.log('插入节点成功！ id=' + maxId)
-    return {
-      id: maxId
-    }
+  addNode(j)
+
+  console.log('插入节点成功！ id=' + maxId)
+  return {
+    id: maxId
   }
 }
 
 export const renameTreeNode = ({ url, type, body }) => {
   var j = JSON.parse(body)
   console.log('renaming ' + JSON.stringify(j))
-  var isRenamed = false
-  function rename (target, params) {
-    if (Array.isArray(target)) {
-      // root
-      target.forEach(item => {
-        rename(item, params)
-      })
-    } else {
-      // product / folder
-      if (target.id === params.id) {
-        target.title = params.title
-        isRenamed = true
-      } else {
-        if (target.type === 'product' || target.type === 'folder') {
-          // 递归往下
-          if (target.children === undefined) {
-            // 可能是无权限节点，return
-            return
-          }
-          target.children.forEach(item => {
-            rename(item, params)
-          })
-        }
-      }
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  target.title = j.title
+
+  console.log('更名成功！')
+  return {
+    // 200 OK 即没问题
+  }
+}
+
+export const moveTreeNode = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('moving ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  let targetParent = indexMap[j.parentId]
+  if (targetParent === undefined) {
+    let err = {
+      msg: `id=${j.parentId} 节点不存在！`
+    }
+    throw err
+  }
+
+  if (targetParent.type !== 'folder' && targetParent.type !== 'product') {
+    let err = {
+      msg: `目标父亲节点 parentId=${j.parentId} 的类型不是folder/product，而是${targetParent.type}！`
+    }
+    throw err
+  }
+
+  // 原父亲节点
+  let oldParentId = indexParentMap[j.id]
+  let oldParent = indexMap[oldParentId]
+
+  // 移动，注意，这里没有对权限等重新计算。
+  // 实际接口会因为继承关系改变，而导致权限属性也有所改变
+  for (let i = 0; i < oldParent.children.length; i++) {
+    if (oldParent.children[i].id === target.id) {
+      oldParent.children.splice(i, 1)
+      targetParent.children.push(target)
     }
   }
 
-  rename(mockTreeNodes, j)
-
-  if (isRenamed) {
-    console.log('更名成功！')
-    return {
-      isRenamed
-    }
-  } else {
-    console.log('更名失败！')
-    let err = { msg: '更名失败!' }
-    throw err
+  doIndex()
+  console.log('移动成功！')
+  return {
+    // 200 OK 即没问题
   }
 }
