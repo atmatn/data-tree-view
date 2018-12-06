@@ -387,8 +387,6 @@ export const setPerms = ({ url, type, body }) => {
   var j = JSON.parse(body)
   console.log('setting perms ' + JSON.stringify(j))
 
-  debugger
-
   let target = indexMap[j.id]
   if (target === undefined) {
     let err = {
@@ -412,6 +410,40 @@ export const setPerms = ({ url, type, body }) => {
     target.computed_executable_perms = newPerms.length > 0 ? newPerms : parentPerms
   }
 
+  return {
+    // 200 OK，就是没问题
+  }
+}
+
+export const copyNode = ({ url, type, body }) => {
+  // 复制叶子节点
+  var j = JSON.parse(body)
+  console.log('copy node ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  if (target.type === 'product' || target.type === 'folder') {
+    let err = {
+      msg: `只能复制叶子结点！ 传入的是type=${target.type}`
+    }
+    throw err
+  }
+
+  let targetParentNode = indexMap[j.parentId]
+  let newNode = _.cloneDeep(target)
+  newNode.id = ++maxId
+  newNode.creator = 'cc'
+  newNode.currentUserManageable = true
+  newNode.currentUserExecutable = true
+  newNode.containsExecutableForCurrentUser = true
+  targetParentNode.children.push(newNode)
+  doIndex()
   return {
     // 200 OK，就是没问题
   }

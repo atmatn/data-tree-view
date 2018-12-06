@@ -45,6 +45,9 @@
       <Button @click="testSetFolderPerms">Set Folder Perms</Button>
       <Button @click="testSetLeafPerms">Set Leaf Perms</Button>
     </div>
+    <div>
+      Copy <Button @click="testCopyLeafNode">Copy Leaf Node</Button>
+    </div>
   </div>
         <Layout>
             <Header>
@@ -211,6 +214,12 @@ export default {
             perms: ['ke_general','new_perm_3']
           }
         ]
+      })
+    },
+    testCopyLeafNode(){
+      axios.post('/api/data-tree/edit/copy', {
+        id: 16,
+        parentId: 5
       })
     }
   },
