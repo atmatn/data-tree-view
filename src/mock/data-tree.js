@@ -448,3 +448,95 @@ export const copyNode = ({ url, type, body }) => {
     // 200 OK，就是没问题
   }
 }
+
+export const getAttrs = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('get attrs ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  if (target.type === 'product') {
+    // product 目前没有属性
+    return {
+      id: j.id,
+      attrs: []
+    }
+  } else if (target.type === 'folder') {
+    // folder 也没有属性
+  } else if (target.type === 'direct-link') {
+    // direct-link 的属性是linkUrl
+    return {
+      id: j.id,
+      attrs: [
+        {
+          title: '目标url',
+          attrKey: 'linkUrl',
+          type: 'url',
+          attrVal: target.linkUrl
+        }
+      ]
+    }
+  } else if (target.type === 'args-script') {
+    // args-script 的属性是scriptId和scriptParams
+    return {
+      id: j.id,
+      attrs: [
+        {
+          title: '脚本id',
+          attrKey: 'script_id',
+          type: 'script_id',
+          attrVal: target.scriptId
+        },
+        {
+          title: '脚本参数',
+          attrKey: 'script_params',
+          type: 'script_params',
+          attrVal: JSON.stringify(target.scriptParams)
+        }
+      ]
+    }
+  } else {
+    // 其他也没有属性；目前也没有其他
+    return {
+      id: j.id,
+      attrs: []
+    }
+  }
+}
+
+export const setAttrs = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('set attrs ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  if (target.type === 'product') {
+    // product 目前没有属性
+  } else if (target.type === 'folder') {
+    // folder 也没有属性
+  } else if (target.type === 'direct-link') {
+    // direct-link 的属性是linkUrl
+    target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
+  } else if (target.type === 'args-script') {
+    // args-script 的属性是scriptId和scriptParams
+    target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
+    target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+  } else {
+    // 其他也没有属性；目前也没有其他
+  }
+  return {
+    // 200 OK
+  }
+}

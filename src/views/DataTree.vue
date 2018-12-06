@@ -46,7 +46,16 @@
       <Button @click="testSetLeafPerms">Set Leaf Perms</Button>
     </div>
     <div>
-      Copy <Button @click="testCopyLeafNode">Copy Leaf Node</Button>
+      Copy: <Button @click="testCopyLeafNode">Copy Leaf Node</Button>
+    </div>
+    <div>
+      Attrs:
+      <Input type="textarea" v-bind:value="attrText" :rows="4" style="width: 800px;"/>
+      <br/>
+      <Button @click="testGetAttrs(16)">Get DirectLink Attrs</Button>
+      <Button @click="testGetAttrs(8)">Get ArgsScript Attrs</Button>
+      <Button @click="testSetDirectLinkAttrs">Set DirectLink Attrs</Button>
+      <Button @click="testSetArgsScriptAttrs">Set ArgsScript Attrs</Button>
     </div>
   </div>
         <Layout>
@@ -221,6 +230,39 @@ export default {
         id: 16,
         parentId: 5
       })
+    },
+    testGetAttrs(id){
+      axios.post('/api/data-tree/edit/get-attrs', {
+        id
+      }).then( res => {
+        this.attrText = JSON.stringify(res.data, null, 4)
+      })
+    },
+    testSetDirectLinkAttrs(){
+      axios.post('/api/data-tree/edit/set-attrs', {
+        id: 16,
+        attrs: [
+          {
+            attrKey: 'linkUrl',
+            attrVal: 'http://www.youdao.com'
+          }
+        ]
+      })
+    },
+    testSetArgsScriptAttrs(){
+      axios.post('/api/data-tree/edit/set-attrs', {
+        id: 8,
+        attrs: [
+          {
+            attrKey: 'scriptId',
+            attrVal: '456'
+          },
+          {
+            attrKey: 'scriptParams',
+            attrVal: '{"param_a": 10, "param_b": 100}'
+          }
+        ]
+      })
     }
   },
   computed: {
@@ -232,7 +274,8 @@ export default {
   data () {
     return {
       someData: "nothing",
-      permText: ''
+      permText: '',
+      attrText: ''
     }
   }
 }
