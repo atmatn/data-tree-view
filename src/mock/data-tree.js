@@ -561,13 +561,13 @@ export const setAttrs = ({ url, type, body }) => {
 export const deleteNode = ({ url, type, body }) => {
   var j = JSON.parse(body)
   console.log('delete node ' + JSON.stringify(j))
-
   let target = indexMap[j.id]
   if (target === undefined) {
     let err = {
       msg: `id=${j.id} 节点不存在！`
     }
     throw err
+
   }
 
   function removeFrom (arr, id) {

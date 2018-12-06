@@ -3,7 +3,7 @@
   <Button type="default" @click="addProduct()">添加新产品</Button>
   <Tree :data="TreeNodes" :render="renderContent"></Tree>
   <h3>{{tips}}</h3>
-  <forms  :model="addForm" v-model="model" :functions="functions"></forms>
+  <forms  :model="addForm" v-model="model" :functions="functions" :selected="selected"></forms>
 </div>
 </template>
 <script>
@@ -18,7 +18,8 @@ export default {
              dataTreeNodes:this.$store.dispatch('reloadDataTree'),
              tips:'欢迎来到编辑页面！',
              addForm:'',
-             functions:''
+             functions:'',
+             selected:''
             }
           },
     computed:{
@@ -33,7 +34,7 @@ export default {
                     [
                         data.currentUserVisible===false||data.currentUserExecutable===false?null:h('span', [
                           h('Button',
-                          {props:{type:'primary'}},
+                          {props:{type:'primary'},on:{click:()=>{this.select(data)}}},
                           data.title+' '
                           ),
                           ]),
@@ -54,7 +55,7 @@ export default {
                         '删除'
                         ):null,
                         data.type!=='product'&&data.currentUserManageable === true?h('Button',
-                        {props:{type: 'text'},style:{color:'purple'}},
+                        {props:{type: 'text'},on:{click:()=>{this.move(data)}},style:{color:'purple'}},
                         '移动'
                         ):null,
                         data.type!=='product'&&data.currentUserManageable === true?h('Button',
@@ -67,6 +68,9 @@ export default {
                         ):null,
                     ]),
                 ]);
+            },
+            select(data){
+                this.selected=data;
             },
             add (data) {
               this.tips='当前项:'+data.title+'-新增';
@@ -108,6 +112,18 @@ export default {
               this.tips='当前项:'+data.title+'-删除';
               this.addForm=data;
               this.functions='delete';
+              return{
+                render: h=>{
+                  'div',
+                  {},
+                  'hello'
+                }
+              }
+            },
+            move(data){
+              this.tips='当前项:'+data.title+'-移动';
+              this.addForm=data;
+              this.functions='move';
               return{
                 render: h=>{
                   'div',

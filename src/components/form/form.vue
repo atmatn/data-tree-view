@@ -46,6 +46,16 @@
     <Button v-if="allow===false" @click="deletes()"type="primary">确定</Button>
   </formItem>
 </Form>
+<Form v-if="functions==='move'">
+  <formItem>
+    请点击上方按钮来选择目标folder或者product：
+    <br/>
+    当前选择了：<h5 style="color:red">{{this.selected.title}}
+      <div v-if="this.selected.type!=='product'&&this.selected.type!=='folder'">（此选项不是product或者folder）</div></h5>
+    <br/>
+    <Button v-if="allow===false" @click="moves()"type="primary">移动</Button>
+  </formItem>
+</Form>
 </div>
 
 </template>
@@ -54,7 +64,7 @@ import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import axios from 'axios'
 export default {
-    props:['model','functions'],
+    props:['model','functions','selected'],
     data(){
       return{
         type:'',
@@ -159,18 +169,35 @@ export default {
                   id:this.model.id
               }
               }).then(res => {
-                console.log(res.data.isDeleted)
-              if(res.data.isDeleted === true){
+              //  if(res.data.msg === null){
                     this.$Message.info('删除成功');
-                    this.success='已删除';
+                    this.success='删除成功';
                     this.$store.commit('updateAllow',{status:true});
                     this.$store.dispatch('reloadDataTree')
-              }else{
-                this.$store.commit('updateAllow',{status:false});
-                this.$Message.info('删除失败');
-                this.success='删除失败';
-              }
+              // }else{
+              //   this.$store.commit('updateAllow',{status:false});
+              //   this.$Message.info(res.data.msg);
+              //   this.success=res.data.msg;
+              // }
                             })
+      },
+      moves(){
+        if(this.model.type !== 'product'){
+          axios.request({
+              url: '/api/data-tree/edit/move',
+              method: 'post',
+              data:{
+                  id:this.model.id,
+                  parentId:this.selected.id
+              }
+              }).then(res => {
+                    this.$Message.info('移动成功');
+                    this.success='移动成功';
+                    this.$store.commit('updateAllow',{status:true});
+                    this.$store.dispatch('reloadDataTree')
+                            })
+        }
+        //console.log(this.selected.type)
       }
     }
 }
