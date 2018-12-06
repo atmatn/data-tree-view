@@ -138,27 +138,33 @@ var mockTreeNodes = [
 
 var maxId = 100
 
+// id -> node
 var indexMap = {}
 
-function doIndex (target) {
+// id -> parentId
+var indexParentMap = {}
+
+function doIndex (target, parentId) {
   if (target === undefined) {
     // 无参数调用，直接处理root array
-    doIndex(mockTreeNodes)
+    doIndex(mockTreeNodes, -1)
   } else if (Array.isArray(target)) {
     // 清空索引，因为要重建
     indexMap = {}
+    indexParentMap = {}
     // root array
     target.forEach(item => {
-      doIndex(item)
+      doIndex(item, -1)
     })
   } else {
     // 索引当前节点
     indexMap[target.id] = target
+    indexParentMap[target.id] = parentId
     // 递归往下
     if (target.type === 'product' || target.type === 'folder') {
       if (target.children !== undefined) {
         target.children.forEach(item => {
-          doIndex(item)
+          doIndex(item, target.id)
         })
       }
     }
@@ -283,6 +289,53 @@ export const renameTreeNode = ({ url, type, body }) => {
   target.title = j.title
 
   console.log('更名成功！')
+  return {
+    // 200 OK 即没问题
+  }
+}
+
+export const moveTreeNode = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('moving ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  let targetParent = indexMap[j.parentId]
+  if (targetParent === undefined) {
+    let err = {
+      msg: `id=${j.parentId} 节点不存在！`
+    }
+    throw err
+  }
+
+  if (targetParent.type !== 'folder' && targetParent.type !== 'product') {
+    let err = {
+      msg: `目标父亲节点 parentId=${j.parentId} 的类型不是folder/product，而是${targetParent.type}！`
+    }
+    throw err
+  }
+
+  // 原父亲节点
+  let oldParentId = indexParentMap[j.id]
+  let oldParent = indexMap[oldParentId]
+
+  // 移动，注意，这里没有对权限等重新计算。
+  // 实际接口会因为继承关系改变，而导致权限属性也有所改变
+  for (let i = 0; i < oldParent.children.length; i++) {
+    if (oldParent.children[i].id === target.id) {
+      oldParent.children.splice(i, 1)
+      targetParent.children.push(target)
+    }
+  }
+
+  doIndex()
+  console.log('移动成功！')
   return {
     // 200 OK 即没问题
   }
