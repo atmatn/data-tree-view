@@ -312,5 +312,7 @@ export default {
     border-style: solid;
     border-color: red;
     z-index: 10000;
+    max-height: 400px;
+    overflow: auto;
 }
 </style>
