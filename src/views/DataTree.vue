@@ -18,14 +18,33 @@
       <Button @click="reloadDataTree">Reload Data Tree</Button>
     </div>
     <div>
+      Add:
       <Button @click="testAddToFolderNode">Add DirectLink To Folder Node</Button>
       <Button @click="testAddToProductNode">Add DirectLink To Product Node</Button>
-      <Button @click="testAddProductNode">Add Product Node</Button>    </div>
+      <Button @click="testAddProductNode">Add Product Node</Button>
+    </div>
+    <div>
+      Rename:
       <Button @click="testRenameProductNode">Rename Product Node</Button>
       <Button @click="testRenameFolderNode">Rename Folder Node</Button>
       <Button @click="testRenameLeafNode">Rename Leaf Node</Button>
       <Button @click="testMoveFolderNode">Move Folder Node</Button>
       <Button @click="testMoveLeafNode">Move Leaf Node</Button>
+    </div>
+    <div>
+      Perms:
+      <Input type="textarea" v-bind:value="permText" :rows="4" style="width: 800px;"/>
+      <br/>
+      get-perms
+      <Button @click="testGetPerms(1)">Get Product Perms</Button>
+      <Button @click="testGetPerms(15)">Get Folder Perms</Button>
+      <Button @click="testGetPerms(16)">Get Leaf Perms</Button>
+      <br/>
+      set-perms
+      <Button @click="testSetProductPerms">Set Product Perms</Button>
+      <Button @click="testSetFolderPerms">Set Folder Perms</Button>
+      <Button @click="testSetLeafPerms">Set Leaf Perms</Button>
+    </div>
   </div>
         <Layout>
             <Header>
@@ -153,6 +172,46 @@ export default {
         id: 16,
         parentId: 5
       })
+    },
+    testGetPerms(id){
+      axios.post('/api/data-tree/edit/get-perms', {
+        id: id
+      }).then( res => {
+        this.permText = JSON.stringify(res.data, null, 4)
+      })
+    },
+    testSetProductPerms(){
+      axios.post('/api/data-tree/edit/set-perms', {
+        id: 1,
+        permList: [
+          {
+            value: 'visible_perms',
+            perms: ['ke_general','new_perm_1']
+          }
+        ]
+      })
+    },
+    testSetFolderPerms(){
+      axios.post('/api/data-tree/edit/set-perms', {
+        id: 15,
+        permList: [
+          {
+            value: 'executable_perms',
+            perms: ['ke_general','new_perm_2']
+          }
+        ]
+      })
+    },
+    testSetLeafPerms(){
+      axios.post('/api/data-tree/edit/set-perms', {
+        id: 16,
+        permList: [
+          {
+            value: 'executable_perms',
+            perms: ['ke_general','new_perm_3']
+          }
+        ]
+      })
     }
   },
   computed: {
@@ -164,6 +223,7 @@ export default {
   data () {
     return {
       someData: "nothing",
+      permText: ''
     }
   }
 }

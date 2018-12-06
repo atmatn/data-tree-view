@@ -1,3 +1,4 @@
+import _ from 'lodash'
 var mockTreeNodes = [
   {
     type: 'product',
@@ -231,7 +232,7 @@ function addNode ({ parentId, type, title }) {
         'currentUserManageable',
         'creator']
       needCopy.forEach(x => {
-        newNode[x] = target[x]
+        newNode[x] = _.cloneDeep(target[x])
       })
       newNode.children = []
     } else {
@@ -338,5 +339,79 @@ export const moveTreeNode = ({ url, type, body }) => {
   console.log('移动成功！')
   return {
     // 200 OK 即没问题
+  }
+}
+
+export const getPerms = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('getting perms ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  var permList = []
+  if (target.type === 'product') {
+    permList.push({
+      value: 'visible_perms',
+      perms: _.cloneDeep(target.visible_perms)
+    })
+  } else if (target.type === 'folder') {
+    let parentNode = indexParentMap[j.id]
+    let perms = []
+    if (_.difference(target.computed_executable_perms, parentNode.computed_executable_perms).length === 0 &&
+     _.difference(parentNode.computed_executable_perms, target.computed_executable_perms).length === 0) {
+      // 与父节点相同，则认为是继承的
+      perms = []
+    } else {
+      perms = _.cloneDeep(target.computed_executable_perms)
+    }
+    permList.push({
+      value: 'executable_perms',
+      perms
+    })
+  }
+
+  return {
+    id: j.id,
+    permList
+  }
+}
+
+export const setPerms = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('setting perms ' + JSON.stringify(j))
+
+  debugger
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  var permList = j.permList
+  if (target.type === 'product') {
+    target.visible_perms = _.clone(permList.find(x => x.value === 'visible_perms')).perms
+  } else {
+    let parentNode = indexMap[indexParentMap[j.id]]
+    let parentPerms
+    if (parentNode.type === 'product') {
+      parentPerms = parentNode.visible_perms
+    } else {
+      parentPerms = parentNode.computed_executable_perms
+    }
+    let newPerms = permList.find(x => x.value === 'executable_perms').perms
+    target.computed_executable_perms = newPerms.length > 0 ? newPerms : parentPerms
+  }
+
+  return {
+    // 200 OK，就是没问题
   }
 }
