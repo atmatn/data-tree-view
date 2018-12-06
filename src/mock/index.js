@@ -21,6 +21,7 @@ Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
 
 Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
+Mock.mock(/\/api\/data-tree\/edit\/delete/, 'post', deleteTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/move/, 'post', moveTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/get-perms/, 'post', getPerms)
 Mock.mock(/\/api\/data-tree\/edit\/set-perms/, 'post', setPerms)

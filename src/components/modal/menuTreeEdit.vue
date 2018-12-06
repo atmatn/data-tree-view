@@ -39,27 +39,31 @@ export default {
                           ]),
                         data.currentUserVisible===false?null:(data.type==='product'||data.type==='folder'?h('Button',
                         {props:{type:'text'},on:{click:()=>{this.add(data)}},style:{color:'red'}},
-                        data.title+'-新增'
+                        '新增'
                         ):null),
                         data.type!=='product'&&data.type!=='folder'&&data.containsExecutableForCurrentUser === true?h('Button',
                         {props:{type: 'text'},style:{color:'green'}},
-                        data.title+'-复制'
+                       '复制'
                         ):null,
                         data.type!=='product'&&data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},on:{click:()=>{this.rename(data)}},style:{color:'blue'}},
-                        data.title+'-更名'
+                        '更名'
+                        ):null,
+                        data.type!=='product'&&data.currentUserManageable === true?h('Button',
+                        {props:{type: 'text'},on:{click:()=>{this.delete(data)}},style:{color:'black'}},
+                        '删除'
                         ):null,
                         data.type!=='product'&&data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},style:{color:'purple'}},
-                        data.title+'-移动'
+                        '移动'
                         ):null,
                         data.type!=='product'&&data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},style:{color:'orange'}},
-                        data.title+'-管理权限'
+                        '管理权限'
                         ):null,
                         data.type!=='product'&&data.type!=='folder'&&data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},style:{color:'pink'}},
-                        data.title+'-设置属性'
+                        '设置属性'
                         ):null,
                     ]),
                 ]);
@@ -92,6 +96,18 @@ export default {
               this.tips='当前项:'+data.title+'-更名';
               this.addForm=data;
               this.functions='rename';
+              return{
+                render: h=>{
+                  'div',
+                  {},
+                  'hello'
+                }
+              }
+            },
+            delete(data){
+              this.tips='当前项:'+data.title+'-删除';
+              this.addForm=data;
+              this.functions='delete';
               return{
                 render: h=>{
                   'div',

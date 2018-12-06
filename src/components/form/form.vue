@@ -40,6 +40,12 @@
     <div v-if ="allow===true" style="color:green">{{this.success}}</div>
   </formItem>
 </Form>
+<Form v-if="functions==='delete'">
+  <formItem>
+   确定要删除【{{model.title}}】吗？
+    <Button v-if="allow===false" @click="deletes()"type="primary">确定</Button>
+  </formItem>
+</Form>
 </div>
 
 </template>
@@ -144,6 +150,27 @@ export default {
               }
                             })
             }
+      },
+      deletes(){
+         axios.request({
+              url: '/api/data-tree/edit/delete',
+              method: 'post',
+              data:{
+                  id:this.model.id
+              }
+              }).then(res => {
+                console.log(res.data.isDeleted)
+              if(res.data.isDeleted === true){
+                    this.$Message.info('删除成功');
+                    this.success='已删除';
+                    this.$store.commit('updateAllow',{status:true});
+                    this.$store.dispatch('reloadDataTree')
+              }else{
+                this.$store.commit('updateAllow',{status:false});
+                this.$Message.info('删除失败');
+                this.success='删除失败';
+              }
+                            })
       }
     }
 }
