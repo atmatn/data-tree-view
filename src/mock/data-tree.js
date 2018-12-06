@@ -343,6 +343,7 @@ export const moveTreeNode = ({ url, type, body }) => {
 }
 
 export const getPerms = ({ url, type, body }) => {
+  debugger
   var j = JSON.parse(body)
   console.log('getting perms ' + JSON.stringify(j))
 
@@ -360,7 +361,7 @@ export const getPerms = ({ url, type, body }) => {
       value: 'visible_perms',
       perms: _.cloneDeep(target.visible_perms)
     })
-  } else if (target.type === 'folder') {
+  } else {
     let parentNode = indexParentMap[j.id]
     let perms = []
     if (_.difference(target.computed_executable_perms, parentNode.computed_executable_perms).length === 0 &&
