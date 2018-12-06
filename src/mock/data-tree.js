@@ -312,12 +312,6 @@ export const renameTreeNode = ({ url, type, body }) => {
     // 200 OK 即没问题
   }
 }
-export const deleteTreeNode = ({ url, type, body }) => {
-  var j = JSON.parse(body)
-  console.log('deleting ' + JSON.stringify(j))
-
-
-}
 export const moveTreeNode = ({ url, type, body }) => {
   var j = JSON.parse(body)
   console.log('moving ' + JSON.stringify(j))
