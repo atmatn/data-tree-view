@@ -129,6 +129,18 @@ var mockTreeNodes = [
   },
   {
     type: 'product',
+    id: 3,
+    title: '有道词典',
+    visible_perms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+    currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+    containsExecutableForCurrentUser: true, // （后端计算出的属性）
+    creator: 'bob',
+    children: [
+      // 空的
+    ]
+  },
+  {
+    type: 'product',
     id: 2,
     title: '有道云笔记',
     visible_perms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
@@ -159,6 +171,12 @@ function doIndex (target, parentId) {
     })
   } else {
     // 索引当前节点
+    if (indexMap[target.id] !== undefined) {
+      let err = {
+        msg: `错误！mock tree 出现重复id=${target.id}`
+      }
+      throw err
+    }
     indexMap[target.id] = target
     indexParentMap[target.id] = parentId
     // 递归往下
@@ -544,4 +562,48 @@ export const setAttrs = ({ url, type, body }) => {
   return {
     // 200 OK
   }
+}
+
+export const deleteNode = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log('delete node ' + JSON.stringify(j))
+
+  let target = indexMap[j.id]
+  if (target === undefined) {
+    let err = {
+      msg: `id=${j.id} 节点不存在！`
+    }
+    throw err
+  }
+
+  function removeFrom (arr, id) {
+    for (let pos = 0; pos < arr.length; pos++) {
+      if (arr[pos].id === target.id) {
+        // 删除
+        arr.splice(pos, 1)
+      }
+    }
+  }
+
+  if (target.type === 'product' || target.type === 'folder') {
+    // 必须没有子节点
+    if (target.children.length === 0) {
+      if (target.type === 'product') {
+        removeFrom(mockTreeNodes, j.id)
+      } else {
+        let parent = indexMap[indexParentMap[j.id]]
+        removeFrom(parent.children, j.id)
+      }
+    } else {
+      let err = {
+        msg: `id=${j.id} type=${target.type} 节点非空！`
+      }
+      throw err
+    }
+  } else {
+    // 叶子结点
+    let parent = indexMap[indexParentMap[j.id]]
+    removeFrom(parent.children, j.id)
+  }
+  doIndex()
 }

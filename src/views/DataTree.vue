@@ -32,6 +32,12 @@
       <Button @click="testMoveLeafNode">Move Leaf Node</Button>
     </div>
     <div>
+      Delete:
+      <Button @click="testDeleteLeafNode">Delete Leaf Node</Button>
+      <Button @click="testDeleteFolderNode">Delete Folder Node</Button>
+      <Button @click="testDeleteProductNode">Delete Product Node</Button>
+    </div>
+    <div>
       Perms:
       <Input type="textarea" v-bind:value="permText" :rows="4" style="width: 800px;"/>
       <br/>
@@ -262,6 +268,21 @@ export default {
             attrVal: '{"param_a": 10, "param_b": 100}'
           }
         ]
+      })
+    },
+    testDeleteLeafNode() {
+      axios.post('/api/data-tree/edit/delete', {
+        id: 16
+      })
+    },
+    testDeleteFolderNode() {
+      axios.post('/api/data-tree/edit/delete', {
+        id: 7
+      })
+    },
+    testDeleteProductNode() {
+      axios.post('/api/data-tree/edit/delete', {
+        id: 3
       })
     }
   },

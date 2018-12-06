@@ -1,5 +1,5 @@
 import Mock from 'mockjs'
-import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs } from './data-tree'
+import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
@@ -21,7 +21,7 @@ Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
 
 Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
-Mock.mock(/\/api\/data-tree\/edit\/delete/, 'post', deleteTreeNode)
+Mock.mock(/\/api\/data-tree\/edit\/delete/, 'post', deleteNode)
 Mock.mock(/\/api\/data-tree\/edit\/move/, 'post', moveTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/get-perms/, 'post', getPerms)
 Mock.mock(/\/api\/data-tree\/edit\/set-perms/, 'post', setPerms)
