@@ -546,10 +546,13 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
+      console.log(target.linkUrl)
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
-    target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+    //target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+    target.scriptParams =j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
+    console.log(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
   } else {
     // 其他也没有属性；目前也没有其他
   }

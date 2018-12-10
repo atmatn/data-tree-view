@@ -4,7 +4,7 @@
         <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
-        <MenuItem :name="model.id" @click.native="openScript({scriptId: model.id, params: {'param_a': model.scriptParams.param_a, 'param_b': model.scriptParams.param_b }})">{{model.title}}</MenuItem>
+        <MenuItem :name="model.id" @click.native="openScript({scriptId: model.id, params:model.scriptParams})">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
@@ -58,7 +58,9 @@ export default {
     ...mapActions(["openScript"])
   },
   data(){
-    return {}
+    return {
+      //openName:this.model.title
+    }
   }
 }
 </script>
