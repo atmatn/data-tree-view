@@ -1,5 +1,6 @@
 <template>
   <div class="arg-list">
+
     <span>
       <prompt v-model="value"></prompt>
     </span>
@@ -9,7 +10,7 @@
           <span @click="setEditing(index)" v-if="index != editingIndex" class="input-item">
             <span>{{value.val[index]}}</span>
             <span class="remove" @click="remove(index)">
-              <Icon type="close-round"></Icon>
+              <Icon type="md-close" />
             </span>
           </span>
           <i-input
@@ -21,6 +22,7 @@
             @on-enter="setEditing(-1)"
             v-model="value.val[index]"
             v-if="index == editingIndex"
+            style="width: 100px"
           ></i-input>
         </span>
       </span>
@@ -37,10 +39,13 @@
 
 <script>
 import Prompt from './Prompt.vue'
+import { Icon } from 'iview'
+import { getList } from '@/lib/util'
 export default {
   name: 'ArgList',
   components: {
-    Prompt
+    Prompt,
+    Icon
   },
   data: function() {
     return {
@@ -145,5 +150,63 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.input-item {
+  border-style: solid;
+  border-width: 1px;
+  padding: 2px;
+  background-color: #eeeacb;
+  min-width: 100px;
+  margin-left: 10px;
+  /*margin-right: 10px;*/
+  display: inline-block;
+}
+.editing-input-item {
+  padding: 2px;
+  /*background-color: pink;*/
+  min-width: 100px;
+  margin-left: 10px;
+  /*margin-right: 10px;*/
+  display: inline-block;
+  width: 100px;
+}
+
+.input-item .remove {
+  display:none;
+  // display: inline-block;
+  // border-color: red;
+  // border-style: solid;
+  // width: 1em;
+}
+
+.input-item:hover .remove {
+  float: right;
+  display: block;
+}
+
+.choice-area {
+  display: block;
+}
+.choice-area .reset-button {
+  display: none;
+}
+.choice-area:hover .reset-button {
+  display: inline;
+}
+.enabled-ta-mode {
+  display: inline;
+}
+.arg-list {
+  /*border-style: solid;*/
+}
+
+.switcher-part {
+  display: none;
+}
+
+.arg-list:hover .switcher-part {
+  display: inline;
+}
+
+
 </style>

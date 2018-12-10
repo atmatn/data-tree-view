@@ -1,6 +1,8 @@
 <template>
   <div>
-    {{scriptTitle}} （作者：{{author}}）
+    <div class="title-line">
+    <span class="script-title">{{scriptTitle}}</span> <span class="script-author">（作者：{{author}}）</span>
+    </div>
     <br>
     <!-- <Button @click="changeParam">Change Param</Button> -->
     <ArgsScriptParams v-bind:argDefs="argDefs"></ArgsScriptParams>
@@ -10,14 +12,17 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex"
-import { objEqual } from "../lib/tools"
-import axios from "axios"
-import ArgsScriptParams from "_c/args/ArgsScriptParams.vue"
-import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js"
-import $ from 'jquery'
-import { getListFromMeta, getStringFromMeta, getDefaultLengthFromMeta } from '@/lib/util.js'
-
+import { mapState, mapActions } from "vuex";
+import { objEqual } from "../lib/tools";
+import axios from "axios";
+import ArgsScriptParams from "_c/args/ArgsScriptParams.vue";
+import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js";
+import $ from "jquery";
+import {
+  getListFromMeta,
+  getStringFromMeta,
+  getDefaultLengthFromMeta
+} from "@/lib/util.js";
 
 export default {
   components: {
@@ -240,5 +245,25 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.echarts {
+  margin-left: 20px;
+}
+#dataSelector h3 {
+  margin-left: 300px;
+}
+p * {
+  vertical-align: top;
+}
 </style>
+<style scoped lang="less">
+.title-line {
+
+}
+.script-title {
+  color: blue;
+  font-size: 32px;
+}
+
+</style>
+

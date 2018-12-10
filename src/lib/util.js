@@ -1,3 +1,5 @@
+import $ from 'jquery'
+import _ from 'underscore'
 var cacheMap = {}
 export const getListFromMeta = function getListFromMeta (meta) {
   console.log(meta)
@@ -49,4 +51,13 @@ export const getDefaultLengthFromMeta = function getStringFromMeta (meta, defaul
     }
   }
   return ret
+}
+
+export const getList = function getList (txt) {
+  var payCourses = txt.split('\n')
+  var idsTrimmed = _.flatten(_.map(payCourses, function (v) {
+    var tv = v.trim()
+    return tv === '' ? [] : [tv]
+  }))
+  return idsTrimmed
 }

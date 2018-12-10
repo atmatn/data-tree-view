@@ -51,5 +51,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.prompt {
+}
+.prompt .my-label {
+  margin-right: 1em;
+  min-width: 7em;
+  display: inline-block;
+  text-align: right;
+}
 </style>

@@ -103,5 +103,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+
+.arg-item {
+  flex-basis: 95%;
+  margin: 0.5em;
+}
 </style>

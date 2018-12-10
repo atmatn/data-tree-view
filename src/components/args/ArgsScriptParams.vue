@@ -1,9 +1,9 @@
 <template>
-  <div>
-    {{argDefs}}
-    <div v-for="(argDef,idx) in argDefs" v-bind:key="idx">
+  <div class="args-input-area">
+    <!-- {{argDefs}} -->
+    <template v-for="(argDef, idx) in argDefs">
       <ArgItem :value="argDef"></ArgItem>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -28,6 +28,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
+.args-input-area {
+  display: flex;
+  flex-wrap: wrap;
+}
 
 </style>
