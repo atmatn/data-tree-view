@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Input type="textarea" :rows="20" :value="JSON.stringify(argDefs,null,4)"/>
     <div class="title-line">
     <span class="script-title">{{scriptTitle}}</span> <span class="script-author">（作者：{{author}}）</span>
     </div>
@@ -91,7 +92,33 @@ export default {
       this.myParams.param_a = x;
     },
     doRun() {
-      debugger;
+      // 将界面上的参数读出来
+      var params = {}
+      var argDefs = this.argDefs
+      for(var i=0; i<argDefs.length; i++) {
+          var arg = argDefs[i];
+          if( arg.type == 'DATE_RANGE' ) {
+                params[arg.id] =
+                      arg.val.fromDate
+                      + "to" + arg.val.toDate;
+          }else if( arg.type == "STRING") {
+              params[arg.id] = arg.val || '';
+          }else if( arg.type == "LIST" ||
+              arg.type == "INT_LIST") {
+              params[arg.id] =
+                  _.map(arg.val, function(x){return x.trim(); } ).join(",");
+          }else if( arg.type == "CHOICE") {
+              params[arg.id] = arg.val || '';
+          }else if( arg.type == "MULTI_CHOICE") {
+              params[arg.id] = arg.val.join(",");
+          }else if( arg.type == "BOOL") {
+              // var val = arg.$elem.is(':checked');
+              params[arg.id] = arg.val;
+          }
+      }
+
+      this.myParams = params
+
       // 更新URL
       this.updateScriptParams({
         params: {
@@ -99,7 +126,9 @@ export default {
         }
       });
 
+      // 这里执行脚本
       debugger;
+      
       // 假设下面的是结果
       this.$refs.content.innerText = "结果:" + this.myParams.param_a;
     },
