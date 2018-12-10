@@ -567,7 +567,6 @@ export const deleteNode = ({ url, type, body }) => {
       msg: `id=${j.id} 节点不存在！`
     }
     throw err
-
   }
 
   function removeFrom (arr, id) {

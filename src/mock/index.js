@@ -1,6 +1,7 @@
 import Mock from 'mockjs'
 import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
+import { getSingleV2 } from './my-script'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
   return {
@@ -28,6 +29,7 @@ Mock.mock(/\/api\/data-tree\/edit\/set-perms/, 'post', setPerms)
 Mock.mock(/\/api\/data-tree\/edit\/copy/, 'post', copyNode)
 Mock.mock(/\/api\/data-tree\/edit\/get-attrs/, 'post', getAttrs)
 Mock.mock(/\/api\/data-tree\/edit\/set-attrs/, 'post', setAttrs)
+Mock.mock(/\/api\/my-script\/single-v2/, 'post', getSingleV2)
 
 // 集成测试时，暂时手工设置为true
 var integrationTest = false
