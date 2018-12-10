@@ -50,6 +50,9 @@
       <Button @click="testSetProductPerms">Set Product Perms</Button>
       <Button @click="testSetFolderPerms">Set Folder Perms</Button>
       <Button @click="testSetLeafPerms">Set Leaf Perms</Button>
+      <br/>
+      list-perms
+      <Button @click="testListPerms">List Perms</Button>
     </div>
     <div>
       Copy: <Button @click="testCopyLeafNode">Copy Leaf Node</Button>
@@ -229,6 +232,11 @@ export default {
             perms: ['ke_general','new_perm_3']
           }
         ]
+      })
+    },
+    testListPerms(){
+      axios.post('/api/data-tree/edit/list-perms').then( res => {
+        this.permText = JSON.stringify(res.data, null, 4)
       })
     },
     testCopyLeafNode(){

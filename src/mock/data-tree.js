@@ -604,3 +604,21 @@ export const deleteNode = ({ url, type, body }) => {
   }
   doIndex()
 }
+
+export const listPerms = ({ url, type, body }) => {
+  return {
+    perms: [{
+      title: '精品课general',
+      value: 'ke_general'
+    }, {
+      title: '词典general',
+      value: 'dict_general'
+    }, {
+      title: '精品课财务',
+      value: 'ke_financial'
+    }, {
+      title: '精品课财务主管',
+      value: 'ke_chief_financial'
+    }]
+  }
+}
