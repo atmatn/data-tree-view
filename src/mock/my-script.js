@@ -145,7 +145,7 @@ export const getSingleV2 = ({ url, type, body }) => {
         'help': null,
         'type': 'HEADING',
         'id': null,
-        'meta': '{\'level\':1}',
+        'meta': '{\"level\":1}',
         'width': '95%',
         'optional': false
       }, {
@@ -331,4 +331,8 @@ export const getSingleV2 = ({ url, type, body }) => {
       }]
     }
   }
+}
+
+export const getKafkaList = ({ url, type, body }) => {
+  return ["hd020:9092","hd063:9092","hd064:9092","hd035:9092","hd036:9092"]
 }

@@ -16,49 +16,8 @@ import axios from "axios"
 import ArgsScriptParams from "_c/args/ArgsScriptParams.vue"
 import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js"
 import $ from 'jquery'
+import { getListFromMeta, getStringFromMeta, getDefaultLengthFromMeta } from '@/lib/util.js'
 
-var cacheMap = {};
-let getListFromMeta = function getListFromMeta(meta) {
-  console.log(meta)
-  var metaObj = JSON.parse(meta);
-  if (metaObj == null) {
-    return [];
-  }
-  if (metaObj.type == "listed") {
-    return metaObj.val;
-  } else if (metaObj.type == "url") {
-    var url = metaObj.val;
-    if (cacheMap[url] != undefined) {
-      return cacheMap[url];
-    } else {
-      var ret = [];
-      $.ajax({
-        url: url,
-        async: false,
-        success: function(data) {
-          ret = data;
-        },
-        error: function() {
-          console.log("error get url: " + metaObj.val);
-        }
-      });
-      cacheMap[url] = ret;
-      return ret;
-    }
-  }
-};
-
-let getDefaultLengthFromMeta = function getStringFromMeta(meta, defaultVal) {
-  var ret = defaultVal;
-  if (meta != null && meta != "") {
-    console.log(meta);
-    var metaObj = JSON.parse(meta);
-    if (metaObj.type == "default_length") {
-      ret = metaObj.val;
-    }
-  }
-  return ret;
-};
 
 export default {
   components: {

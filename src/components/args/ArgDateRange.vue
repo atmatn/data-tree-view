@@ -16,7 +16,7 @@ export default {
   components: {
     Prompt
   },
-  name: "DataRange",
+  name: "ArgDateRange",
   data: function(){
     return {}
   },

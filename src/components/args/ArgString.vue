@@ -13,6 +13,7 @@
 <script>
 import Prompt from './Prompt.vue'
 export default {
+  name: 'ArgString',
   components: {
     Prompt
   },
