@@ -49,6 +49,11 @@ module.exports = {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
+      },
+      '/presto': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
       }
     }
   }

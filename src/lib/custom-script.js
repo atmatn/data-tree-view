@@ -479,3 +479,126 @@ export const drawChart = function (params) {
   var myChart = echarts.init(e)
   myChart.setOption(option)
 }
+
+function getSql (params, kind, callback, errorCallback) {
+  if (callback) {
+    addTaskByArgsScript()
+  }
+  var ret
+  var sql
+  if (typeof (params) === 'string') {
+    sql = params
+  } else {
+    sql = params.sql
+  }
+  $.ajax({
+    method: 'POST',
+    url: '/' + kind,
+    data: {
+      sql: sql
+    },
+    async: callback !== undefined,
+    success: function (result) {
+      // debugger;
+      if (callback) {
+        completeTaskByArgsScript()
+        callback(result)
+      } else {
+        ret = result
+      }
+
+    },
+    error: function (err) {
+      if (callback) {
+        completeTaskByArgsScript()
+      }
+      if (errorCallback) {
+        errorCallback(err)
+      }
+      console.log(JSON.stringify(err))
+      ret = NoResult
+    }
+  })
+  if (callback) {
+    ret = 'async'
+  }
+  return ret
+}
+
+export const get_hive = function getHive (params, callback, errorCallback) {
+  return getSql(params, 'hive', callback, errorCallback)
+}
+
+export const get_pgsql = function getPgSql (params, callback, errorCallback) {
+  return getSql(params, 'pgsql', callback, errorCallback)
+}
+
+export const get_presto = function getPresto (params, callback, errorCallback) {
+  return getSql(params, 'presto', callback, errorCallback)
+}
+
+export const get_url = function visitUrl (url, data) {
+  var ret
+  $.ajax({
+    method: 'GET',
+    async: false,
+    url: url,
+    data: data,
+    success: function (data) {
+      ret = data
+      return ret
+    },
+    error: function (data) {
+      ret = data
+    }
+  })
+  return ret
+}
+
+// var runStateMap = {}
+// var lastRunState
+
+// // 用于定期汇报执行进度
+// var progressInterval
+
+// var runNo = 0
+
+// function getRunState (aRunNo) {
+//   return runStateMap[aRunNo]
+// }
+// function setRunState (aRunNo, runState) {
+//   runStateMap[aRunNo] = runState
+//   lastRunState = runState
+// }
+
+// function getCurrentRunState () {
+//   return lastRunState
+// }
+
+export const addTaskByArgsScript = function () {
+
+}
+
+export const completeTaskByArgsScript = function () {
+
+}
+
+// export const startArgsScript = function ($disp, statusReporter, doneCallback) {
+//   runNo++
+//   var runState = {
+//     taskNum: 1, // 这个任务相当于同步执行script.js本身
+//     doneNum: 0,
+//     $disp: $disp,
+//     doneCallback: doneCallback,
+//     statusReport: statusReporter,
+//     startTime: new Date().getTime(),
+//     mainDone: false
+//   }
+
+//   setRunState(runNo, runState)
+
+//   // 开始自动更新状态显示
+//   if (!progressInterval) {
+//     progressInterval = setInterval(showProgress, 1000)
+//   }
+// }

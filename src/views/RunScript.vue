@@ -19,7 +19,9 @@ import axios from "axios";
 import ArgsScriptParams from "_c/args/ArgsScriptParams.vue";
 import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js";
 import $ from "jquery"
-import _ from 'underscore'
+import _ from '@/lib/myunderscore.js'
+import underscore from '@/lib/myunderscore.js'
+import * as customScriptApi from '@/lib/custom-script.js'
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -92,8 +94,153 @@ export default {
       // 更新组件内参数
       this.myParams.param_a = x;
     },
+    prepareForRun() {
+      var argDefs = this.argDefs
+      var userParams = this.myParams
+      var $disp = $(this.$refs.content)
+      var args = {};
+      var layouts = {};
+      // var debugging = true;
+      for(var i=0; i<argDefs.length; i++) {
+          var argDef = argDefs[i];
+          var dataPropName;
+          if( argDef.mode == "NORMAL") {
+              dataPropName = argDef.id
+          }else{
+              dataPropName = argDef.id + "_obj";
+          }
+          if( argDef.type == 'DATE_RANGE' ) {
+              var d = userParams[argDef.id];
+              var m = d.match(/^(.*)to(.*)$/);
+              if( m != null ) {
+                  if( argDef.mode == "SQL") {
+                      var sqlData = _.template("<%= col%> between '<%=fromDate%>' and '<%=toDate%>'",
+                          {
+                              col: argDef.id,
+                              fromDate: m[1],
+                              toDate: m[2]
+                          });
+                      args[argDef.id] = sqlData;
+                  }
+
+                  args[dataPropName] = {
+                      fromDate: m[1],
+                      toDate: m[2]
+                  }
+              }
+          }else if( argDef.type == 'STRING' || argDef.type == 'CHOICE') {
+              var d = userParams[argDef.id];
+              if( argDef.mode == "SQL") {
+                  if( d !== '') {
+                      //非空
+                      var sqlData = _.template("<%= col%> = '<%=d%>'",
+                          {
+                              col: argDef.id,
+                              d: d
+                          });
+                  }else{
+                      //空，表示不做限制
+                      var sqlData = "1 = 1";
+                  }
+                  args[argDef.id] = sqlData;
+              }
+              args[dataPropName] = d;
+          }else if( argDef.type == 'BOOL') {
+              var d = userParams[argDef.id];
+              if( argDef.mode == "SQL") {
+                  if( d !== '') {
+                      //非空
+                      if( d === "true") {
+                          var sqlData = _.template("<%= col%> ",
+                              {
+                                  col: argDef.id
+                              });
+                      }else{
+                          var sqlData = _.template("not <%= col%> ",
+                              {
+                                  col: argDef.id
+                              });
+                      }
+                  }else{
+                      //空，表示不做限制
+                      var sqlData = "1 = 1";
+                  }
+                  args[argDef.id] = sqlData;
+              }
+              args[dataPropName] = d;
+
+          }else if( argDef.type == 'LIST' || argDef.type == 'INT_LIST' || argDef.type== 'MULTI_CHOICE') {
+              var d = userParams[argDef.id];
+              if( argDef.mode == "SQL") {
+                  if( d !== '') {
+                      //非空
+                      var sqlData = _.template("<%= col%> in ( <%=dList.join(',')%> )",
+                          {
+                              col: argDef.id,
+                              dList: _.map(d.split(","), function (x) {
+                                  if( argDef.type == 'INT_LIST' ) {
+                                      return "" + x;
+                                  }else{
+                                      return "'"+x+"'";
+                                  }
+                              })
+                          });
+                  }else{
+                      //空，表示不做限制
+                      var sqlData = "1 = 1";
+                  }
+                  args[argDef.id] = sqlData;
+              }
+
+              if( d !== '') {
+                  if (argDef.type == 'INT_LIST') {
+                      args[dataPropName] = _.map(d.split(","), function (x) {
+                          return parseInt(x)
+                      });
+                  } else {
+                      args[dataPropName] = d.split(",");
+                  }
+              }else{
+                  args[dataPropName] = [];
+              }
+          }else if (argDef.type == 'LAYOUT' ) {
+              var layoutLines = JSON.parse(argDef.meta);
+              var $layoutPart = $("<div>").css({
+                  // borderStyle: "solid"
+              });
+              _.each(layoutLines, function(layoutLine){
+                  var $layoutLine = $("<p>");
+                  var widthTotal = 0;
+                  _.each(layoutLine, function(layoutItem){
+                      widthTotal += layoutItem.width;
+                  });
+                  _.each(layoutLine, function(layoutItem)  {
+                      var $layoutItem = $("<span>").css({
+                          display: 'inline-block',
+                          padding: "2px",
+                          width: parseInt(100.0 / widthTotal * layoutItem.width) + '%'
+                      });
+                      $layoutLine.append($layoutItem);
+
+                      //for debug
+                      // if( debugging ) {
+                      //     $layoutItem.append($("span").text(layoutItem.name));
+                      // }
+                      layouts[layoutItem.name] = $layoutItem;
+                  });
+                  $layoutPart.append($layoutLine);
+              });
+              $disp.append($layoutPart);
+          }
+      }
+      return {
+        args,
+        layouts
+      }
+    },
     doRun() {
       // 将界面上的参数读出来
+      let _ = underscore
       var params = {}
       var argDefs = this.argDefs
       for(var i=0; i<argDefs.length; i++) {
@@ -127,11 +274,18 @@ export default {
         }
       });
 
-      // 这里执行脚本
-      debugger;
+      // 这里处理args和layout
+      debugger
+
+      let { drawTable, drawChart, get_presto, get_hive, get_pgsql } = customScriptApi
+      let { args, layouts } = this.prepareForRun()
+      let $disp = $(this.$refs.content)
+
+      eval(this.scriptBody)
+
 
       // 假设下面的是结果
-      this.$refs.content.innerText = "结果:" + this.myParams.param_a;
+      // this.$refs.content.innerText = "结果:" + this.myParams.param_a;
     },
     initializeArgDefs({ argDefs, userParams }) {
       for (var i = 0; i < argDefs.length; i++) {
