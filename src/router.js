@@ -32,8 +32,23 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
+      path: '/exp-home',
+      name: 'exp-home',
+      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome2.vue')
+    },
+    {
+      path: '/summary-query',
+      name: 'summary-query',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "summary-query" */ './views/SummaryQuery.vue')
+    },
+    {
       path: '*',
-      redirect: { name: 'data-tree-home' }
+      // redirect: { name: 'data-tree-home' }
+      // 方便demo这个功能
+      redirect: { name: 'summary-query' }
     }
   ]
 })

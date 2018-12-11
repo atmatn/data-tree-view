@@ -2,6 +2,10 @@
 <div class="layout">
   <div class="extra">
     <div>
+      <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
+      | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
+    </div>
+    <div>
       someData: <Input v-model="someData" style="width: 200px;"/>
       <Button @click="getSomeData">Get Some Data (ajax)</Button>
     </div>
@@ -13,30 +17,16 @@
       data-tree-json: <Input type="textarea" :rows="4" v-bind:value="JSON.stringify(dataTreeNodes, null, 4)" style="width: 800px;"/>
       <Button @click="reloadDataTree">Reload Data Tree</Button>
     </div>
+    <div>
+      <Button @click="testAddToFolderNode">Add DirectLink To Folder Node</Button>
+      <Button @click="testAddToProductNode">Add DirectLink To Product Node</Button>
+      <Button @click="testAddProductNode">Add Product Node</Button>    </div>
+      <Button @click="testRenameProductNode">Rename Product Node</Button>
+      <Button @click="testRenameFolderNode">Rename Folder Node</Button>
+      <Button @click="testRenameLeafNode">Rename Leaf Node</Button>
   </div>
         <Layout>
             <Header>
-                <!--Menu mode="horizontal" theme="dark" active-name="1">
-                    <div class="layout-logo"></div>
-                    <div class="layout-nav">
-                        <MenuItem name="1">
-                            <Icon type="ios-navigate"></Icon>
-                            Item 1
-                        </MenuItem>
-                        <MenuItem name="2">
-                            <Icon type="ios-keypad"></Icon>
-                            Item 2
-                        </MenuItem>
-                        <MenuItem name="3">
-                            <Icon type="ios-analytics"></Icon>
-                            Item 3
-                        </MenuItem>
-                        <MenuItem name="4">
-                            <Icon type="ios-paper"></Icon>
-                            Item 4
-                        </MenuItem>
-                    </div>
-                </Menu-->
             </Header>
             <Layout :style="{padding: '0 50px'}">
                 <Breadcrumb :style="{margin: '16px 0'}">
@@ -44,7 +34,7 @@
                     <BreadcrumbItem>Components</BreadcrumbItem>
                     <BreadcrumbItem>Layout</BreadcrumbItem>
                 </Breadcrumb>
-                <Content :style="{padding: '24px 0', minHeight: '280px', background: '#fff'}">
+                <Content :style="{padding: '0 0', minHeight: '100%', background: '#fff'}">
                     <div class="extra">
                       <Button @click="openScript({scriptId: '123', params: { 'param_a': '1', 'param_b': '2' }})">Open Script 123</Button>
                       <br/>
@@ -52,33 +42,7 @@
                     </div>
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}">
-                            <Menu active-name="1-2" theme="light" width="auto" :open-names="['1']">
-                                <Submenu name="1">
-                                    <template slot="title">
-                                        <Icon type="ios-navigate"></Icon>
-                                        Item 1
-                                    </template>
-                                    <MenuItem name="1-1">Option 1</MenuItem>
-                                    <MenuItem name="1-2">Option 2</MenuItem>
-                                    <MenuItem name="1-3">Option 3</MenuItem>
-                                </Submenu>
-                                <Submenu name="2">
-                                    <template slot="title">
-                                        <Icon type="ios-keypad"></Icon>
-                                        Item 2
-                                    </template>
-                                    <MenuItem name="2-1">Option 1</MenuItem>
-                                    <MenuItem name="2-2">Option 2</MenuItem>
-                                </Submenu>
-                                <Submenu name="3">
-                                    <template slot="title">
-                                        <Icon type="ios-analytics"></Icon>
-                                        Item 3
-                                    </template>
-                                    <MenuItem name="3-1">Option 1</MenuItem>
-                                    <MenuItem name="3-2">Option 2</MenuItem>
-                                </Submenu>
-                            </Menu>
+                              <menuTree></menuTree>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                             <router-view/>
@@ -96,10 +60,13 @@
 import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
+import menuTree from '@/components/menu/menuTree.vue'
+// import {getDataTree} from '@/mock/index.js'
 
 export default {
+  components: {menuTree},
   beforeRouteEnter: function (to, from, next) {
-    debugger
+    //debugger
     if( to.name == 'run-script' ) {
       next( function(vm) {
         vm.openScript({
@@ -133,7 +100,46 @@ export default {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     },
     // 通过vuex的处理reload data tree
-    ...mapActions(["reloadDataTree"])
+    ...mapActions(["reloadDataTree"]),
+    testAddToFolderNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: 15,
+        type: 'direct-link',
+        title: '新增1'
+      })
+    },
+    testAddToProductNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: 1,
+        type: 'folder',
+        title: '新增2'
+      })
+    },
+    testAddProductNode () {
+      axios.post('/api/data-tree/edit/add', {
+        parentId: -1,
+        type: 'product',
+        title: '新增3'
+      })
+    },
+    testRenameProductNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 1,
+        title: '更名1'
+      })
+    },
+    testRenameFolderNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 15,
+        title: '更名2'
+      })
+    },
+    testRenameLeafNode () {
+      axios.post('/api/data-tree/edit/rename', {
+        id: 16,
+        title: '更名3'
+      })
+    }
   },
   computed: {
     ...mapState({
@@ -143,7 +149,7 @@ export default {
   },
   data () {
     return {
-      someData: "nothing"
+      someData: "nothing",
     }
   }
 }
