@@ -1,11 +1,11 @@
 <template>
   <div class="all">
     <h1 class="h1">
-      明细查询工具(Beta)
+      明细字段查询工具(Beta)
       <Tooltip max-width="400" :transfer="true">
         <Icon type="ios-help-circle-outline" />
         <div slot="content">
-            <p align="center">什么是“明细查询工具”</p>
+            <p align="center">什么是“明细字段查询工具”</p>
             <p>“明细数据源”中记录了更详尽的参数，但之前只能通过Hive/Presto查询，为方便非技术的同事使用，开发了本页面。</p>
             <br/>
             <p>目前的功能：</p>
