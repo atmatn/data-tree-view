@@ -106,9 +106,10 @@
             <DataLimitedWarning :isDataLimited="isDimValsLimited" :dataLimitNum="dimValsLimitNum" :preciseSql="dimValsPreciseSql" :bigFont="false">
 
             </DataLimitedWarning>
-            <Table class="dim-val-tbl" height="500" :columns="dimValCols" :data="filterdDimValsAggData">
+            <Table class="dim-val-tbl" height="560" :columns="dimValCols" :data="pagedFilterdDimValsAggData">
 
             </Table>
+            <Page :total="filterdDimValsAggData.length" :current="currentPageNumber" @on-change="changePage" :page-size="pageSize"></Page>
             <div class="line1_in3">
               <Button class="line1_in3-button" @click="addIsNullFilterWrapper({dim: curDim})">添加is null过滤条件</Button>
               <Button class="line1_in3-button" @click="addIsNotNullFilterWrapper({dim: curDim})">添加is not null过滤条件</Button>
@@ -167,6 +168,8 @@ import SqlHint from '_c/SqlHint.vue'
 import deparam from 'deparam'
 import TimeTransaction from '@/lib/TimeTransaction'
 var timeTransaction = new TimeTransaction()
+
+const pageSize = 10
 
 export default {
   components: {
@@ -234,7 +237,7 @@ export default {
             return (
               <span>
               <span>{col.column.title}</span>
-              <Input style="width:150px" v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
+              <Input style="width:150px" on-on-change={this.resetPageNumebr} v-model={this.dimValFilter} placeholder="搜索参数值"></Input>
               {(this.dimValFilter != '' && !this.dimValFilterIsNull)?<Button on-click={this.addLikeFilterWrapper.bind(this, {dim: this.curDim, dimVal: this.dimValFilter})}>将【包含“{this.dimValFilter.toLowerCase()}”（忽略大小写）】<br/>添加到【过滤条件】</Button>:<span></span>}
               </span>
 
@@ -267,7 +270,10 @@ export default {
       loadDateRangeDataFail: false,
       loadDateRangeDataFailMessage: '',
       loadDimValDataFail: false,
-      loadDimValDataFailMessage: ''
+      loadDimValDataFailMessage: '',
+      //paging
+      pageSize: pageSize,
+      currentPageNumber: 1
     }
   },
   computed: {
@@ -303,6 +309,22 @@ export default {
       // 过滤条件是 is null
       return (this.dimValFilter.length > 0 &&
       this.dimValFilter.match(/^\s*is\s*null\s*$/i) != null)
+    },
+    // pageCount: function(){
+    //   debugger
+    //   let count = Math.ceil(this.filterdDimValsAggData.length / pageSize)
+    //   let count2 = 100
+    //   // console.log("count=" + count)
+    //   // console.log("type of count=" + typeof(count))
+    //   // console.log("type of count2=" + typeof(count2))
+    //   // return parseInt('100')
+    // },
+    pagedFilterdDimValsAggData: function (){
+      // debugger
+      let start = (this.currentPageNumber - 1 ) * this.pageSize
+      let end = Math.min(this.filterdDimValsAggData.length, start + this.pageSize)
+      let retList = this.filterdDimValsAggData.slice(start, end)
+      return retList
     },
     filterdDimValsAggData: function(){
       // debugger
@@ -430,6 +452,7 @@ export default {
         this.isDimValsSampled = res.data.isSampled
         this.dimValsSampleType = res.data.sampleType
         this.dimValsPreciseSql = res.data.preciseSql || ''
+        this.currentPageNumber = 1
         this.dimValsAggData = res.data.dateRangeAggData
 
         this.isDimValsLimited = res.data.isLimited
@@ -618,6 +641,14 @@ export default {
         console.log('参数列表保存失败！' + JSON.stringify(err, null, 4))
         this.$Message.error('参数列表保存失败！')
       })
+    },
+    changePage: function (pageNum){
+      this.currentPageNumber = pageNum
+    },
+    resetPageNumebr () {
+      // debugger
+      console.log('reset current page number')
+      this.currentPageNumber = 1
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -653,6 +684,9 @@ export default {
     "daterange": function(){
       console.log('daterange changed!')
       this.updatePvUvList()
+    },
+    "currentPageNumber": function(newVal, oldVal) {
+      console.log('newVal = ' + newVal + " oldVal = " + oldVal )
     }
     // "dataSource": function(){
     //   console.log('dataSource changed!')

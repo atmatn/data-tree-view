@@ -23,7 +23,7 @@ Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
 
 // 集成测试时，暂时手工设置为true
-var integrationTest = true
+var integrationTest = false
 
 if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)

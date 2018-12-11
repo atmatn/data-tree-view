@@ -178,7 +178,7 @@ export const getDateRangeAgg = ({ url, type, body }) => {
     } else {
       // groupBy dim
       var groupByItem = groupByList[depth]
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < 10000; i++) {
         curObj[groupByItem] = (i === 0 ? null : (groupByItem + '_' + i))
         fill(depth + 1)
       }
