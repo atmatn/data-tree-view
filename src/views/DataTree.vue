@@ -328,12 +328,16 @@ export default {
 .layout-footer-center{
     text-align: center;
 }
+</style>
+
+<style lang="less">
 .extra {
     display: inline-block;
     border-style: solid;
     border-color: red;
     z-index: 10000;
-    max-height: 400px;
+    max-height: 600px;
+    width: 90%;
     overflow: auto;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div>
+    <div class="extra">
     <Input type="textarea" :rows="20" :value="JSON.stringify(argDefs,null,4)"/>
+    </div>
     <div class="title-line">
     <span class="script-title">{{scriptTitle}}</span> <span class="script-author">（作者：{{author}}）</span>
     </div>
