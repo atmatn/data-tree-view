@@ -1,6 +1,36 @@
 <template>
   <div class="all">
-    <h1 class="h1">明细查询工具</h1>
+    <h1 class="h1">
+      明细查询工具(Beta)
+      <Tooltip max-width="400" :transfer="true">
+        <Icon type="ios-help-circle-outline" />
+        <div slot="content">
+            <p align="center">什么是“明细查询工具”</p>
+            <p>“明细数据源”中记录了更详尽的参数，但之前只能通过Hive/Presto查询，为方便非技术的同事使用，开发了本页面。</p>
+            <br/>
+            <p>目前的功能：</p>
+            <ul>
+              <li>&nbsp;&nbsp;1. 筛选参数，然后查看PV和UV</li>
+              <li>&nbsp;&nbsp;2. 可以给参数分类、排序</li>
+              <li>&nbsp;&nbsp;3. 如果查询的数据量比较大，为了保证查询响应时间，会使用采样计算并有提示。一般而言，采样查询的结果可以帮助您判断对应的查询条件下是否有数据。如果您确实需要全量计算，请根据提示操作。</li>
+            </ul>
+            <br/>
+            <p>计划加入的功能：</p>
+            <ul>
+              <li>&nbsp;&nbsp;1. 查看明细数据行</li>
+              <li>&nbsp;&nbsp;2. 可以增加groupBy的列</li>
+              <li>&nbsp;&nbsp;3. 对参数做更智能的归类</li>
+              <li>&nbsp;&nbsp;4. 一键生成“查询页面”</li>
+            </ul>
+            <br/>
+            <p>提示：</p>
+            <p>&nbsp;&nbsp;如果您熟悉SQL，可以用Hive或Presto查询。</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;对于数据量较小的产品，可以使用<a href="http://yana.inner.youdao.com/">presto查询</a></p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;对于数据量较大的产品，可以使用<a href="/hive-async-query.html">hive查询</a></p>
+        </div>
+      </Tooltip>
+    </h1>
+
     <div class="line1">
       <div class="datasource-part">
         <div class="h">数据源</div>
