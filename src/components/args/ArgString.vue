@@ -12,6 +12,12 @@
 
 <script>
 import Prompt from './Prompt.vue'
+import {
+  getListFromMeta,
+  getStringFromMeta,
+  getDefaultLengthFromMeta
+} from "@/lib/util.js";
+
 export default {
   name: 'ArgString',
   components: {

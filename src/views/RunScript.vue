@@ -18,7 +18,8 @@ import { objEqual } from "../lib/tools";
 import axios from "axios";
 import ArgsScriptParams from "_c/args/ArgsScriptParams.vue";
 import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js";
-import $ from "jquery";
+import $ from "jquery"
+import _ from 'underscore'
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -128,7 +129,7 @@ export default {
 
       // 这里执行脚本
       debugger;
-      
+
       // 假设下面的是结果
       this.$refs.content.innerText = "结果:" + this.myParams.param_a;
     },
