@@ -48,6 +48,11 @@ const router = new Router({
       meta: { page: 'summary-query' }
     },
     {
+      path: '/current-dso-list',
+      name: 'current-dso-list',
+      component: () => import(/* webpackChunkName: "current-dso-list" */ './views/CurrentDsoList.vue')
+    },
+    {
       path: '*',
       // redirect: { name: 'data-tree-home' }
       // 方便demo这个功能

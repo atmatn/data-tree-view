@@ -1,6 +1,7 @@
 import Mock from 'mockjs'
 import { getDataTree, addTreeNode, renameTreeNode } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
+import { getDsoProductList, setDsoCategory, deleteDso, listProducts, addProduct } from './current-dso-list'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
   return {
@@ -34,6 +35,12 @@ if (!integrationTest) {
 }
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
+
+Mock.mock(/\/api\/current-dso-list\/list-dso-products/, 'get', getDsoProductList)
+Mock.mock(/\/api\/current-dso-list\/change-category/, 'post', setDsoCategory)
+Mock.mock(/\/api\/current-dso-list\/delete-dso/, 'post', deleteDso)
+Mock.mock(/\/api\/current-dso-list\/list-products/, 'get', listProducts)
+Mock.mock(/\/api\/current-dso-list\/add-product/, 'post', addProduct)
 
 Mock.setup({
   timeout: 0
