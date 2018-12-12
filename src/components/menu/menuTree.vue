@@ -3,9 +3,9 @@
   <div>
   <selects/>
   </div>
-  <Menu theme="dark" >
-    <div v-if="TreeNodes" :active-name="1">
-          <submenu v-for="item in TreeNodes" :model="item" :name="item"></submenu>
+  <Menu theme="dark"  :active-name="turnOn" v-model="turnOn" :open-names="turnOn" ref="side_menu" >
+    <div v-if="TreeNodes" >
+          <submenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></submenu>
     </div>
     <div v-else>
         <h1 style="color:red">暂无数据</br>请联系管理员！</h1>
@@ -32,9 +32,22 @@ export default {
     components:{submenu,selects,switchs,modals},
     computed:{
          ...mapState({
-      TreeNodes: "dataTreeNodes"
-    })
+              TreeNodes: "dataTreeNodes"
+                  }),
+        ...mapState({
+              turnOn: "turnOn"
+                    })
 
+    },
+    methods:{
+      getOn(status){
+            this.turnOn =status
+            this.$nextTick(() => {
+                  this.$refs.side_menu.updateOpened();
+                  this.$refs.side_menu.updateActiveName();
+                              })
+        return status;
+      }
     }
 }
 </script>

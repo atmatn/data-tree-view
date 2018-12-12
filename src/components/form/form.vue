@@ -116,7 +116,7 @@ import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import axios from 'axios'
 export default {
-    props:['model','functions','selected','perms','attrs','permsList'],
+    props:['model','functions','perms','attrs','permsList'],
     watch:{
             model:function(newVal,oldVal){
                 this.scriptid = newVal.scriptId;
