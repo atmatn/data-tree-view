@@ -4,7 +4,7 @@
         <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
-        <MenuItem :name="model.id" @click.native="openScript({scriptId: model.id, params:model.scriptParams})">{{model.title}}</MenuItem>
+        <MenuItem :name="model.title" @click.native="openScript({scriptId: model.id, params:model.scriptParams})">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
@@ -17,12 +17,12 @@
       <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
-      <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
+      <MenuItem :name="model.title" @click.native="childClick">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else>
       <div v-if="model.currentUserExecutable === true&&model.children.length === 0">
-          <MenuItem :name="model.id">{{model.title}}(空目录)</MenuItem>
+          <MenuItem :name="model.title">{{model.title}}(空目录)</MenuItem>
       </div>
       <div v-else>
           <div v-if="model.type=== 'product'&&model.currentUserVisible===false" ></div>

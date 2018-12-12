@@ -18,7 +18,8 @@ export default new Vuex.Store({
     cannotSubmit:true,//用于判断是否是重复提交
     permsList:'',//权限列表
     queryingCount: 0,
-    turnOn:[]//选择哪一项展开
+    turnOn:[],//选择哪一项展开
+    turnLight:''//选择那一项高亮
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     updateTurnOn:(state,{status}) =>{
      state.turnOn=status
   },
+    updateTurnLight:(state,{status}) =>{
+    state.turnLight=status
+ },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
     }

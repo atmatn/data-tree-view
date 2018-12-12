@@ -3,7 +3,7 @@
   <div>
   <selects/>
   </div>
-  <Menu theme="dark"  :active-name="turnOn" v-model="turnOn" :open-names="turnOn" ref="side_menu" >
+  <Menu theme="dark"  :active-name="turnLight" v-model="turnOn" :open-names="turnOn" ref="side_menu" >
     <div v-if="TreeNodes" >
           <submenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></submenu>
     </div>
@@ -36,12 +36,15 @@ export default {
                   }),
         ...mapState({
               turnOn: "turnOn"
+                    }),
+        ...mapState({
+              turnLight: "turnLight"
                     })
 
     },
     methods:{
       getOn(status){
-            this.turnOn =status
+            //this.turnOn =status
             this.$nextTick(() => {
                   this.$refs.side_menu.updateOpened();
                   this.$refs.side_menu.updateActiveName();
