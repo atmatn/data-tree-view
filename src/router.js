@@ -3,9 +3,11 @@ import Router from 'vue-router'
 import RunScript from './views/RunScript.vue'
 import DataTree from './views/DataTree.vue'
 import DataTreeHome from './views/DataTreeHome.vue'
+import log from '@/lib/log'
+import { Recorded } from 'rx';
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: '/ui/',
   routes: [
@@ -42,7 +44,8 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "summary-query" */ './views/SummaryQuery.vue')
+      component: () => import(/* webpackChunkName: "summary-query" */ './views/SummaryQuery.vue'),
+      meta: { page: 'summary-query' }
     },
     {
       path: '*',
@@ -52,3 +55,16 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  var record = to.matched[0]
+  if (record && record.meta && record.meta.page) {
+    log('action_open', {
+      'page': record.meta.page,
+      'action': 'open'
+    })
+  }
+  next()
+})
+
+export default router
