@@ -4,7 +4,7 @@
   <selects/>
   </div>
   <Menu theme="dark" >
-    <div v-if="TreeNodes">
+    <div v-if="TreeNodes" :active-name="1">
           <submenu v-for="item in TreeNodes" :model="item" :name="item"></submenu>
     </div>
     <div v-else>

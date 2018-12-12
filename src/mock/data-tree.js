@@ -385,6 +385,7 @@ export const getPerms = ({ url, type, body }) => {
      _.difference(parentNode.computed_executable_perms, target.computed_executable_perms).length === 0) {
       // 与父节点相同，则认为是继承的
       perms = []
+      console.log('2333'+target.computed_executable_perms)
     } else {
       perms = _.cloneDeep(target.computed_executable_perms)
     }

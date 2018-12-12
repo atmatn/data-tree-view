@@ -6,6 +6,7 @@
         draggable
         scrollable
         :closable="false"
+        class-name="vertical-center-modal"
         title="编辑"
         width="auto"
         @on-ok="ok"

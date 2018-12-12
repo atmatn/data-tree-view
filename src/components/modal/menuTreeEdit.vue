@@ -3,7 +3,7 @@
   <Button type="default" @click="addProduct()">添加新产品</Button>
   <Tree :data="TreeNodes" :render="renderContent"></Tree>
   <h3>{{tips}}</h3>
-  <forms  :model="addForm" v-model="model" :functions="functions" :selected="selected" :perms="perms" :attrs="attrs"></forms>
+  <forms  :model="addForm" v-model="model" :functions="functions" :selected="selected" :perms="perm" :attrs="attrs" :permsList="this.perms"></forms>
 </div>
 </template>
 <script>
@@ -21,13 +21,17 @@ export default {
              addForm:'',
              functions:'',
              selected:'',
-             perms:'',
-             attrs:''
+             perm:'',
+             attrs:'',
+             permsList:this.$store.dispatch('reloadPermsList')
             }
           },
     computed:{
          ...mapState({
       TreeNodes: "dataTreeNodes"
+    }),
+         ...mapState({
+      perms: "permsList"
     })
     },
     methods: {
@@ -101,7 +105,7 @@ export default {
               this.functions='move';
             },
             copy(data){
-              this.tips='当前项:'+data.title+'-移动';
+              this.tips='当前项:'+data.title+'-复制';
               this.addForm=data;
               this.functions='copy';
             },
@@ -118,7 +122,7 @@ export default {
               }
               }).then(res => {
                 if(res.data.permList !==null&&res.data.permList !==''&&res.data.permList !==undefined){
-                    this.perms=res.data.permList
+                    this.perm=res.data.permList
                     console.log('获取权限成功');
                 }else{
                     console.log('获取权限失败');
