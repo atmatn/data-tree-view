@@ -1,6 +1,9 @@
 <template>
 <div class="layout">
-  <div class="extra">
+  <div>
+    <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
+  </div>
+  <div v-show="showDebug" class="extra">
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
@@ -77,7 +80,7 @@
                     <BreadcrumbItem>Layout</BreadcrumbItem>
                 </Breadcrumb>
                 <Content :style="{padding: '0 0', minHeight: '100%', background: '#fff'}">
-                    <div class="extra">
+                    <div v-show="showDebug" class="extra">
                       <Button @click="openScript({scriptId: '123', params: { 'param_a': '1', 'param_b': '2' }})">Open Script 123</Button>
                       <br/>
                       <Button @click="openScript({scriptId: '456', params: {'param_a': 4, 'param_b': 5 } })">Open Script 456</Button>
@@ -143,6 +146,7 @@ export default {
     },
     // 通过vuex的处理reload data tree
     ...mapActions(["reloadDataTree"]),
+    ...mapActions(["setShowDebug"]),
     testAddToFolderNode () {
       axios.post('/api/data-tree/edit/add', {
         parentId: 15,
@@ -297,7 +301,8 @@ export default {
   computed: {
     ...mapState({
       someMsg: "someMsg",
-      dataTreeNodes: "dataTreeNodes"
+      dataTreeNodes: "dataTreeNodes",
+      showDebug: 'showDebug'
     })
   },
   data () {

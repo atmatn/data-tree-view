@@ -13,13 +13,14 @@ export default new Vuex.Store({
     currentScriptId: '',
     currentScriptParams: {},
     dataTreeNodes: [],
-    wichToShow: false ,//决定是否显示无可执行权限的项
-    allow:false, //确定按钮是否可以关闭model
-    cannotSubmit:true,//用于判断是否是重复提交
-    permsList:'',//权限列表
+    wichToShow: false, // 决定是否显示无可执行权限的项
+    allow: false, // 确定按钮是否可以关闭model
+    cannotSubmit: true, // 用于判断是否是重复提交
+    permsList: '', // 权限列表
     queryingCount: 0,
-    turnOn:[],//选择哪一项展开
-    turnLight:''//选择那一项高亮
+    turnOn: [], // 选择哪一项展开
+    turnLight: '', // 选择那一项高亮
+    showDebug: true
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -40,24 +41,27 @@ export default new Vuex.Store({
     updateWichToShow: (state, { status }) => {
       state.wichToShow = status
     },
-    updateAllow:(state,{status}) => {
+    updateAllow: (state, { status }) => {
       state.allow = status
     },
-    updateCannotSubmit:(state,{status}) => {
+    updateCannotSubmit: (state, { status }) => {
       state.allow = status
     },
-    updatePermsList:(state,{perms}) =>{
-        state.permsList=_.cloneDeep(perms)
-        //console.log(state.permsList)
+    updatePermsList: (state, { perms }) => {
+      state.permsList = _.cloneDeep(perms)
+      // console.log(state.permsList)
     },
-    updateTurnOn:(state,{status}) =>{
-     state.turnOn=status
-  },
-    updateTurnLight:(state,{status}) =>{
-    state.turnLight=status
- },
+    updateTurnOn: (state, { status }) => {
+      state.turnOn = status
+    },
+    updateTurnLight: (state, { status }) => {
+      state.turnLight = status
+    },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
+    },
+    setShowDebug: (state, { val }) => {
+      state.showDebug = val
     }
   },
   actions: {
@@ -95,13 +99,13 @@ export default new Vuex.Store({
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
       })
     },
-    reloadPermsList({ commit, state }){
-        axios.request({
-            url: '/api/data-tree/edit/list-perms',
-            method: 'post',
-                      }).then(res => {
-                      commit('updatePermsList', { perms: res.data.perms })
-                      })
+    reloadPermsList ({ commit, state }) {
+      axios.request({
+        url: '/api/data-tree/edit/list-perms',
+        method: 'post'
+      }).then(res => {
+        commit('updatePermsList', { perms: res.data.perms })
+      })
     },
     changeWichToShow ({ commit }, { status }) {
       commit('updateWichToShow', { status })
@@ -115,12 +119,15 @@ export default new Vuex.Store({
     incrementQueringCount ({ commit, state }, { val }) {
       commit('incrementQueringCount', { val })
     },
-    updateSummaryQueryParams ({ commit, state}, payload) {
+    updateSummaryQueryParams ({ commit, state }, payload) {
       console.log('action: updateSummaryQueryParams' + JSON.stringify(payload))
       const url = '/ui/summary-query?' + $.param(payload)
       router.push({
         path: url
       })
+    },
+    setShowDebug ({ commit, state }, { val }) {
+      commit('setShowDebug', { val })
     }
   }
 })
