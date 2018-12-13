@@ -24,7 +24,7 @@ Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
 Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
 
 // 集成测试时，暂时手工设置为true
-var integrationTest = false
+var integrationTest = true
 
 if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/date-range-agg/, 'post', getDateRangeAgg)
@@ -32,15 +32,15 @@ if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/dims/, 'post', getDataSourceDimList)
   Mock.mock(/\/api\/summary-query\/update-dim-cat-list/, 'post', updateDimCatList)
   Mock.mock(/\/api\/summary-query\/queries/, 'get', getQueries)
+
+  Mock.mock(/\/api\/current-dso-list\/list-dso-products/, 'get', getDsoProductList)
+  Mock.mock(/\/api\/current-dso-list\/change-category/, 'post', setDsoCategory)
+  Mock.mock(/\/api\/current-dso-list\/delete-dso/, 'post', deleteDso)
+  Mock.mock(/\/api\/current-dso-list\/list-products/, 'get', listProducts)
+  Mock.mock(/\/api\/current-dso-list\/add-product/, 'post', addProduct)
 }
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
-
-Mock.mock(/\/api\/current-dso-list\/list-dso-products/, 'get', getDsoProductList)
-Mock.mock(/\/api\/current-dso-list\/change-category/, 'post', setDsoCategory)
-Mock.mock(/\/api\/current-dso-list\/delete-dso/, 'post', deleteDso)
-Mock.mock(/\/api\/current-dso-list\/list-products/, 'get', listProducts)
-Mock.mock(/\/api\/current-dso-list\/add-product/, 'post', addProduct)
 
 Mock.setup({
   timeout: 0

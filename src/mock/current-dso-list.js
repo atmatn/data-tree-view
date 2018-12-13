@@ -1,15 +1,18 @@
 let mockDsoList = [
   {
     'product': 'A',
-    'category': 'quick'
+    'category': 'quick',
+    'tblName': 'a'
   },
   {
     'product': 'B',
-    'category': 'prior'
+    'category': 'prior',
+    'tblName': 'b'
   },
   {
     'product': 'C',
-    'category': 'normal'
+    'category': 'normal',
+    'tblName': 'c'
   }
 ]
 

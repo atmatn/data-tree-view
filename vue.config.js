@@ -55,6 +55,11 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
+      '/api/current-dso-list': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
       '/log': {
         target: 'http://localhost:18080',
         ws: true,

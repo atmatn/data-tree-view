@@ -2,11 +2,11 @@
   <div>
     <h1>明细数据源管理</h1>
     <Table :columns="cols" :data="data"></Table>
-    <Button @click="showAdd = true">添加</Button>
+    <Button @click="toAdd">添加</Button>
     <Modal v-model="showAdd" @on-ok="addNewProduct">
       配置文件 （Product）
       <Select v-model="selectedNewProduct">
-        <Option v-for="item in allProductList" :value="item" v-bind:key="item">{{item}}</Option>
+        <Option v-for="item in notAddedProductList" :value="item" v-bind:key="item">{{item}}</Option>
       </Select>
       分类（Category）
       <Select v-model="selectedNewProductCategory">
@@ -35,6 +35,10 @@ export default {
         {
           title: '配置文件 (Product)',
           key: 'product'
+        },
+        {
+          title: '明细数据源表格名 (tblName)',
+          key: 'tblName'
         },
         {
           title: '分类',
@@ -155,6 +159,18 @@ export default {
         this.$Message.info('已添加Product')
         this.reload()
       })
+    },
+    toAdd () {
+      this.selectedNewProduct = this.notAddedProductList.length > 0 ? this.notAddedProductList[0]: ''
+      this.selectedNewProductCategory = 'quick'
+      this.showAdd = true
+    }
+  },
+  computed: {
+    notAddedProductList: function() {
+      var added = this.data.map(x => x.product)
+      var ret = _.difference(this.allProductList, added)
+      return ret
     }
   }
 }
