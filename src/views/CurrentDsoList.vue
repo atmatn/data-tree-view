@@ -30,7 +30,7 @@ export default {
       selectedNewProduct: '',
       selectedNewProductCategory: 'quick',
       showAdd: false,
-      allCategory: ['quick','normal','prior'],
+      allCategory: ['quick','normal','prior','禁用'],
       cols: [
         {
           title: '配置文件 (Product)',
