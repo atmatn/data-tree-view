@@ -218,7 +218,7 @@ export const drawTable = function (params) {
       }
     })
   } else {
-    debugger
+    // debugger
     var tblHtml = createTable(title)
     var $tbl = $(tblHtml)
     var colNames = _.map(cols, function (x) {
@@ -481,6 +481,7 @@ export const drawChart = function (params) {
 }
 
 function getSql (params, kind, callback, errorCallback) {
+  var localRunNo = runNo
   if (callback) {
     addTaskByArgsScript()
   }
@@ -501,16 +502,15 @@ function getSql (params, kind, callback, errorCallback) {
     success: function (result) {
       // debugger;
       if (callback) {
-        completeTaskByArgsScript()
+        completeTaskByArgsScript(localRunNo)
         callback(result)
       } else {
         ret = result
       }
-
     },
     error: function (err) {
       if (callback) {
-        completeTaskByArgsScript()
+        completeTaskByArgsScript(localRunNo)
       }
       if (errorCallback) {
         errorCallback(err)
@@ -555,50 +555,31 @@ export const get_url = function visitUrl (url, data) {
   return ret
 }
 
-// var runStateMap = {}
-// var lastRunState
+var runNo = 0
+var runState = [
+  {
+    completed: 0,
+    submitted: 0
+  }
+]
 
-// // 用于定期汇报执行进度
-// var progressInterval
+export const startRun = function () {
+  runNo++
+  runState[runNo] = {
+    completed: 0,
+    submitted: 0
+  }
+}
 
-// var runNo = 0
-
-// function getRunState (aRunNo) {
-//   return runStateMap[aRunNo]
-// }
-// function setRunState (aRunNo, runState) {
-//   runStateMap[aRunNo] = runState
-//   lastRunState = runState
-// }
-
-// function getCurrentRunState () {
-//   return lastRunState
-// }
+export const currentRunState = function () {
+  return runState[runNo]
+}
 
 export const addTaskByArgsScript = function () {
-
+  // 假设所有请求都是一气异步发出的，中间没有被下个RunNo打断的机会
+  currentRunState().submitted++
 }
 
-export const completeTaskByArgsScript = function () {
-
+export const completeTaskByArgsScript = function (runNo) {
+  runState[runNo].completed++
 }
-
-// export const startArgsScript = function ($disp, statusReporter, doneCallback) {
-//   runNo++
-//   var runState = {
-//     taskNum: 1, // 这个任务相当于同步执行script.js本身
-//     doneNum: 0,
-//     $disp: $disp,
-//     doneCallback: doneCallback,
-//     statusReport: statusReporter,
-//     startTime: new Date().getTime(),
-//     mainDone: false
-//   }
-
-//   setRunState(runNo, runState)
-
-//   // 开始自动更新状态显示
-//   if (!progressInterval) {
-//     progressInterval = setInterval(showProgress, 1000)
-//   }
-// }

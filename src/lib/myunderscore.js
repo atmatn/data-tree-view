@@ -1,7 +1,7 @@
 import _ from 'underscore'
 let oldTemplate = _.template
 let newTemplate = function (a, b) {
-  debugger
+  // debugger
   if (b === undefined) {
     return oldTemplate(a)
   } else {

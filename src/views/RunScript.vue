@@ -10,6 +10,9 @@
     <!-- <Button @click="changeParam">Change Param</Button> -->
     <ArgsScriptParams v-bind:argDefs="argDefs"></ArgsScriptParams>
     <Button @click="doRun">获取数据</Button>
+    <div v-if="showProgress">
+      执行进度 {{ runState.completed }} / {{ runState.submitted }}
+    </div>
     <div ref="content"></div>
   </div>
 </template>
@@ -24,6 +27,7 @@ import $ from "jquery"
 import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
 import * as customScriptApi from '@/lib/custom-script.js'
+import { startRun, currentRunState } from '@/lib/custom-script.js'
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -42,7 +46,9 @@ export default {
       argDefs: [],
       scriptBody: "",
       scriptTitle: "",
-      author: ""
+      author: "",
+      showProgress: false,
+      runState: {}
     };
     // return {
     //     myScriptId: this.$store.state.currentScriptId,
@@ -51,6 +57,20 @@ export default {
   },
   mounted: function() {
     this.reload();
+    setInterval( () => {
+      debugger
+      var runState = currentRunState()
+      console.log(`runState submitted = ${runState.submitted}`)
+      if( runState.submitted > 0 ) {
+        if (runState.completed < runState.submitted) {
+          this.showProgress = true
+          this.runState = runState
+        } else {
+          this.showProgress = false
+          this.runState = {}
+        }
+      }
+    }, 1000)
   },
   props: {
     scriptId: String,
@@ -277,12 +297,13 @@ export default {
       });
 
       // 这里处理args和layout
-      debugger
+      // debugger
 
       let { drawTable, drawChart, get_presto, get_hive, get_pgsql } = customScriptApi
       let { args, layouts } = this.prepareForRun()
       let $disp = $(this.$refs.content)
 
+      startRun()
       eval(this.scriptBody)
 
 
