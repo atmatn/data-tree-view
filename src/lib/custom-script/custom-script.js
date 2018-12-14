@@ -583,3 +583,32 @@ export const addTaskByArgsScript = function () {
 export const completeTaskByArgsScript = function (runNo) {
   runState[runNo].completed++
 }
+
+// 目前不支持ES6的custom script，所以需要手工处理下multiline
+export const fixMultiline = function fixMultiline (scriptBody) {
+  // 处理multiline
+  // https://regex101.com/
+  var scriptBodyNew = scriptBody.replace(/multiline\s*\(\s*function\s*\(\s*\)\s*\{\s*\/\*((\s|.)*?)\*\/\s*\}\s*\)/gm, function (m0, m1) {
+    // count lines
+    var lines = m1.split(/(\n|\r)+/m)
+    var suffix = '/*\n'
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].match(/^\s*$/)) {
+
+      } else {
+        suffix += lines[i] + '\n'
+      }
+    }
+    suffix += '*/\n'
+    return JSON.stringify(m1) + suffix
+  })
+  return scriptBodyNew
+}
+
+export const wrapScript = function wrapScript (scriptBody, userParams, scriptId) {
+  // return `'use strict';(function(){${scriptBody}})();\n//# sourceURL=args_script${scriptId ? ('.' + scriptId) : ''}.js`
+  // return `(function(){${scriptBody}})();\n//# sourceURL=args_script${scriptId ? ('.' + scriptId) : ''}.js`
+  var prepend = `var userParams = ${JSON.stringify(userParams)};`
+  var newScript = `'use strict';(function(args){${prepend} ${fixMultiline(scriptBody)}\n})(args);\n//# sourceURL=my_custom_script.js`
+  return newScript
+}

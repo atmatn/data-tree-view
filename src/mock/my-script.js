@@ -1,4 +1,4 @@
-export const getSingleV2 = ({ url, type, body }) => {
+export const getArgsScriptSingle = ({ url, type, body }) => {
   let j = JSON.parse(body)
   if (j.id === '123') {
     return {

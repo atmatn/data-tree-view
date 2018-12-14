@@ -28,8 +28,9 @@ import $ from "jquery"
 import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
 import * as customScriptApi from '@/lib/custom-script'
-import { startRun, currentRunState } from '@/lib/custom-script'
+import { startRun, currentRunState, wrapScript } from '@/lib/custom-script'
 import PrestoProgress from "_c/PrestoProgress.vue"
+import { toPercent, limitFraction, autoFormat} from "@/lib/format"
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -311,13 +312,22 @@ export default {
             collapseTable,
             orderByProperty,
             appendBase,
-            appendSum
+            appendSum,
+            runJs,
+            set_snippet
               } = customScriptApi
       let { args, layouts } = this.prepareForRun()
+      let lib = {
+        format: {
+          toPercent: toPercent,
+          limitFraction: limitFraction,
+          autoFormat: autoFormat
+        }
+      }
       let $disp = $(this.$refs.content)
 
       startRun()
-      eval(this.scriptBody)
+      eval(wrapScript(this.scriptBody, params, this.myScriptId))
 
 
       // 假设下面的是结果
@@ -445,9 +455,9 @@ export default {
       // 读取script
       axios
         .request({
-          url: "/api/my-script/single-v2",
-          method: "POST",
-          data: {
+          url: "/api/args-script/single",
+          method: "GET",
+          params: {
             id: this.currentScriptId
           }
         })

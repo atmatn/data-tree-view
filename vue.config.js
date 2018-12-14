@@ -54,6 +54,21 @@ module.exports = {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
+      },
+      '/api/args-script': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api/presto': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/snippet': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
       }
     }
   }
