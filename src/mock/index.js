@@ -2,6 +2,7 @@ import Mock from 'mockjs'
 import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 import { getSingleV2, getKafkaList } from './my-script'
+import { getPrestoQueries } from './presto'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
   return {
@@ -41,6 +42,7 @@ if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/dims/, 'post', getDataSourceDimList)
   Mock.mock(/\/api\/summary-query\/update-dim-cat-list/, 'post', updateDimCatList)
   Mock.mock(/\/api\/summary-query\/queries/, 'get', getQueries)
+  Mock.mock(/\/api\/presto\/my-queries/, 'get', getPrestoQueries)
 }
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
