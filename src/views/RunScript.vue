@@ -14,6 +14,7 @@
       执行进度 {{ runState.completed }} / {{ runState.submitted }}
     </div>
     <div ref="content"></div>
+    <PrestoProgress></PrestoProgress>
   </div>
 </template>
 
@@ -26,8 +27,9 @@ import { toIntDay, yesterdayDateStr } from "@/lib/date-extension.js";
 import $ from "jquery"
 import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
-import * as customScriptApi from '@/lib/custom-script.js'
-import { startRun, currentRunState } from '@/lib/custom-script.js'
+import * as customScriptApi from '@/lib/custom-script'
+import { startRun, currentRunState } from '@/lib/custom-script'
+import PrestoProgress from "_c/PrestoProgress.vue"
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -36,7 +38,8 @@ import {
 
 export default {
   components: {
-    ArgsScriptParams
+    ArgsScriptParams,
+    PrestoProgress
   },
   data: function() {
     // debugger
@@ -58,7 +61,7 @@ export default {
   mounted: function() {
     this.reload();
     setInterval( () => {
-      debugger
+      // debugger
       var runState = currentRunState()
       console.log(`runState submitted = ${runState.submitted}`)
       if( runState.submitted > 0 ) {
@@ -299,7 +302,17 @@ export default {
       // 这里处理args和layout
       // debugger
 
-      let { drawTable, drawChart, get_presto, get_hive, get_pgsql } = customScriptApi
+      let {
+            drawTable,
+            drawChart,
+            get_presto,
+            get_hive,
+            get_pgsql,
+            collapseTable,
+            orderByProperty,
+            appendBase,
+            appendSum
+              } = customScriptApi
       let { args, layouts } = this.prepareForRun()
       let $disp = $(this.$refs.content)
 
