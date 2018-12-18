@@ -86,7 +86,7 @@
                       <Button @click="openScript({scriptId: '456', params: {'param_a': 4, 'param_b': 5 } })">Open Script 456</Button>
                     </div>
                     <Layout>
-                        <Sider hide-trigger :style="{background: '#fff'}">
+                        <Sider hide-trigger :style="{background: '#fff'}" :width="300">
                               <menuTree></menuTree>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
@@ -344,12 +344,16 @@ export default {
 .layout-footer-center{
     text-align: center;
 }
+</style>
+
+<style lang="less">
 .extra {
     display: inline-block;
     border-style: solid;
     border-color: red;
     z-index: 10000;
-    max-height: 400px;
+    max-height: 600px;
+    width: 90%;
     overflow: auto;
 }
 </style>

@@ -124,7 +124,7 @@ import HttpRequest from '@/lib/wrapped-axios'
 import { mapState, mapActions } from 'vuex'
 var axios = new HttpRequest()
 import moment from 'moment'
-import { drawTable, drawChart } from '@/lib/custom-script.js'
+import { drawTable, drawChart } from '@/lib/custom-script'
 import $ from 'jquery'
 import { Input, Button } from 'iview'
 // https://www.npmjs.com/package/@saeris/vue-spinners
