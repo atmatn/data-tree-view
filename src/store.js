@@ -10,8 +10,8 @@ export default new Vuex.Store({
   state: {
     // 参考：https://vuex.vuejs.org/zh/guide/state.html
     someMsg: '',
-    currentScriptId: '',
-    currentScriptParams: {},
+    // currentScriptId: '',
+    // currentScriptParams: {},
     dataTreeNodes: [],
     wichToShow: false, // 决定是否显示无可执行权限的项
     allow: false, // 确定按钮是否可以关闭model
@@ -25,14 +25,14 @@ export default new Vuex.Store({
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
     updateSomeMsg: (state, msg) => { state.someMsg = msg },
 
-    updateScriptIdAndParams: (state, { scriptId, params }) => {
-      state.currentScriptId = scriptId
-      state.currentScriptParams = params
-    },
+    // updateScriptIdAndParams: (state, { scriptId, params }) => {
+    //   state.currentScriptId = scriptId
+    //   state.currentScriptParams = params
+    // },
 
-    updateScriptParams: (state, { params }) => {
-      state.currentScriptParams = params
-    },
+    // updateScriptParams: (state, { params }) => {
+    //   state.currentScriptParams = params
+    // },
 
     updateDataTreeNodes: (state, { treeNodes }) => {
       state.dataTreeNodes = _.cloneDeep(treeNodes)
@@ -41,7 +41,7 @@ export default new Vuex.Store({
       state.wichToShow = status
     },
     updateAllow: (state, { status }) => {
-        state.allow = status
+      state.allow = status
     },
     updateCannotSubmit: (state, { status }) => {
       state.allow = status
@@ -70,7 +70,7 @@ export default new Vuex.Store({
     },
 
     openScript ({ commit }, { scriptId, params }) {
-      commit('updateScriptIdAndParams', { scriptId, params })
+      // commit('updateScriptIdAndParams', { scriptId, params })
       router.push({
         name: 'run-script',
         query: {
@@ -79,17 +79,17 @@ export default new Vuex.Store({
         }
       })
     },
-    updateScriptParams ({ commit, state }, { params }) {
-      // debugger
-      commit('updateScriptParams', { params })
-      router.push({
-        name: 'run-script',
-        query: {
-          scriptId: state.currentScriptId,
-          ...params
-        }
-      })
-    },
+    // updateScriptParams ({ commit, state }, { params }) {
+    //   // debugger
+    //   commit('updateScriptParams', { params })
+    //   router.push({
+    //     name: 'run-script',
+    //     query: {
+    //       scriptId: state.currentScriptId,
+    //       ...params
+    //     }
+    //   })
+    // },
     reloadDataTree ({ commit, state }) {
       axios.request({
         url: '/api/data-tree',

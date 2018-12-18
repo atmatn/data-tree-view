@@ -53,7 +53,7 @@ export default {
     }
   },
   mounted: function() {
-    console.log("mounted");
+    console.log("presto progress mounted");
     var lastHasRunningQuery = false;
     var lastCheck = 0;
     var pageStartTime = new Date().getTime();

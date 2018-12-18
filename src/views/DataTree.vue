@@ -70,7 +70,7 @@
       <Button @click="testSetArgsScriptAttrs">Set ArgsScript Attrs</Button>
     </div>
     <div>
-      Run Script (目前点之后，需要刷新页面):
+      Run Script (仅在“集成测试”模式有效):
       <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
       &nbsp;
       <router-link :to="{name: 'run-script', query: {'scriptId': 'attend_turn_rate', 'category_name': '高中'} }">attend_turn_rate</router-link>

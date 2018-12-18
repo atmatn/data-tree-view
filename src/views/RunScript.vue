@@ -11,7 +11,7 @@
     <ArgsScriptParams v-bind:argDefs="argDefs"></ArgsScriptParams>
     <Button @click="doRun">获取数据</Button>
     <div v-if="showProgress">
-      执行进度 {{ runState.completed }} / {{ runState.submitted }}
+      <div class="show-progress">执行进度 {{ runState.completed }} / {{ runState.submitted }}</div>
     </div>
     <div ref="content"></div>
     <PrestoProgress></PrestoProgress>
@@ -54,7 +54,8 @@ export default {
       scriptTitle: "",
       author: "",
       showProgress: false,
-      runState: {}
+      runState: {},
+      autoRun: false
     };
     // return {
     //     myScriptId: this.$store.state.currentScriptId,
@@ -62,7 +63,6 @@ export default {
     // }
   },
   mounted: function() {
-    this.reload();
     setInterval( () => {
       // debugger
       var runState = currentRunState()
@@ -88,35 +88,68 @@ export default {
     // next( vm => {
     //   vm.myParams = JSON.parse(JSON.stringify(to.query))
     // })
-    next();
+    console.log('calling: beforeRouteEnter')
+    next( vm => {
+      debugger
+      vm.reload()
+    })
   },
   beforeRouteLeave(to, from, next) {
     // debugger
     // next(false)
   },
-  computed: {
-    ...mapState(["currentScriptId", "currentScriptParams"])
-  },
-  watch: {
-    currentScriptId(val, oldVal) {
-      //current script id changed
-      console.log("current script id from " + oldVal + " to " + val);
-      // console.log(this.$route)
-
-      this.reload();
-    },
-    currentScriptParams(val, oldVal) {
-      // debugger
-      //current script params changed
-      console.log("current script params from " + oldVal + " to " + val);
-      var equalToSavedParams = objEqual(val, this.myParams);
-      if (!equalToSavedParams) {
-        this.reload();
-      }
+  // 调用router.push，会走到这，如果调用next，URL才会真正被替换
+  beforeRouteUpdate (to, from, next) {
+    console.log('calling: before route update')
+    if (to.params.noReload) {
+      // 不用reload
+      console.log('do not reload')
+      next()
+    } else {
+      console.log('do reload')
+      next()
+      this.reload()
     }
   },
+  // computed: {
+  //   ...mapState(["currentScriptId", "currentScriptParams"])
+  // },
+  watch: {
+    // currentScriptId(val, oldVal) {
+    //   //current script id changed
+    //   console.log("current script id from " + oldVal + " to " + val);
+    //   // console.log(this.$route)
+
+    //   this.reload();
+    // },
+    // currentScriptParams(val, oldVal) {
+    //   // debugger
+    //   //current script params changed
+    //   console.log("current script params from " + oldVal + " to " + val);
+    //   var equalToSavedParams = objEqual(val, this.myParams);
+    //   if (!equalToSavedParams) {
+    //     this.reload();
+    //   }
+    // }
+  },
   methods: {
-    ...mapActions(["updateScriptParams"]),
+    // ...mapActions(["updateScriptParams"]),
+    updateScriptParams: function({params}){
+      debugger
+      this.myParams = params
+      this.$router.push({
+        name: 'run-script',
+        query: {
+          scriptId: this.myScriptId,
+          ...params,
+          autoRun: this.autoRun
+        },
+        params: {
+          // 不用reload
+          noReload: true
+        }
+      })
+    },
     changeParam() {
       var x = Math.random();
       // 更新组件内参数
@@ -331,6 +364,7 @@ export default {
       let $disp = $(this.$refs.content)
 
       let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
+      this.clearDisp()
       startRun()
       eval(wrapScript(this.scriptBody, params, this.myScriptId))
 
@@ -449,21 +483,29 @@ export default {
         }
       }
     },
-    reload: function() {
-      this.myParams = JSON.parse(JSON.stringify(this.currentScriptParams));
-      this.myScriptId = this.currentScriptId;
+    clearDisp () {
       // 清空结果
       this.$refs.content.innerHTML = "";
       if (this.myScriptId === "") {
         return;
       }
+    },
+    reload: function() {
+      // debugger
+      this.myParams = this.$route.query
+      this.myScriptId = this.$route.query.scriptId
+      this.autoRun = (this.$route.query.autoRun === 'true' || this.$route.query.autoRun === true)
+
+      this.clearDisp()
+      console.log(`FETCHING ${this.myScriptId}`)
+
       // 读取script
       axios
         .request({
           url: "/api/args-script/single",
           method: "GET",
           params: {
-            id: this.currentScriptId
+            id: this.myScriptId
           }
         })
         .then(res => {
@@ -474,6 +516,10 @@ export default {
           this.scriptBody = res.data.body;
           this.scriptTitle = res.data.title;
           this.author = res.data.author;
+
+          if (this.autoRun) {
+            this.doRun()
+          }
         });
     }
   }
@@ -500,5 +546,9 @@ p * {
   font-size: 32px;
 }
 
+.show-progress {
+  text-align: center;
+  background-color: lightyellow;
+}
 </style>
 
