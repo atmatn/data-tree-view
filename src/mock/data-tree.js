@@ -218,7 +218,8 @@ function addNode ({ parentId, type, title }) {
       visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
       currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
       containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
-      creator: 'bob' // 创建者
+      creator: 'bob', // 创建者
+      children: []
     }
     mockTreeNodes.push(newNode)
     doIndex()
@@ -547,12 +548,12 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
-      console.log(target.linkUrl)
+    console.log(target.linkUrl)
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
-    //target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
-    target.scriptParams =j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
+    // target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+    target.scriptParams = j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
     console.log(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
   } else {
     // 其他也没有属性；目前也没有其他
@@ -571,7 +572,6 @@ export const deleteNode = ({ url, type, body }) => {
       msg: `id=${j.id} 节点不存在！`
     }
     throw err
-
   }
 
   function removeFrom (arr, id) {
