@@ -15,7 +15,6 @@ export default new Vuex.Store({
     dataTreeNodes: [],
     wichToShow: false, // 决定是否显示无可执行权限的项
     allow: false, // 确定按钮是否可以关闭model
-    cannotSubmit: true, // 用于判断是否是重复提交
     permsList: '', // 权限列表
     queryingCount: 0,
     turnOn: [], // 选择哪一项展开
@@ -42,7 +41,7 @@ export default new Vuex.Store({
       state.wichToShow = status
     },
     updateAllow: (state, { status }) => {
-      state.allow = status
+        state.allow = status
     },
     updateCannotSubmit: (state, { status }) => {
       state.allow = status
@@ -109,12 +108,6 @@ export default new Vuex.Store({
     },
     changeWichToShow ({ commit }, { status }) {
       commit('updateWichToShow', { status })
-      router.push({
-        name: 'run-script',
-        query: {
-          status: status
-        }
-      })
     },
     incrementQueringCount ({ commit, state }, { val }) {
       commit('incrementQueringCount', { val })

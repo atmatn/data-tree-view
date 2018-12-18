@@ -3,12 +3,10 @@
     <Button type="primary" @click="modal1 = true">编辑模式</Button>
     <Modal
         v-model="modal1"
-        draggable
-        scrollable
         :closable="false"
-        class-name="vertical-center-modal"
         title="编辑"
-        width="auto"
+        :mask-closable="false"
+        class-name="vertical-center-modal"
         @on-ok="ok"
         @on-cancel="cancel">
         <edits></edits>
@@ -59,3 +57,17 @@ export default {
         }
     }
 </script>
+<style lang="less">
+.vertical-center-modal{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ivu-modal{
+        top: 0;
+        min-width: 45%;
+        overflow-x: auto;
+        overflow-y: auto
+    }
+}
+</style>

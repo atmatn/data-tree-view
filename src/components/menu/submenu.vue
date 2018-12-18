@@ -4,16 +4,11 @@
         <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
-        <MenuItem :name="model.title" @click.native="openScript({scriptId: model.id, params:model.scriptParams})">{{model.title}}</MenuItem>
+        <MenuItem :name="model.title" @click.native="openScript({scriptId: model.scriptId, params:model.scriptParams})">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else-if="model.type !== 'product'&&model.type !== 'folder'&&model.type ==='direct-link'">
     <div v-if="model.currentUserExecutable=== false">
-      <!-- <MenuItem :name="model.id">
-          <Poptip title="缺少下列权限" :content="model.computed_executable_perms.toString()" placement="right">
-              {{model.title}}<icon type="md-lock"/>
-          </Poptip>
-      </MenuItem> -->
       <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
@@ -21,14 +16,25 @@
     </div>
   </div>
   <div v-else>
-      <div v-if="model.currentUserExecutable === true&&model.children.length === 0">
+      <div v-if="model.type !== 'product'&&model.children!==undefined&&model.children.length === 0">
           <MenuItem :name="model.title">{{model.title}}(空目录)</MenuItem>
       </div>
       <div v-else>
-          <div v-if="model.type=== 'product'&&model.currentUserVisible===false" ></div>
+          <div v-if="model.type=== 'product'&&model.currentUserVisible===false" >
+              <submenu v-if="wichToShow===true" :name="model.title">
+                    <template v-if="model.children!==undefined&&model.children.length !== 0" slot="title">{{model.title}}</template>
+                    <template v-else slot="title">
+                        <Poptip trigger="hover" title="缺少下列权限" :content="'currentUserVisible = false'" placement="right">
+                          {{model.title}}<icon type="md-lock"/>(空产品)
+                        </Poptip>
+                      </template>
+                    <div v-if="isFolder"><treeMenu v-for="item in model.children" :model="item"></treeMenu></div>
+              </submenu>
+          </div>
           <div v-else>
-              <submenu :name="model.title" >
-                    <template slot="title">{{model.title}}</template>
+              <submenu :name="model.title">
+                    <template v-if="model.children!==undefined&&model.children.length !== 0" slot="title">{{model.title}}</template>
+                    <template v-else slot="title">{{model.title}}(空产品)</template>
                     <div v-if="isFolder"><treeMenu v-for="item in model.children" :model="item"></treeMenu></div>
               </submenu>
           </div>

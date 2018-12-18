@@ -1,6 +1,6 @@
 <template>
 <div>
-<Form v-if="functions==='add'">
+<Form v-if="functions==='add'&&allow===false" @submit.native.prevent>
   <formItem>
       请选择要添加的类型:
         <RadioGroup v-model="type">
@@ -15,38 +15,31 @@
         您当前选择了:{{this.type}}&nbsp;,&nbsp;parentId:{{model.id}}&nbsp;,&nbsp;itemName:{{this.itemName}}
       </div>
       <br/>
-    <Button v-if="allow===false" @click="save()"type="primary">保存</Button>
-    <!-- <div v-if ="allow===false" style="color:red">{{this.success}}</div>
-    <div v-if ="allow===true" style="color:green">{{this.success}}</div> -->
+    <Button  @click="save()"type="primary">保存</Button>
   </formItem>
 </Form>
-<Form v-if="functions==='addProduct'">
+<Form v-if="functions==='addProduct'&&allow===false" @submit.native.prevent>
   <formItem>
     请输入要添加的新产品名称：<input v-model.trim="productName"/>
   </formItem>
   <formItem>
     <Button type="primary" v-if="allow===false" @click="save()">添加产品</Button>
-    <!-- <div v-if ="allow===false" style="color:red">{{this.success}}</div>
-    <div v-if ="allow===true" style="color:green">{{this.success}}</div> -->
   </formItem>
 </Form>
-<Form v-if="functions==='rename'">
+<Form v-if="functions==='rename'&&allow===false" @submit.native.prevent>
   <formItem>
-      <!-- 原名称:{{model.title}}<br/> -->
-        <Input v-model.trim="itemName" :placeholder="model.title" style="width: 300px" />
+        <Input v-model.trim="reName" :placeholder="model.title" style="width: 300px" />
       <br/>
     <Button v-if="allow===false" @click="rename()"type="primary">更改</Button>
-    <!-- <div v-if ="allow===false" style="color:red">{{this.success}}</div>
-    <div v-if ="allow===true" style="color:green">{{this.success}}</div> -->
   </formItem>
 </Form>
-<Form v-if="functions==='delete'">
+<Form v-if="functions==='delete'&&allow===false" @submit.native.prevent>
   <formItem>
    确定要删除【{{model.title}}】吗？
     <Button v-if="allow===false" @click="deletes()"type="primary">确定</Button>
   </formItem>
 </Form>
-<Form v-if="functions==='move'">
+<Form v-if="functions==='move'&&allow===false" @submit.native.prevent>
   <formItem>
     <br/>
     1.当前选择了：{{model.title}}<br/>
@@ -60,7 +53,7 @@
     <Button v-if="allow===false" @click="moves()"type="primary">移动</Button>
   </formItem>
 </Form>
-<Form v-if="functions==='copy'">
+<Form v-if="functions==='copy'&&allow===false" @submit.native.prevent>
   <formItem>
     1.要复制的叶子节点:{{model.title}}
     <br/>
@@ -75,9 +68,12 @@
     <Button v-if="allow===false" @click="copys()"type="primary">复制</Button>
   </formItem>
 </Form>
-<Form v-if="functions==='setPerms'">
+<Form v-if="functions==='setPerms'&&allow===false" @submit.native.prevent>
   <formItem>
-    {{model.title}}的权限:<div v-for="item in this.perms"><div >{{item.value}}:{{item.perms}}</div></div>
+    {{model.title}}的权限:<div v-for="item in this.perms">{{item.value}}:{{item.perms}}</div>
+    <div v-if="model.currentUserExecutable!==undefind">currentUserExecutable:{{model.currentUserExecutable}}</div>
+    <div v-if="model.containsExecutableForCurrentUser!==undefind">containsExecutableForCurrentUser:{{model.containsExecutableForCurrentUser}}</div>
+    <div v-if="model.currentUserManageable!==undefind">currentUserManageable:{{model.currentUserManageable}}</div>
     <br/>
     权限列表：
     <Select v-model="permSelected" style="width:300px">
@@ -87,21 +83,17 @@
     <Button @click="setPerms()"type="primary">设置</Button>
   </formItem>
 </Form>
-<Form v-if="functions==='setAttrs'">
+<Form v-if="functions==='setAttrs'&&allow===false" @submit.native.prevent>
   <formItem>
     {{model.title}}的属性:<div v-for="item in this.attrs">{{item.title}}:{{item.attrVal}}</div>
   </formItem>
   <formItem>
-    <!-- 设置当前属性的类型为：
-    <RadioGroup v-model="Nowtype">
-      <Radio label='direct-link'/>
-      <Radio label='args-script'/>
-    </RadioGroup> -->
     <Input v-if="model.type === 'direct-link'" :placeholder="model.linkUrl" v-model.trim="urls" />
     <div v-if="model.type === 'args-script'">
-      脚本id：<Input :placeholder="model.scriptId" v-model.trim="scriptid" style="width: 300px" value="model.scriptId"/><br/>
+      脚本 id：<Input :placeholder="model.scriptId" v-model.trim="scriptid" style="width: 300px" value="model.scriptId"/><br/>
       <div v-for="(key,value,index) in model.scriptParams">
-      参数名{{index+1}}：<Input :placeholder="value+''" v-model.trim="param_a[index]" style="width: 300px"/>参数值{{index+1}}：<Input :placeholder="key+''" v-model.trim="param_a_value[index]" style="width: 300px" /><br/>
+      参数名{{index+1}}：<Input :placeholder="value+''" v-model.trim="param_a[index]" style="width: 300px"/><br/>
+      参数值{{index+1}}：<Input :placeholder="key+''" v-model.trim="param_a_value[index]" style="width: 300px" /><br/>
       </div>
     </div>
     <Button type="primary" @click="setAttrs()">保存</Button>
@@ -121,6 +113,7 @@ export default {
             model:function(newVal,oldVal){
                 this.scriptid = newVal.scriptId;
                 this.urls=newVal.linkUrl;
+                this.reName=newVal.title;
                 var i=0;
                 for(var key in newVal.scriptParams){
                           this.param_a[i]=key;
@@ -129,10 +122,12 @@ export default {
                 }
                           }
         },
+    inject:['reload'],
     data(){
       return{
         type:'',
         itemName:'',
+        reName:'',
         success:'',
         productName:'',
         urls:'',
@@ -172,6 +167,7 @@ export default {
                  this.$Message.info('添加成功');
                  this.success='已添加';
                  this.$store.commit('updateAllow',{status:true});
+                 this.productName='';
                  this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
               }
                             })
@@ -190,16 +186,16 @@ export default {
                   title:this.itemName
               }
               }).then(res => {
-              //this.$Message.info('新增项的id：'+res.data.id);//测试用
               if(res.status !== 200){
                 this.$store.commit('updateAllow',{status:false});
                 this.$Message.info(res.data.msg);
                 this.success='添加失败,请按F12打开控制台查看错误信息';
               }else{
                  this.$Message.info('添加成功'+'id:'+res.data.id);
-                 // this.$Message.info(res.data.id);
                  this.success='已添加';
                  this.$store.commit('updateAllow',{status:true});
+                 this.type='';
+                 this.itemName='';
                  this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
               }
                             })
@@ -207,7 +203,7 @@ export default {
          }
       },
       rename(){
-            if(this.itemName===''||this.itemName.length===0){
+            if(this.reName===''||this.reName.length===0){
             this.$Message.info('输入的名称为空');
             this.success='输入的名称为空';
             this.$store.commit('updateAllow',{status:false});
@@ -217,13 +213,14 @@ export default {
               method: 'post',
               data:{
                   id:this.model.id,
-                  title:this.itemName
+                  title:this.reName
               }
               }).then(res => {
               if(res.status === 200){
                     this.$Message.info('修改成功');
                     this.success='已修改';
                     this.$store.commit('updateAllow',{status:true});
+                    this.reName='';
                     this.$store.dispatch('reloadDataTree')
               }else{
                 this.$store.commit('updateAllow',{status:false});
@@ -271,6 +268,7 @@ export default {
                     this.$Message.info('移动成功');
                     this.success='移动成功';
                     this.$store.commit('updateAllow',{status:true});
+                    this.onChange=''
                     this.$store.dispatch('reloadDataTree')
                 }
                             })
@@ -278,7 +276,6 @@ export default {
       },
       changeVal(onChange){
           this.onChange=onChange
-          // console.log('2333333hh'+this.onChange)
       },
       copys(){
 
@@ -299,13 +296,13 @@ export default {
                     this.$Message.info('复制成功');
                     this.success='复制成功';
                     this.$store.commit('updateAllow',{status:true});
+                    this.onChange=''
                     this.$store.dispatch('reloadDataTree')
                 }
                             })
         }
       },
       setPerms(){
-            //console.log(this.permsList);
             axios.request({
               url: '/api/data-tree/edit/set-perms',
               method: 'post',
@@ -322,6 +319,7 @@ export default {
                     this.$Message.info('设置成功');
                     this.success='设置成功';
                     this.$store.commit('updateAllow',{status:true});
+                    this.permSelected=''
                     this.$store.dispatch('reloadDataTree')
                     }
                             })
@@ -337,9 +335,8 @@ export default {
             var attrVal={};
             attrVal[a]=this.param_a_value[0];
             attrVal[b]=this.param_a_value[1];
-           //console.log('21'+this.model.scriptParams.getKey());
             if(this.param_a==='[]'||this.param_a===[]){
-              console.log('21')
+              //console.log('21')
                 var attrScript=[{'attrKey':'scriptId','attrVal':this.$placeholder.value},{'attrKey':'scriptParams','attrVal':attrVal}];
             }else{
                 var attrScript=[{'attrKey':'scriptId','attrVal':this.scriptid},{'attrKey':'scriptParams','attrVal':attrVal}];

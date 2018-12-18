@@ -3,7 +3,7 @@
   <div>
   <selects/>
   </div>
-  <Menu theme="dark"  :active-name="turnLight" v-model="turnOn" :open-names="turnOn" ref="side_menu" >
+  <Menu theme="dark"  :active-name="turnLight"  :open-names="turnOn" ref="side_menu">
     <div v-if="TreeNodes" >
           <submenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></submenu>
     </div>
@@ -26,7 +26,8 @@ import modals from '@/components/modal/modal.vue'
 export default {
     data(){
             return{
-              dataTreeNodes:this.$store.dispatch('reloadDataTree')
+              dataTreeNodes:this.$store.dispatch('reloadDataTree'),
+              onChangeStatus:[]
             }
           },
     components:{submenu,selects,switchs,modals},

@@ -105,6 +105,7 @@
 import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
+import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
 // import {getDataTree} from '@/mock/index.js'
 
@@ -116,8 +117,10 @@ export default {
       next( function(vm) {
         vm.openScript({
           scriptId: to.query.scriptId,
-          params: to.query
+          params: to.query,
         })
+       // vm.$store.commit('updateTurnOn',{status:[to.query.title]})
+        //vm.$store.commit('updateTurnLight',{status:'KPI数据'})
       })
     } else {
       next()

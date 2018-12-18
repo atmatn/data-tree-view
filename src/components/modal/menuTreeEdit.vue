@@ -3,7 +3,7 @@
   <Button type="default" @click="addProduct()">添加新产品</Button>
   <Tree :data="TreeNodes" :render="renderContent"></Tree>
   <h3>{{tips}}</h3>
-  <forms  :model="addForm" v-model="model" :functions="functions" :selected="selected" :perms="perm" :attrs="attrs" :permsList="this.perms"></forms>
+  <forms  :model="addForm" v-model="model" :functions="functions" :perms="perm" :attrs="attrs" :permsList="this.perms"></forms>
 </div>
 </template>
 <script>
@@ -20,13 +20,16 @@ export default {
              tips:'欢迎来到编辑页面！',
              addForm:'',
              functions:'',
-             selected:'',
              perm:'',
              attrs:'',
-             permsList:this.$store.dispatch('reloadPermsList')
+             permsList:this.$store.dispatch('reloadPermsList'),
+             buttonType:'primary'
             }
           },
     computed:{
+       ...mapState({
+      allow: "allow"
+    }),
          ...mapState({
       TreeNodes: "dataTreeNodes"
     }),
@@ -39,9 +42,10 @@ export default {
                 return h('span', [
                             h('span',
                     [
-                        data.currentUserVisible===false||data.currentUserExecutable===false?null:h('span', [
+                        data.currentUserVisible===false||data.currentUserExecutable===false?null:
+                        h('span', [
                           h('Button',
-                          {props:{type:'primary'},on:{click:()=>{this.select(data)}}},
+                          {props:{type:(data.type === 'product'?'primary':data.type === 'folder'?'info':data.type === 'args-script'?'success':data.type ==='direct-link'?'warning':'')}},
                           data.title+' '
                           ),
                           ]),
@@ -57,7 +61,7 @@ export default {
                         {props:{type: 'text'},on:{click:()=>{this.rename(data)}},style:{color:'blue'}},
                         '更名'
                         ):null,
-                        data.type!=='product'&&data.currentUserManageable === true?h('Button',
+                        data.type!=='product'&&data.currentUserManageable === true&&(data.children=== undefined||data.children.length===0)?h('Button',
                         {props:{type: 'text'},on:{click:()=>{this.delete(data)}},style:{color:'black'}},
                         '删除'
                         ):null,
@@ -76,38 +80,43 @@ export default {
                     ]),
                 ]);
             },
-            select(data){
-                this.selected=data;
-            },
             add (data) {
               this.tips='当前项:'+data.title+'-新增';
               this.addForm=data;
               this.functions='add';
+              this.$store.commit('updateAllow',{status:false});
             },
             addProduct(){
               this.tips='添加新产品';
               this.addForm='';
               this.functions='addProduct';
+              this.$store.commit('updateAllow',{status:false});
             },
             rename(data){
               this.tips='当前项:'+data.title+'-更名';
               this.addForm=data;
               this.functions='rename';
+              this.$store.commit('updateAllow',{status:false});
             },
             delete(data){
               this.tips='当前项:'+data.title+'-删除';
               this.addForm=data;
+              debugger
+              //console.log('2333333333333333333333'+data.children)
               this.functions='delete';
+              this.$store.commit('updateAllow',{status:false});
             },
             move(data){
               this.tips='当前项:'+data.title+'-移动';
               this.addForm=data;
               this.functions='move';
+              this.$store.commit('updateAllow',{status:false});
             },
             copy(data){
               this.tips='当前项:'+data.title+'-复制';
               this.addForm=data;
               this.functions='copy';
+              this.$store.commit('updateAllow',{status:false});
             },
             getPerms(data){
               this.tips='当前项:'+data.title+'-管理权限';
@@ -128,6 +137,7 @@ export default {
                     console.log('获取权限失败');
                 }
                             })
+               this.$store.commit('updateAllow',{status:false});
             },
             getAttrs(data){
               this.tips='当前项:'+data.title+'-设置属性';
@@ -143,12 +153,12 @@ export default {
               }).then(res => {
                 if(res.data.attrs !==null&&res.data.attrs !==''&&res.data.attrs !==undefined){
                     this.attrs=res.data.attrs
-
                     console.log('获取属性成功');
                 }else{
                     console.log('获取属性失败');
                 }
                             })
+               this.$store.commit('updateAllow',{status:false});
             }
         }
 }
