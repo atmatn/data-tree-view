@@ -54,7 +54,8 @@ export default {
       scriptTitle: "",
       author: "",
       showProgress: false,
-      runState: {}
+      runState: {},
+      autoRun: false
     };
     // return {
     //     myScriptId: this.$store.state.currentScriptId,
@@ -140,7 +141,8 @@ export default {
         name: 'run-script',
         query: {
           scriptId: this.myScriptId,
-          ...params
+          ...params,
+          autoRun: this.autoRun
         },
         params: {
           // 不用reload
@@ -492,6 +494,7 @@ export default {
       // debugger
       this.myParams = this.$route.query
       this.myScriptId = this.$route.query.scriptId
+      this.autoRun = (this.$route.query.autoRun === 'true' || this.$route.query.autoRun === true)
 
       this.clearDisp()
       console.log(`FETCHING ${this.myScriptId}`)
@@ -513,6 +516,10 @@ export default {
           this.scriptBody = res.data.body;
           this.scriptTitle = res.data.title;
           this.author = res.data.author;
+
+          if (this.autoRun) {
+            this.doRun()
+          }
         });
     }
   }
