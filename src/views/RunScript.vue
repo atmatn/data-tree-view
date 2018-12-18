@@ -28,9 +28,11 @@ import $ from "jquery"
 import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
 import * as customScriptApi from '@/lib/custom-script'
+import * as dateApi from '@/lib/date-extension'
 import { startRun, currentRunState, wrapScript } from '@/lib/custom-script'
 import PrestoProgress from "_c/PrestoProgress.vue"
 import { toPercent, limitFraction, autoFormat} from "@/lib/format"
+import momentRef from "moment"
 import {
   getListFromMeta,
   getStringFromMeta,
@@ -317,6 +319,8 @@ export default {
             set_snippet
               } = customScriptApi
       let { args, layouts } = this.prepareForRun()
+      let { dateFormat } = dateApi
+      let moment = momentRef
       let lib = {
         format: {
           toPercent: toPercent,

@@ -1,5 +1,5 @@
 <template>
-  <div id="prestoStatus">Hello!
+  <div id="prestoStatus">
     <div class="running-presto-query" v-if="show && queryList.length > 0">
       <p>
         <span class="ptitle">Presto查询</span>

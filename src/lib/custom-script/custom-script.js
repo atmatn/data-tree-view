@@ -204,7 +204,8 @@ export const drawTable = function (params) {
               render: render,
               renderHeader: renderHeader,
               width: width,
-              fixed: fixed
+              fixed: fixed,
+              className: 'col-class'
             }
           }),
           data: data

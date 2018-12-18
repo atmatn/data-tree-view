@@ -69,6 +69,16 @@
       <Button @click="testSetDirectLinkAttrs">Set DirectLink Attrs</Button>
       <Button @click="testSetArgsScriptAttrs">Set ArgsScript Attrs</Button>
     </div>
+    <div>
+      Run Script (目前点之后，需要刷新页面):
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'attend_turn_rate', 'category_name': '高中'} }">attend_turn_rate</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'outvendor_repurchase', 'category_name': '高中', 'course_type': '公开课', 'second_name': '安卓精品课APP'} }">outvendor_repurchase</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'ke_kernel', 'category_name': '高中', 'course_type': '公开课', 'second_name': '安卓精品课APP'} }">outvendor_repurchase</router-link>
+    </div>
   </div>
         <Layout>
             <Header>
