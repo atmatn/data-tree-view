@@ -1,6 +1,6 @@
 export const getArgsScriptSingle = ({ url, type, body }) => {
-  let j = JSON.parse(body)
-  if (j.id === '123') {
+  var id = url.match(/id=([^&]+)/)[1]
+  if (id === '123') {
     return {
       'id': 3095,
       'title': '网站每日PV',
