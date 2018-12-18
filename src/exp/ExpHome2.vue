@@ -2,6 +2,9 @@
 import { tryWith } from '@/exp/usewith.js'
 import S1 from './S1.vue'
 import _ from '@/lib/myunderscore.js'
+
+require('@/lib/date-extension.js')
+
 console.log( 'template result (should be 10): ' + _.template('<%=a%>', {a: 10}) )
 export default {
   components: {

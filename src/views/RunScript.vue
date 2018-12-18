@@ -66,7 +66,7 @@ export default {
     setInterval( () => {
       // debugger
       var runState = currentRunState()
-      console.log(`runState submitted = ${runState.submitted}`)
+      // console.log(`runState submitted = ${runState.submitted}`)
       if( runState.submitted > 0 ) {
         if (runState.completed < runState.submitted) {
           this.showProgress = true
@@ -330,6 +330,7 @@ export default {
       }
       let $disp = $(this.$refs.content)
 
+      let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
       startRun()
       eval(wrapScript(this.scriptBody, params, this.myScriptId))
 

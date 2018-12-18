@@ -179,3 +179,8 @@ Date.genDayList = function (fromDate, toDate) {
   }
   return retList
 }
+
+// eslint-disable-next-line
+Date.prototype.format = function(fmt) {
+  return dateFormat(this, fmt)
+}

@@ -59,9 +59,9 @@ export default {
     var pageStartTime = new Date().getTime();
     var nInterval = setInterval(() => {
       var now = new Date().getTime();
-      console.log("lastHasRunningQuery=" + lastHasRunningQuery);
+      // console.log("lastHasRunningQuery=" + lastHasRunningQuery);
       var durationFromLastCheck = now - lastCheck;
-      console.log("durationFromLastCheck=" + durationFromLastCheck);
+      // console.log("durationFromLastCheck=" + durationFromLastCheck);
       if (lastHasRunningQuery || durationFromLastCheck > 5000) {
         lastCheck = now;
         axios
