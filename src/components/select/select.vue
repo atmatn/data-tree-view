@@ -3,8 +3,8 @@
       <Row><Col span='6'><Button type="primary">搜索</Button></Col>
       <Col span='16'>
       <Select v-model="onChange" style="width:190px" clearable filterable placement="bottom-end" :transfer="true">
-      <Option v-for="item in dataTreeNodes"  v-if="item.currentUserVisible === true" :value="item.title" :label="item.title">
-      </Option>
+      <!-- <OptionGroup v-for="item in TreeNodes"  v-if="item.currentUserVisible === true" :value="item.title" :label="item.title">
+      </OptionGroup> -->
     </Select>
     </Col>
       </Row>
@@ -19,11 +19,7 @@ export default {
           return{
               onChange:'',
               val:'',
-              dataTreeNodes:function(){
-                  var list=this.$store.dispatch('reloadDataTree')
-                  return list
-              }
-
+              dataTreeNodes:this.$store.dispatch('reloadDataTree')
           }
         },
         computed:{

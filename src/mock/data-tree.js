@@ -548,7 +548,7 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
-    console.log(target.linkUrl)
+    console.log('23333'+target.linkUrl)
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal

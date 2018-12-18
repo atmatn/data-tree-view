@@ -3,8 +3,7 @@
 <Form v-if="functions==='add'&&allow===false" @submit.native.prevent>
   <formItem>
       请选择要添加的类型:
-        <RadioGroup v-model="type">
-           <!-- <Radio label='product'/> -->
+        <RadioGroup v-model="type" @on-change="getLabel($event)">
            <Radio v-if="model.type==='product'||model.type==='folder'"label='folder'/>
            <Radio v-if="model.type==='folder'"label='direct-link'/>
            <Radio v-if="model.type==='folder'"label='args-script'/>
@@ -14,6 +13,15 @@
       <div v-if="type" style="color:green">
         您当前选择了:{{this.type}}&nbsp;,&nbsp;parentId:{{model.id}}&nbsp;,&nbsp;itemName:{{this.itemName}}
       </div>
+      <Input v-if="this.opens === 'direct-link'" placeholder="请输入要添加的链接..." v-model.trim="urls" />
+      <div v-if="this.opens === 'args-script'">
+              脚本id：<Input placeholder="请输入要添加的脚本id..." v-model.trim="scriptid" style="width: 300px"/><br/>
+              <div v-for="(item,index) in this.args">
+                  <Row>参数名{{index+1}}：<Input placeholder="请输入要添加的参数名..." v-model.trim="param_a[index]" style="width: 250px"/>
+                  参数值{{index+1}}：<Input placeholder="请输入要添加的参数值..." v-model.trim="param_a_value[index]" style="width: 250px" /><Button type="error" @click="delAttrs(index)">删除</Button></Row><br/>
+              </div>
+      </div>
+      <Button v-if="this.opens === 'args-script'" type="primary" @click="addAttrs()">添加参数</Button>
       <br/>
     <Button  @click="save()"type="primary">保存</Button>
   </formItem>
@@ -75,12 +83,17 @@
     <div v-if="model.containsExecutableForCurrentUser!==undefind">containsExecutableForCurrentUser:{{model.containsExecutableForCurrentUser}}</div>
     <div v-if="model.currentUserManageable!==undefind">currentUserManageable:{{model.currentUserManageable}}</div>
     <br/>
+    <div v-if="!onSwitch">
+    <Row><Button @click="getParentPerms()"type="primary">继承父节点权限</Button>&nbsp;&nbsp;&nbsp;<Button @click="setSelfPerms()"type="primary">单独设置本节点权限</Button></Row>
+    </div>
+    <div v-if="onSwitch">
     权限列表：
     <Select v-model="permSelected" style="width:300px">
         <Option v-for="perm in this.permsList" :value="perm.value" :key="perm.title">{{perm.title}}:{{perm.value}}</Option>
     </Select>
     <br/>
     <Button @click="setPerms()"type="primary">设置</Button>
+    </div>
   </formItem>
 </Form>
 <Form v-if="functions==='setAttrs'&&allow===false" @submit.native.prevent>
@@ -92,10 +105,11 @@
     <div v-if="model.type === 'args-script'">
       脚本 id：<Input :placeholder="model.scriptId" v-model.trim="scriptid" style="width: 300px" value="model.scriptId"/><br/>
       <div v-for="(key,value,index) in model.scriptParams">
-      参数名{{index+1}}：<Input :placeholder="value+''" v-model.trim="param_a[index]" style="width: 300px"/><br/>
-      参数值{{index+1}}：<Input :placeholder="key+''" v-model.trim="param_a_value[index]" style="width: 300px" /><br/>
+      <Row>参数名{{index+1}}：<Input :placeholder="value+''" v-model.trim="param_a[index]" style="width: 250px"/>
+      参数值{{index+1}}：<Input :placeholder="key+''" v-model.trim="param_a_value[index]" style="width: 250px" /><Button type="error" @click="del4Attrs(model.scriptParams,value,index)">删除</Button></Row><br/>
       </div>
     </div>
+    <Button type="primary" @click="addAttrs(model.scriptParams)">添加参数</Button><br/>
     <Button type="primary" @click="setAttrs()">保存</Button>
   </formItem>
 </Form>
@@ -125,6 +139,9 @@ export default {
     inject:['reload'],
     data(){
       return{
+        opens:'',
+        args:new Array(0),
+        i:1,
         type:'',
         itemName:'',
         reName:'',
@@ -145,9 +162,39 @@ export default {
     }),
     ...mapState({
       TreeNodes: "dataTreeNodes"
+    }),
+    ...mapState({
+      onSwitch: "onSwitch"
     })
     },
     methods:{
+      getLabel(event){
+            this.opens=event
+      },
+      addAttrs(something){
+        if(something === ''||something === null||something === undefined){
+          this.args.push({value:null})
+        }else{
+          this.$set(this.model.scriptParams,'空'+this.i,'空'+this.i);
+          this.i+=1
+        }
+      },
+      delAttrs(index){
+        this.args.splice(index,1)
+        this.param_a_value.splice(index,1)
+        this.param_a.splice(index,1)
+      },
+       del4Attrs(target,key,index){
+         this.$delete(target,key)
+         this.param_a_value.splice(index,1)
+         this.param_a.splice(index,1)
+      },
+      setSelfPerms(){
+        this.$store.commit('updateOnSwitch',{status:!this.onSwitch});
+      },
+      getParentPerms(){
+
+      },
       save(){
         if(this.productName !==null&&this.productName!==''){
            axios.request({
@@ -177,6 +224,7 @@ export default {
             this.success='未选择类型或输入的名称为空';
             this.$store.commit('updateAllow',{status:false});
         }else{
+
          axios.request({
               url: '/api/data-tree/edit/add',
               method: 'post',
@@ -196,6 +244,41 @@ export default {
                  this.$store.commit('updateAllow',{status:true});
                  this.type='';
                  this.itemName='';
+                 var attr={};
+                if(this.opens === 'direct-link'){
+                  var attrLink=[{'attrKey':'linkUrl','attrVal':this.urls}];
+                  attr=attrLink;
+                }else{
+                if(this.param_a.length!==0&&this.param_a_value.length !==0){
+                  var attrVal={};
+                 for(var i=0;i<this.param_a.length;i++){
+                        attrVal[this.param_a[i]]=this.param_a_value[i]
+                    }
+                  var attrScript=[{'attrKey':'scriptId','attrVal':this.scriptid},{'attrKey':'scriptParams','attrVal':attrVal}];
+                  attr=attrScript;
+                  console.log(attrScript);
+                  }
+            }
+              axios.request({
+              url: '/api/data-tree/edit/set-attrs',
+              method: 'post',
+              data:{
+                  id:res.data.id,
+                  attrs:attr
+              }
+              }).then(res => {
+                 if(res.status !== 200){
+                    this.$Message.info('属性添加失败');
+                    this.success='属性添加失败,请按F12打开控制台查看错误信息';
+                    this.$store.commit('updateAllow',{status:false});
+                }else{
+                    this.$Message.info('属性添加成功');
+                    this.$store.commit('updateAllow',{status:true});
+                    this.param_a=[]
+                    this.param_a_value=[]
+                    this.args=new Array(0)
+                    }
+                            })
                  this.$store.dispatch('reloadDataTree')//完成后会从新加载数据
               }
                             })
@@ -314,12 +397,14 @@ export default {
                 if(res.status !== 200){
                     this.$Message.info('设置失败');
                     this.success='设置失败,请按F12打开控制台查看错误信息';
+                    this.$store.commit('updateOnSwitch',{status:!this.onSwitch});
                     this.$store.commit('updateAllow',{status:false});
                 }else{
                     this.$Message.info('设置成功');
                     this.success='设置成功';
                     this.$store.commit('updateAllow',{status:true});
                     this.permSelected=''
+                    this.$store.commit('updateOnSwitch',{status:!this.onSwitch});
                     this.$store.dispatch('reloadDataTree')
                     }
                             })
@@ -330,13 +415,11 @@ export default {
           var attrLink=[{'attrKey':'linkUrl','attrVal':this.urls}];
             attr=attrLink;
         }else{
-            const a=this.param_a[0]
-            const b=this.param_a[1]
             var attrVal={};
-            attrVal[a]=this.param_a_value[0];
-            attrVal[b]=this.param_a_value[1];
+            for(var i=0;i<this.param_a.length;i++){
+                        attrVal[this.param_a[i]]=this.param_a_value[i]
+                    }
             if(this.param_a==='[]'||this.param_a===[]){
-              //console.log('21')
                 var attrScript=[{'attrKey':'scriptId','attrVal':this.$placeholder.value},{'attrKey':'scriptParams','attrVal':attrVal}];
             }else{
                 var attrScript=[{'attrKey':'scriptId','attrVal':this.scriptid},{'attrKey':'scriptParams','attrVal':attrVal}];
