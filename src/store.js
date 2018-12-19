@@ -19,7 +19,8 @@ export default new Vuex.Store({
     queryingCount: 0,
     turnOn: [], // 选择哪一项展开
     turnLight: '', // 选择那一项高亮
-    showDebug: true
+    showDebug: true,
+    onSwitch:false,
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -55,6 +56,9 @@ export default new Vuex.Store({
     },
     updateTurnLight: (state, { status }) => {
       state.turnLight = status
+    },
+    updateOnSwitch: (state, { status }) => {
+      state.onSwitch = status
     },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
@@ -108,6 +112,9 @@ export default new Vuex.Store({
     },
     changeWichToShow ({ commit }, { status }) {
       commit('updateWichToShow', { status })
+    },
+    changeOnSwitch ({ commit }, { status }) {
+      commit('updateOnSwitch', { status })
     },
     incrementQueringCount ({ commit, state }, { val }) {
       commit('incrementQueringCount', { val })

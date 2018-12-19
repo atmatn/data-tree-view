@@ -30,11 +30,14 @@ export default {
        ...mapState({
       allow: "allow"
     }),
-         ...mapState({
+      ...mapState({
       TreeNodes: "dataTreeNodes"
     }),
-         ...mapState({
+      ...mapState({
       perms: "permsList"
+    }),
+      ...mapState({
+      onSwitch: "onSwitch"
     })
     },
     methods: {
@@ -101,8 +104,6 @@ export default {
             delete(data){
               this.tips='当前项:'+data.title+'-删除';
               this.addForm=data;
-              debugger
-              //console.log('2333333333333333333333'+data.children)
               this.functions='delete';
               this.$store.commit('updateAllow',{status:false});
             },
@@ -119,6 +120,7 @@ export default {
               this.$store.commit('updateAllow',{status:false});
             },
             getPerms(data){
+              this.$store.commit('updateOnSwitch',{status:false});
               this.tips='当前项:'+data.title+'-管理权限';
               this.addForm=data;
               this.functions='setPerms';
