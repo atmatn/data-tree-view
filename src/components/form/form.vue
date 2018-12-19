@@ -391,7 +391,7 @@ export default {
               method: 'post',
               data:{
                   id:this.model.id,
-                  permList:[{'value':'executable_perms','perms':this.permSelected}]
+                  permList:[{'value':'executablePerms','perms':this.permSelected}]
               }
               }).then(res => {
                 if(res.status !== 200){

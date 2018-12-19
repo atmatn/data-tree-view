@@ -223,7 +223,7 @@ export default {
         id: 1,
         permList: [
           {
-            value: 'visible_perms',
+            value: 'visiblePerms',
             perms: ['ke_general','new_perm_1']
           }
         ]
@@ -234,7 +234,7 @@ export default {
         id: 15,
         permList: [
           {
-            value: 'executable_perms',
+            value: 'executablePerms',
             perms: ['ke_general','new_perm_2']
           }
         ]
@@ -245,7 +245,7 @@ export default {
         id: 16,
         permList: [
           {
-            value: 'executable_perms',
+            value: 'executablePerms',
             perms: ['ke_general','new_perm_3']
           }
         ]

@@ -1,10 +1,11 @@
 import _ from 'lodash'
+// 2018-12-19 by lisn：所有tree上所有xxx_perms的字段更名为xxxPerms
 var mockTreeNodes = [
   {
     type: 'product',
     id: 1,
     title: '有道精品课',
-    visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+    visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
     creator: 'bob', // 创建者
@@ -14,9 +15,9 @@ var mockTreeNodes = [
         id: 15,
         title: '链接',
         currentUserExecutable: true,
-        computed_executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+        computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
         containsExecutableForCurrentUser: true,
-        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manage_perms”相符的 currentUserManageable 才为 true）
+        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true）
         creator: 'bob', // 创建者
         children: [
           {
@@ -25,7 +26,7 @@ var mockTreeNodes = [
             title: 'KPI数据',
             currentUserExecutable: true,
             containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computed_executable_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             creator: 'bob',
             linkUrl: 'http://analyzer2.corp.youdao.com/'
@@ -36,7 +37,7 @@ var mockTreeNodes = [
             title: '绝密KPI数据',
             currentUserExecutable: false,
             containsExecutableForCurrentUser: false, // （后端计算出的属性）
-            computed_executable_perms: ['ke_core'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computed_executable_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            computedExecutablePerms: ['ke_core'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: false, // （后端计算出的属性）
             creator: 'mary'
             // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的linkUrl
@@ -48,7 +49,7 @@ var mockTreeNodes = [
         type: 'folder',
         id: 5,
         title: '财务',
-        computed_executable_perms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+        computedExecutablePerms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
         currentUserManageable: true, // （后端计算出的属性）
         creator: 'bob',
         children: [
@@ -58,7 +59,7 @@ var mockTreeNodes = [
             title: '高中概要数据',
             currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
             containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝folder的computed_executable_perms）args-script的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            computedExecutablePerms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝folder的computedExecutablePerms）args-script的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             creator: 'bob',
             scriptId: '123',
@@ -73,7 +74,7 @@ var mockTreeNodes = [
             title: '实用英语概要数据',
             currentUserExecutable: false, // （后端计算出的属性）当前用户是否有“执行”权限
             containsExecutableForCurrentUser: false, // （后端计算出的属性）
-            computed_executable_perms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
+            computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
             currentUserManageable: false, // （后端计算出的属性）
             creator: 'sammy'
             // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的scriptId和params
@@ -90,7 +91,7 @@ var mockTreeNodes = [
         id: 6,
         title: '市场',
         currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
-        computed_executable_perms: ['ke_general'],
+        computedExecutablePerms: ['ke_general'],
         currentUserManageable: true, // （后端计算出的属性）
         containsExecutableForCurrentUser: true, // （后端计算出的属性）
         creator: 'bob',
@@ -101,7 +102,7 @@ var mockTreeNodes = [
             title: 'Android端回访情况',
             currentUserExecutable: true, // （后端计算出的属性）
             containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
+            computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
             currentUserManageable: true, // （后端计算出的属性）
             creator: 'bob',
             scriptId: '456',
@@ -118,7 +119,7 @@ var mockTreeNodes = [
         title: '小工具',
         currentUserExecutable: true, // （后端计算出的属性）
         containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
-        computed_executable_perms: ['ke_general'], // （后端计算出的属性）
+        computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
         currentUserManageable: true, // （后端计算出的属性）
         creator: 'bob',
         children: [
@@ -131,7 +132,7 @@ var mockTreeNodes = [
     type: 'product',
     id: 3,
     title: '有道词典',
-    visible_perms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+    visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
     creator: 'bob',
@@ -143,7 +144,7 @@ var mockTreeNodes = [
     type: 'product',
     id: 2,
     title: '有道云笔记',
-    visible_perms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+    visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: false // （后端计算出的属性）
   }
@@ -193,9 +194,9 @@ doIndex()
 
 export const getDataTree = ({ url, type, body }) => {
   // 注意：
-  //   product 只有 “visible_perms”，没有 “executable_perms”
-  //   folder 只有 executable_perms”，没有 “visible_perms”
-  //   args-script 只有 executable_perms”，没有 “visible_perms”
+  //   product 只有 “visiblePerms”，没有 “executablePerms”
+  //   folder 只有 executablePerms”，没有 “visiblePerms”
+  //   args-script 只有 executablePerms”，没有 “visiblePerms”
 
   return {
     treeNodes: mockTreeNodes
@@ -215,7 +216,7 @@ function addNode ({ parentId, type, title }) {
       type,
       id: (++maxId),
       title,
-      visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+      visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
       currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
       containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
       creator: 'bob', // 创建者
@@ -247,7 +248,7 @@ function addNode ({ parentId, type, title }) {
       let needCopy = [
         'currentUserExecutable',
         'containsExecutableForCurrentUser',
-        'computed_executable_perms',
+        'computedExecutablePerms',
         'currentUserManageable',
         'creator']
       needCopy.forEach(x => {
@@ -258,7 +259,7 @@ function addNode ({ parentId, type, title }) {
       // 插入leaf
       newNode.currentUserExecutable = true
       newNode.containsExecutableForCurrentUser = true
-      newNode.computed_executable_perms = ['ke_general']
+      newNode.computedExecutablePerms = ['ke_general']
       newNode.currentUserManageable = true
       newNode.creator = 'bob'
       if (type === 'direct-link') {
@@ -376,22 +377,22 @@ export const getPerms = ({ url, type, body }) => {
   var permList = []
   if (target.type === 'product') {
     permList.push({
-      value: 'visible_perms',
-      perms: _.cloneDeep(target.visible_perms)
+      value: 'visiblePerms',
+      perms: _.cloneDeep(target.visiblePerms)
     })
   } else {
     let parentNode = indexParentMap[j.id]
     let perms = []
-    if (_.difference(target.computed_executable_perms, parentNode.computed_executable_perms).length === 0 &&
-     _.difference(parentNode.computed_executable_perms, target.computed_executable_perms).length === 0) {
+    if (_.difference(target.computedExecutablePerms, parentNode.computedExecutablePerms).length === 0 &&
+     _.difference(parentNode.computedExecutablePerms, target.computedExecutablePerms).length === 0) {
       // 与父节点相同，则认为是继承的
       perms = []
-      //console.log('2333'+target.computed_executable_perms)
+      //console.log('2333'+target.computedExecutablePerms)
     } else {
-      perms = _.cloneDeep(target.computed_executable_perms)
+      perms = _.cloneDeep(target.computedExecutablePerms)
     }
     permList.push({
-      value: 'executable_perms',
+      value: 'executablePerms',
       perms
     })
   }
@@ -416,17 +417,17 @@ export const setPerms = ({ url, type, body }) => {
 
   var permList = j.permList
   if (target.type === 'product') {
-    target.visible_perms = _.clone(permList.find(x => x.value === 'visible_perms')).perms
+    target.visiblePerms = _.clone(permList.find(x => x.value === 'visiblePerms')).perms
   } else {
     let parentNode = indexMap[indexParentMap[j.id]]
     let parentPerms
     if (parentNode.type === 'product') {
-      parentPerms = parentNode.visible_perms
+      parentPerms = parentNode.visiblePerms
     } else {
-      parentPerms = parentNode.computed_executable_perms
+      parentPerms = parentNode.computedExecutablePerms
     }
-    let newPerms = permList.find(x => x.value === 'executable_perms').perms
-    target.computed_executable_perms = newPerms.length > 0 ? newPerms : parentPerms
+    let newPerms = permList.find(x => x.value === 'executablePerms').perms
+    target.computedExecutablePerms = newPerms.length > 0 ? newPerms : parentPerms
   }
 
   return {
