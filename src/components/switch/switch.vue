@@ -1,9 +1,9 @@
 <template>
   <Row>
-    <Col span=20>
+    <Col span=15>
     显示无权限的项:
     </Col>
-    <Col span="4">
+    <Col span="9">
     <i-Switch class="form-inline"  @on-change="changeWichToShow({status: !wichToShow})"/>
     </Col>
   </Row>
