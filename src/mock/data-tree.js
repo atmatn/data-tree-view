@@ -17,7 +17,7 @@ var mockTreeNodes = [
         currentUserExecutable: true,
         computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
         containsExecutableForCurrentUser: true,
-        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true）
+        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
         creator: 'bob', // 创建者
         children: [
           {
