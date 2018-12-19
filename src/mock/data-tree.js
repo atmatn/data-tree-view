@@ -508,13 +508,13 @@ export const getAttrs = ({ url, type, body }) => {
       attrs: [
         {
           title: '脚本id',
-          attrKey: 'script_id',
+          attrKey: 'scriptId',
           type: 'script_id',
           attrVal: target.scriptId
         },
         {
           title: '脚本参数',
-          attrKey: 'script_params',
+          attrKey: 'scriptParams',
           type: 'script_params',
           attrVal: JSON.stringify(target.scriptParams)
         }
