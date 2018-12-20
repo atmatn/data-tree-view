@@ -83,7 +83,7 @@ export default {
     params: Object
   },
   beforeRouteEnter(to, from, next) {
-    // debugger
+    debugger
     //不能用this, 可以 next ( vm => {  vm是组件实例})
     // next( vm => {
     //   vm.myParams = JSON.parse(JSON.stringify(to.query))
@@ -95,7 +95,8 @@ export default {
     })
   },
   beforeRouteLeave(to, from, next) {
-    // debugger
+    debugger
+    next()
     // next(false)
   },
   // 调用router.push，会走到这，如果调用next，URL才会真正被替换
@@ -525,7 +526,15 @@ export default {
           if (this.autoRun) {
             this.doRun()
           }
-        });
+        })
+        .catch( err => {
+          this.$router.replace({
+            name: 'not-found',
+            params: {
+              moreMsg: `scriptId=${this.myScriptId}不存在！`
+            }
+          })
+        })
     }
   }
 };
