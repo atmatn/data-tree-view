@@ -9,7 +9,7 @@ var mockTreeNodes = [
     visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
-    currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+    currentUserManageable: true,
     creator: 'bob', // 创建者
     children: [
       {
@@ -137,7 +137,7 @@ var mockTreeNodes = [
     visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
-    currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+    currentUserManageable: true,
     creator: 'bob',
     children: [
       // 空的
@@ -149,8 +149,8 @@ var mockTreeNodes = [
     title: '有道云笔记',
     visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
-    containsExecutableForCurrentUser: false, // （后端计算出的属性）,
-    currentUserManageable: false // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+    currentUserManageable: false,
+    containsExecutableForCurrentUser: false // （后端计算出的属性）
   }
 ]
 
@@ -391,7 +391,6 @@ export const getPerms = ({ url, type, body }) => {
      _.difference(parentNode.computedExecutablePerms, target.computedExecutablePerms).length === 0) {
       // 与父节点相同，则认为是继承的
       perms = []
-      //console.log('2333'+target.computedExecutablePerms)
     } else {
       perms = _.cloneDeep(target.computedExecutablePerms)
     }
@@ -553,7 +552,6 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
-    console.log('23333'+target.linkUrl)
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
