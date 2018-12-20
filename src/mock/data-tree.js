@@ -1,5 +1,6 @@
 import _ from 'lodash'
 // 2018-12-19 by lisn：所有tree上所有xxx_perms的字段更名为xxxPerms
+// 2018-12-19 by lisn：product增加currentUserManageable字段
 var mockTreeNodes = [
   {
     type: 'product',
@@ -8,7 +9,11 @@ var mockTreeNodes = [
     visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+<<<<<<< HEAD
     currentUserManageable: true,
+=======
+    currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+>>>>>>> 9b26918ae1592dbf576f2d0fcaaca5dc40ccfd08
     creator: 'bob', // 创建者
     children: [
       {
@@ -18,7 +23,7 @@ var mockTreeNodes = [
         currentUserExecutable: true,
         computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
         containsExecutableForCurrentUser: true,
-        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true）
+        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
         creator: 'bob', // 创建者
         children: [
           {
@@ -136,7 +141,11 @@ var mockTreeNodes = [
     visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
+<<<<<<< HEAD
     currentUserManageable: true,
+=======
+    currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+>>>>>>> 9b26918ae1592dbf576f2d0fcaaca5dc40ccfd08
     creator: 'bob',
     children: [
       // 空的
@@ -148,8 +157,13 @@ var mockTreeNodes = [
     title: '有道云笔记',
     visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
+<<<<<<< HEAD
     currentUserManageable: false,
     containsExecutableForCurrentUser: false // （后端计算出的属性）
+=======
+    containsExecutableForCurrentUser: false, // （后端计算出的属性）,
+    currentUserManageable: false // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
+>>>>>>> 9b26918ae1592dbf576f2d0fcaaca5dc40ccfd08
   }
 ]
 
