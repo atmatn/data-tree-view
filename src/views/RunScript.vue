@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="extra">
+    <div v-show="showDebug" class="extra">
     <Input type="textarea" :rows="20" :value="JSON.stringify(argDefs,null,4)"/>
     </div>
     <div class="title-line">
@@ -110,6 +110,11 @@ export default {
       next()
       this.reload()
     }
+  },
+  computed: {
+    ...mapState({
+      showDebug: 'showDebug'
+    })
   },
   // computed: {
   //   ...mapState(["currentScriptId", "currentScriptParams"])

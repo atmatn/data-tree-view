@@ -554,7 +554,7 @@ export const getAttrs = ({
         title: '脚本参数',
         attrKey: 'scriptParams',
         type: 'script_params',
-        attrVal: JSON.stringify(target.scriptParams)
+        attrVal: target.scriptParams
       }
       ]
     }
@@ -594,7 +594,7 @@ export const setAttrs = ({
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
     // target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
-    target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+    target.scriptParams = j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
     console.log(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
   } else {
     // 其他也没有属性；目前也没有其他
