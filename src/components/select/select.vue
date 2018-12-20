@@ -2,13 +2,7 @@
     <div>
       <Row><Col span='4'><Button type="primary">搜索</Button></Col>
       <Col span='20'>
-      <!-- <Select v-model="onChange" style="width:190px" clearable filterable placement="bottom-end" :transfer="true">
-      <OptionGroup v-for="item in TreeNodes"  v-if="item.currentUserVisible === true&&item.children!==undefined" :value="item.title" :label="item.title">
-        <Option v-for="items in item.children" :value="items.title" :label="items.title">
-        </Option>
-      </OptionGroup>
-    </Select> -->
-     <Cascader v-model="onChange" :data="getVal()" filterable :transfer="true"></Cascader>
+     <Cascader v-model="onChange" :data="convertTree(TreeNodes)" filterable :transfer="true" style="width:190px"></Cascader>
     </Col>
       </Row>
     </div>
@@ -23,6 +17,7 @@ export default {
               onChange:'',
               val:'',
               dataTreeNodes:this.$store.dispatch('reloadDataTree'),
+              result:[],
           }
         },
         computed:{
@@ -37,41 +32,44 @@ export default {
                     })
     },
     methods:{
-      changeVal(val){
-        // @on-change="changeVal(val)"
-        // if(this.onChange === undefined||this.onChange ===null){
-        //   this.onChange=event;
-        // }else{
-          this.$store.commit('updateTurnOn',{status:[val.split(":")[0],val.split(":")[1]]})
-          this.$store.commit('updateTurnLight',{status:val.split(":")[2]})
-          //console.log('2333'+onChange)
-       // }
-      },
-      getVal(){
-         var val=this.TreeNodes;
-         var a=true
-        //  for(var i in val){
-        //     console.log(val[i])
-        //     while(a=true){
-        //         if(val[i].children!=undefined&&val[i].children.length!=0){
+      // changeVal(val){
+      //   // @on-change="changeVal(val)"
+      //   // if(this.onChange === undefined||this.onChange ===null){
+      //   //   this.onChange=event;
+      //   // }else{
+      //     this.$store.commit('updateTurnOn',{status:[val.split(":")[0],val.split(":")[1]]})
+      //     this.$store.commit('updateTurnLight',{status:val.split(":")[2]})
+      //     //console.log('2333'+onChange)
+      //  // }
+      // },
+      convertTree (tree) {
+      //  const result = []
+      //   tree.forEach((item) => {
+      //     if(item.currentUserVisible === true||item.currentUserExecutable===true){
+      //   let {
+      //       id: value,
+      //       title: label,
+      //       } = item
+      //   if (item.children){
+      //       var children=item.children
+      //       if(item.children.length !==0){
+      //         console.log(item.children)
+      //            children = this.$options.methods.convertTree.bind(this)(children)
+      //       }
 
-        //         }else{
-        //             a=false
-        //             return
-        //         }
-        //     }
-        //  }
-
-      //   var keyMap = {
-      //             "id" : "value",
-      //             "title" : "label"
-      //               };
-      //  for(var i=0;i<val.length;i++){
-      //    var result = val.map(o=>{return{value:o.id, label:o.title}});
-      //     console.log(result);
-      //  }
-          return result
-      }
+      //   }
+      //   //children = undefined?[]:children
+      //   result.push({
+      //       value,
+      //       label,
+      //       children
+      //               })
+      //         }
+      //                 })
+      //                 console.log(i+':'+result)
+      //              return result
+      this.$store.commit('updateResult',{status:tree});
+                        }
     }
 }
 </script>

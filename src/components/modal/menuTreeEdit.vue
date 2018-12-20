@@ -15,7 +15,7 @@ export default {
     components:{forms},
     props:['model'],
     data(){
-            return{
+             return{
              dataTreeNodes:this.$store.dispatch('reloadDataTree'),
              tips:'欢迎来到编辑页面！',
              addForm:'',
@@ -60,11 +60,11 @@ export default {
                         {props:{type: 'text'},on:{click:()=>{this.copy(data)}},style:{color:'green'}},
                        '复制'
                         ):null,
-                        data.type!=='product'&&data.currentUserManageable === true?h('Button',
+                        data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},on:{click:()=>{this.rename(data)}},style:{color:'blue'}},
                         '更名'
                         ):null,
-                        data.type!=='product'&&data.currentUserManageable === true&&(data.children=== undefined||data.children.length===0)?h('Button',
+                        data.currentUserManageable === true&&(data.children=== undefined||data.children.length===0)?h('Button',
                         {props:{type: 'text'},on:{click:()=>{this.delete(data)}},style:{color:'black'}},
                         '删除'
                         ):null,
@@ -72,7 +72,7 @@ export default {
                         {props:{type: 'text'},on:{click:()=>{this.move(data)}},style:{color:'purple'}},
                         '移动'
                         ):null,
-                        data.type!=='product'&&data.currentUserManageable === true?h('Button',
+                        data.currentUserManageable === true?h('Button',
                         {props:{type: 'text'},on:{click:()=>{this.getPerms(data)}},style:{color:'orange'}},
                         '管理权限'
                         ):null,

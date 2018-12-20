@@ -4,6 +4,7 @@ import router from './router'
 import axios from 'axios'
 import _ from 'lodash'
 import $ from 'jquery'
+import store from '@/store.js'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     turnLight: '', // 选择那一项高亮
     showDebug: true,
     onSwitch:false,
+    result:[]
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -59,6 +61,30 @@ export default new Vuex.Store({
     },
     updateOnSwitch: (state, { status }) => {
       state.onSwitch = status
+    },
+    updateResult:(state,{status }) => {
+      console.log(status)
+      status.forEach((item) => {
+        if(item.currentUserVisible === true||item.currentUserExecutable===true){
+      let {
+          id: value,
+          title: label,
+          } = item
+      if (item.children){
+          var children=item.children
+          if(item.children.length !==0){
+            console.log(item.children)
+               children =this.store.commit('updateResult',children)
+          }
+
+      }
+      state.result.push({
+          value,
+          label,
+          children
+                  })
+            }
+                    })
     },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
@@ -128,6 +154,10 @@ export default new Vuex.Store({
     },
     setShowDebug ({ commit, state }, { val }) {
       commit('setShowDebug', { val })
+    },
+    changeResult ({ commit }, { status }) {
+
+      //commit('updateResult', { status })
     }
   }
 })

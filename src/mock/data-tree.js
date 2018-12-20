@@ -8,6 +8,7 @@ var mockTreeNodes = [
     visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+    currentUserManageable: true,
     creator: 'bob', // 创建者
     children: [
       {
@@ -135,6 +136,7 @@ var mockTreeNodes = [
     visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
+    currentUserManageable: true,
     creator: 'bob',
     children: [
       // 空的
@@ -146,6 +148,7 @@ var mockTreeNodes = [
     title: '有道云笔记',
     visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
+    currentUserManageable: false,
     containsExecutableForCurrentUser: false // （后端计算出的属性）
   }
 ]
