@@ -1,16 +1,47 @@
 import Mock from 'mockjs'
-import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms } from './data-tree'
-import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
-import { getArgsScriptSingle, getKafkaList } from './my-script'
-import { getPrestoQueries } from './presto'
+import {
+  getDataTree,
+  addTreeNode,
+  renameTreeNode,
+  moveTreeNode,
+  getPerms,
+  setPerms,
+  copyNode,
+  getAttrs,
+  setAttrs,
+  deleteNode,
+  listPerms
+} from './data-tree'
+import {
+  getQueries,
+  getDataSourceList,
+  getDataSourceDimList,
+  getDateRangeAgg,
+  updateDimCatList
+} from './summary-query'
+import {
+  getArgsScriptSingle,
+  getKafkaList
+} from './my-script'
+import {
+  getPrestoQueries
+} from './presto'
 
-var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
+var getWelcomeMsg = function getWelcomeMsg ({
+  url,
+  type,
+  body
+}) {
   return {
     msg: 'mock hello world!'
   }
 }
 
-var downloadByPost = function ({ url, type, body }) {
+var downloadByPost = function ({
+  url,
+  type,
+  body
+}) {
   var m = body.match(/.*content=(.*?)&.*/)
   debugger
   var s = decodeURIComponent(m[1])
