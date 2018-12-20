@@ -69,6 +69,11 @@ module.exports = {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
+      },
+      '/api/data-tree': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
       }
     }
   }

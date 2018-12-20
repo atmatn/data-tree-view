@@ -16,7 +16,7 @@ var mockTreeNodes = [
         type: 'folder',
         id: 15,
         title: '链接',
-        currentUserExecutable: true,
+        currentUserExecutable: true, // （后端计算出的属性；如果用户是creator或者在computedExecutablePerms中，或者computedExecutablePerms为空，则设为true ）
         computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
         containsExecutableForCurrentUser: true,
         currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
@@ -558,7 +558,7 @@ export const setAttrs = ({ url, type, body }) => {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
     // target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
-    target.scriptParams = j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
+    target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
     console.log(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
   } else {
     // 其他也没有属性；目前也没有其他

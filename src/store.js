@@ -74,6 +74,7 @@ export default new Vuex.Store({
     },
 
     openScript ({ commit }, { scriptId, params }) {
+      debugger
       // commit('updateScriptIdAndParams', { scriptId, params })
       router.push({
         name: 'run-script',
