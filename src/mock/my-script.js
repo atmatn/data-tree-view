@@ -1,4 +1,8 @@
-export const getArgsScriptSingle = ({ url, type, body }) => {
+export const getArgsScriptSingle = ({
+  url,
+  type,
+  body
+}) => {
   var id = url.match(/id=([^&]+)/)[1]
   if (id === '123') {
     return {
@@ -333,6 +337,10 @@ export const getArgsScriptSingle = ({ url, type, body }) => {
   }
 }
 
-export const getKafkaList = ({ url, type, body }) => {
-  return ["hd020:9092","hd063:9092","hd064:9092","hd035:9092","hd036:9092"]
+export const getKafkaList = ({
+  url,
+  type,
+  body
+}) => {
+  return ["hd020:9092", "hd063:9092", "hd064:9092", "hd035:9092", "hd036:9092"]
 }
