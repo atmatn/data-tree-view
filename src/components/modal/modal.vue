@@ -6,6 +6,7 @@
         draggable
         scrollable
         :closable="false"
+        class-name="vertical-center-modal"
         title="编辑"
         width="auto"
         @on-ok="ok"
@@ -41,7 +42,7 @@ export default {
         methods: {
             ok () {
               if(this.allow === true){
-                this.$Message.info('保存成功');
+                this.$Message.info('点击了保存');
                 this.modal1=false;
                 //this.$router.go(0);
                 this.$store.commit('updateAllow',{status:false});
@@ -50,7 +51,7 @@ export default {
             },
             cancel () {
               // if(this.allow === true){
-                this.$Message.info('取消保存');
+                this.$Message.info('点击了取消');
                  this.modal1=false;
                  this.reload();
               // }

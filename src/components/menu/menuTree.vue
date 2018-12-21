@@ -3,9 +3,9 @@
   <div>
   <selects/>
   </div>
-  <Menu theme="dark" active-name="1">
-    <div v-if="TreeNodes">
-          <submenu v-for="item in TreeNodes" :model="item" :name="item" ></submenu>
+  <Menu theme="dark" >
+    <div v-if="TreeNodes" :active-name="1">
+          <submenu v-for="item in TreeNodes" :model="item" :name="item"></submenu>
     </div>
     <div v-else>
         <h1 style="color:red">暂无数据</br>请联系管理员！</h1>

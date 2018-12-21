@@ -15,6 +15,8 @@ export default new Vuex.Store({
     dataTreeNodes: [],
     wichToShow: false ,//决定是否显示无可执行权限的项
     allow:false, //确定按钮是否可以关闭model
+    cannotSubmit:true,//用于判断是否是重复提交
+    permsList:'',//权限列表
     queryingCount: 0
   },
   mutations: {
@@ -38,6 +40,13 @@ export default new Vuex.Store({
     },
     updateAllow:(state,{status}) => {
       state.allow = status
+    },
+    updateCannotSubmit:(state,{status}) => {
+      state.allow = status
+    },
+    updatePermsList:(state,{perms}) =>{
+        state.permsList=_.cloneDeep(perms)
+        //console.log(state.permsList)
     },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
@@ -77,6 +86,14 @@ export default new Vuex.Store({
       }).then(res => {
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
       })
+    },
+    reloadPermsList({ commit, state }){
+        axios.request({
+            url: '/api/data-tree/edit/list-perms',
+            method: 'post',
+                      }).then(res => {
+                      commit('updatePermsList', { perms: res.data.perms })
+                      })
     },
     changeWichToShow ({ commit }, { status }) {
       commit('updateWichToShow', { status })
