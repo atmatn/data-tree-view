@@ -1,5 +1,6 @@
 <template>
 <div class="layout">
+  <Scroll height="1000">
   <div>
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
@@ -84,11 +85,11 @@
             <Header>
             </Header>
             <Layout :style="{padding: '0 50px'}">
-                <Breadcrumb :style="{margin: '16px 0'}">
+                <!-- <Breadcrumb :style="{margin: '16px 0'}">
                     <BreadcrumbItem>Home</BreadcrumbItem>
                     <BreadcrumbItem>Components</BreadcrumbItem>
                     <BreadcrumbItem>Layout</BreadcrumbItem>
-                </Breadcrumb>
+                </Breadcrumb> -->
                 <Content :style="{padding: '0 0', minHeight: '100%', background: '#fff'}">
                     <div v-show="showDebug" class="extra">
                       <Button @click="openScript({scriptId: '123', params: { 'param_a': '1', 'param_b': '2' }})">Open Script 123</Button>
@@ -107,6 +108,7 @@
             </Layout>
             <Footer class="layout-footer-center">2006-2018 &copy; Youdao</Footer>
         </Layout>
+        </Scroll>
     </div>
 </div>
 </template>
@@ -326,6 +328,7 @@ export default {
     }
   }
 }
+document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
 </script>
 
 <style scoped>
@@ -334,7 +337,7 @@ export default {
     background: #f5f7f9;
     position: relative;
     border-radius: 4px;
-    overflow: hidden;
+    overflow: auto;
 }
 .layout-logo{
     width: 100px;

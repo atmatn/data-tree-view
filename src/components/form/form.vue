@@ -14,21 +14,21 @@
           style="color:green"
         >您当前选择了:{{this.type}}&nbsp;,&nbsp;parentId:{{model.id}}&nbsp;,&nbsp;itemName:{{this.itemName}}</div>
         <Input v-if="this.opens === 'direct-link'" placeholder="请输入要添加的链接..." v-model.trim="urls"/>
-        <div v-if="this.opens === 'args-script'">脚本id：
-          <Input placeholder="请输入要添加的脚本id..." v-model.trim="scriptid" style="width: 300px"/>
+        <div v-if="this.opens === 'args-script'&&allow2===false">脚本id：
+          <Input v-if="allow2===false" placeholder="请输入要添加的脚本id..." v-model.trim="scriptid" style="width: 300px"/>
           <br>
-          <div v-for="(item,index) in this.args">
+          <div v-if="allow2===false" v-for="(item,index) in this.args">
             <Row>
               参数名{{index+1}}：
               <Input
                 placeholder="请输入要添加的参数名..."
-                v-model.trim="param_a[index]"
+                v-model.trim="param_b[index]"
                 style="width: 250px"
               />
               参数值{{index+1}}：
               <Input
                 placeholder="请输入要添加的参数值..."
-                v-model.trim="param_a_value[index]"
+                v-model.trim="param_b_value[index]"
                 style="width: 250px"
               />
               <Button type="error" @click="delAttrs(index)">删除</Button>
@@ -36,7 +36,7 @@
             <br>
           </div>
         </div>
-        <Button v-if="this.opens === 'args-script'" type="primary" @click="addAttrs()">添加参数</Button>
+        <Button v-if="this.opens === 'args-script'&&allow2===false" type="primary" @click="addAttrs()">添加参数</Button>
         <br>
         <Button @click="save()" type="primary">保存</Button>
       </formItem>
@@ -140,7 +140,8 @@
         </div>
       </formItem>
     </Form>
-    <Form v-if="functions==='setAttrs'&&allow===false" @submit.native.prevent>
+        <Scroll v-if="functions ==='setAttrs'" >
+    <Form v-if="functions==='setAttrs'&&allow2===false" @submit.native.prevent>
       <formItem>
         {{model.title}}的属性:
         <div v-for="item in this.attrs">{{item.title}}:{{item.attrVal}}</div>
@@ -151,10 +152,11 @@
           :placeholder="model.linkUrl"
           v-model.trim="urls"
         />
-        <div v-if="model.type === 'args-script'">脚本 id：
+        <div v-if="model.type === 'args-script'&&allow2===false">脚本 id：
           <Input
             :placeholder="model.scriptId"
             v-model.trim="scriptid"
+            v-if="allow===false"
             style="width: 300px"
             value="model.scriptId"
           />
@@ -174,13 +176,14 @@
             <br>
           </div>
         </div>
-        <Button type="primary" @click="addAttrs(model.scriptParams)">添加参数</Button>
+        <Button v-if="model.type==='args-script'&&allow===false"type="primary" @click="addAttrs(model.scriptParams)">添加参数</Button>
         <br>
         <Button type="primary" @click="setAttrs()">保存</Button>
       </formItem>
     </Form>
     <div v-if="allow===false" style="color:red">{{this.success}}</div>
     <div v-if="allow===true" style="color:green">{{this.success}}</div>
+    </Scroll>
   </div>
 </template>
 <script>
@@ -217,6 +220,8 @@ export default {
       scriptid: "",
       param_a: [],
       param_a_value: [],
+      param_b: [],
+      param_b_value: [],
       permSelected: "",
       dataTreeNodes: this.$store.dispatch("reloadDataTree"),
       onChange: ""
@@ -225,6 +230,9 @@ export default {
   computed: {
     ...mapState({
       allow: "allow"
+    }),
+    ...mapState({
+      allow2: "allow2"
     }),
     ...mapState({
       TreeNodes: "dataTreeNodes"
@@ -319,20 +327,37 @@ export default {
                   var attrLink = [{ attrKey: "linkUrl", attrVal: this.urls }];
                   attr = attrLink;
                 } else {
+                  if (this.opens === "direct-link") {
+                         this.$store.commit("updateAllow2", { status: false });
+                  }
                   if (
                     this.param_a.length !== 0 &&
                     this.param_a_value.length !== 0
                   ) {
-                    var attrVal = {};
-                    for (var i = 0; i < this.param_a.length; i++) {
-                      attrVal[this.param_a[i]] = this.param_a_value[i];
+                    var attrVals = {};
+                    for (var i = 0; i < this.param_b.length; i++) {
+                      attrVals[this.param_b[i]] = this.param_b_value[i];
                     }
+                    if(this.scriptid===''){
+                      console.log('23333L'+this.scriptid);
+                      var attrScript = [
+                      { attrKey: "scriptId", attrVal: '' },
+                      { attrKey: "scriptParams", attrVal: {'空':'空'} }
+                    ];
+                    }else if(this.scriptid!==''&&(attrVals==={}||attrVals===undefined)){
+                      console.log('233'+attrVals)
+                      var attrScript = [
+                      { attrKey: "scriptId", attrVal: this.scriptid },
+                      { attrKey: "scriptParams", attrVal: {'空':'空'} }
+                    ];
+                    }else{
                     var attrScript = [
                       { attrKey: "scriptId", attrVal: this.scriptid },
-                      { attrKey: "scriptParams", attrVal: attrVal }
+                      { attrKey: "scriptParams", attrVal: attrVals }
                     ];
+                    }
                     attr = attrScript;
-                    console.log(attrScript);
+                    console.log('233'+attrVals)
                   }
                 }
                 axios
@@ -352,10 +377,10 @@ export default {
                       this.$store.commit("updateAllow", { status: false });
                     } else {
                       this.$Message.info("属性添加成功");
-                      this.$store.commit("updateAllow", { status: true });
-                      this.param_a = [];
-                      this.param_a_value = [];
+                      this.param_b = [];
+                      this.param_b_value = [];
                       this.args = new Array(0);
+                       this.$store.commit("updateAllow2", { status: true });
                     }
                   });
                 this.$store.dispatch("reloadDataTree"); //完成后会从新加载数据

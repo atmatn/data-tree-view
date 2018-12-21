@@ -13,7 +13,7 @@
       <edits></edits>
       <div slot="footer">
         <Button type="text" size="large" @click="cancel">取消</Button>
-        <Button type="primary" size="large" @click="ok">确定</Button>
+        <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button>
       </div>
     </Modal>
   </div>

@@ -1,7 +1,9 @@
 <template>
   <div>
+    <Scroll>
     <Button type="default" @click="addProduct()">添加新产品</Button>
     <Tree :data="TreeNodes" :render="renderContent"></Tree>
+    </Scroll>
     <h3>{{tips}}</h3>
     <forms
       :model="addForm"
@@ -29,6 +31,10 @@ export default {
       functions: "",
       perm: "",
       attrs: "",
+      param_a:[],
+      param_a_value:[],
+      param_b:[],
+      param_b_value:[],
       permsList: this.$store.dispatch("reloadPermsList"),
       buttonType: "primary"
     };
@@ -36,6 +42,9 @@ export default {
   computed: {
     ...mapState({
       allow: "allow"
+    }),
+    ...mapState({
+      allow2: "allow2"
     }),
     ...mapState({
       TreeNodes: "dataTreeNodes"
@@ -46,6 +55,12 @@ export default {
     ...mapState({
       onSwitch: "onSwitch"
     })
+    //     ...mapState({
+    //   param_a: "param_a"
+    // }),
+    //     ...mapState({
+    //   param_a_value: "param_a_value"
+    // })
   },
   methods: {
     renderContent(h, { root, node, data }) {
@@ -193,7 +208,11 @@ export default {
       this.tips = "当前项:" + data.title + "-新增";
       this.addForm = data;
       this.functions = "add";
+      this.attrs=[];
+      //console.log('21333333'+this.attrs)
       this.$store.commit("updateAllow", { status: false });
+      //this.$store.commit("updateAllow2", { status: false });
+      // this.$store.commit("updateParam_a", { status: '' });
     },
     addProduct() {
       this.tips = "添加新产品";

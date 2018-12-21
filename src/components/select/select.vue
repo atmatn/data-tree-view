@@ -29,6 +29,31 @@ export default {
       result: []
     };
   },
+  created(){
+      var result=[]
+      TreeNodes=this.$store.dispatch("reloadDataTree")
+      this.TreeNodes.forEach((item) => {
+        if (item.currentUserVisible === true || item.currentUserExecutable === true) {
+          let {
+            id: value,
+            title: label
+          } = item
+          if (item.children) {
+            var children = item.children
+            if (item.children.length !== 0) {
+              console.log(item.children)
+              children = Vue.commit('updateResult', children)
+            }
+          }
+          result.push({
+            value,
+            label,
+            children
+          })
+        }
+      })
+      console.log(result)
+  },
   computed: {
     ...mapState({
       TreeNodes: "dataTreeNodes"
@@ -77,7 +102,7 @@ export default {
       //                 })
       //                 console.log(i+':'+result)
       //              return result
-      this.$store.commit("updateResult", { status: tree });
+      //this.$store.commit("updateResult", { status: tree });
     }
   }
 };
