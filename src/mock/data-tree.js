@@ -554,7 +554,7 @@ export const getAttrs = ({
         title: '脚本参数',
         attrKey: 'scriptParams',
         type: 'script_params',
-        attrVal: JSON.stringify(target.scriptParams)
+        attrVal: target.scriptParams
       }
       ]
     }

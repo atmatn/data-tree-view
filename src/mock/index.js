@@ -50,19 +50,6 @@ var downloadByPost = function ({
 
 Mock.mock(/\/getWelcomeMsg/, 'get', getWelcomeMsg)
 
-Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
-
-Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
-Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
-Mock.mock(/\/api\/data-tree\/edit\/delete/, 'post', deleteNode)
-Mock.mock(/\/api\/data-tree\/edit\/move/, 'post', moveTreeNode)
-Mock.mock(/\/api\/data-tree\/edit\/get-perms/, 'post', getPerms)
-Mock.mock(/\/api\/data-tree\/edit\/set-perms/, 'post', setPerms)
-Mock.mock(/\/api\/data-tree\/edit\/copy/, 'post', copyNode)
-Mock.mock(/\/api\/data-tree\/edit\/get-attrs/, 'post', getAttrs)
-Mock.mock(/\/api\/data-tree\/edit\/set-attrs/, 'post', setAttrs)
-Mock.mock(/\/api\/data-tree\/edit\/list-perms/, 'post', listPerms)
-
 // 集成测试时，暂时手工设置为true
 var integrationTest = false
 
@@ -74,6 +61,19 @@ if (!integrationTest) {
   Mock.mock(/\/api\/summary-query\/queries/, 'get', getQueries)
   Mock.mock(/\/api\/presto\/my-queries/, 'get', getPrestoQueries)
   Mock.mock(/\/api\/args-script\/single/, 'get', getArgsScriptSingle)
+
+  Mock.mock(/\/api\/data-tree/, 'get', getDataTree)
+
+  Mock.mock(/\/api\/data-tree\/edit\/add/, 'post', addTreeNode)
+  Mock.mock(/\/api\/data-tree\/edit\/rename/, 'post', renameTreeNode)
+  Mock.mock(/\/api\/data-tree\/edit\/delete/, 'post', deleteNode)
+  Mock.mock(/\/api\/data-tree\/edit\/move/, 'post', moveTreeNode)
+  Mock.mock(/\/api\/data-tree\/edit\/get-perms/, 'post', getPerms)
+  Mock.mock(/\/api\/data-tree\/edit\/set-perms/, 'post', setPerms)
+  Mock.mock(/\/api\/data-tree\/edit\/copy/, 'post', copyNode)
+  Mock.mock(/\/api\/data-tree\/edit\/get-attrs/, 'post', getAttrs)
+  Mock.mock(/\/api\/data-tree\/edit\/set-attrs/, 'post', setAttrs)
+  Mock.mock(/\/api\/data-tree\/edit\/list-perms/, 'post', listPerms)
 }
 
 Mock.mock(/\/zk\/kafka/, 'get', getKafkaList)

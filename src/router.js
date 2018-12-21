@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import RunScript from './views/RunScript.vue'
 import DataTree from './views/DataTree.vue'
 import DataTreeHome from './views/DataTreeHome.vue'
+import NotFound from './views/NotFound.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -21,6 +22,18 @@ export default new Router({
         path: 'home',
         name: 'data-tree-home',
         component: DataTreeHome
+      }, {
+        path: '404',
+        name: 'not-found',
+        props: (route) => {
+          return {
+            moreMsg: route.params.moreMsg || ''
+          }
+        },
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: NotFound
       }]
     },
     {
@@ -48,7 +61,7 @@ export default new Router({
       path: '*',
       // redirect: { name: 'data-tree-home' }
       // 方便demo这个功能
-      redirect: { name: 'summary-query' }
+      redirect: { name: 'not-found' }
     }
   ]
 })
