@@ -65,6 +65,7 @@ export default {
     };
   },
   mounted: function() {
+    this.loadConstants();
     this.reload();
   },
   methods: {
@@ -94,7 +95,9 @@ export default {
     },
     handleSearch: function(str) {
       var matchList = [];
-      debugger;
+      if( str === '') {
+        return this.availableDataSources
+      }
       this.availableDataSources.map(x => {
         if (x.toLowerCase().indexOf(str) >= 0) {
           matchList.push(x);
@@ -161,7 +164,7 @@ export default {
           })
           .catch(err => {
             // fail
-            debugger;
+            // debugger;
             this.$Modal.error({
               title: "错误",
               content: err.response.data
@@ -170,24 +173,7 @@ export default {
           });
       }
     },
-    reload: function() {
-      axios
-        .request({
-          url: "/api/ds-perms/all",
-          method: "get"
-        })
-        .then(res => {
-          // success
-          this.data = res.data.dsPermsList;
-        })
-        .catch(err => {
-          // fail
-          debugger;
-          this.$Modal.error({
-            title: "错误",
-            content: err.response.data
-          });
-        });
+    loadConstants(){
       axios
         .request({
           url: "/api/ds-perms/list-perms",
@@ -199,7 +185,7 @@ export default {
         })
         .catch(err => {
           // fail
-          debugger;
+          // debugger;
           this.$Modal.error({
             title: "错误",
             content: err.response.data
@@ -216,12 +202,32 @@ export default {
         })
         .catch(err => {
           // fail
-          debugger;
+          // debugger;
           this.$Modal.error({
             title: "错误",
             content: err.response.data
           });
         });
+    },
+    reload: function() {
+      axios
+        .request({
+          url: "/api/ds-perms/all",
+          method: "get"
+        })
+        .then(res => {
+          // success
+          this.data = res.data.dsPermsList;
+        })
+        .catch(err => {
+          // fail
+          // debugger;
+          this.$Modal.error({
+            title: "错误",
+            content: err.response.data
+          });
+        });
+
     }
   }
 };

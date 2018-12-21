@@ -39,16 +39,18 @@ if (!integrationTest) {
   Mock.mock(/\/api\/current-dso-list\/delete-dso/, 'post', deleteDso)
   Mock.mock(/\/api\/current-dso-list\/list-products/, 'get', listProducts)
   Mock.mock(/\/api\/current-dso-list\/add-product/, 'post', addProduct)
+
+  Mock.mock(/\/api\/ds-perms\/all/, 'get', getDsPerms)
+  Mock.mock(/\/api\/ds-perms\/set-perms/, 'post', setDsPerms)
+  Mock.mock(/\/api\/ds-perms\/add/, 'post', addDsAndPerms)
+  Mock.mock(/\/api\/ds-perms\/delete/, 'post', deleteDsAndPerms)
+  Mock.mock(/\/api\/ds-perms\/list-perms/, 'get', getAvailablePerms)
+  Mock.mock(/\/api\/ds-perms\/list-available-ds/, 'get', listAvailableDataSources)
+
 }
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
 
-Mock.mock(/\/api\/ds-perms\/all/, 'get', getDsPerms)
-Mock.mock(/\/api\/ds-perms\/set-perms/, 'post', setDsPerms)
-Mock.mock(/\/api\/ds-perms\/add/, 'post', addDsAndPerms)
-Mock.mock(/\/api\/ds-perms\/delete/, 'post', deleteDsAndPerms)
-Mock.mock(/\/api\/ds-perms\/list-perms/, 'get', getAvailablePerms)
-Mock.mock(/\/api\/ds-perms\/list-available-ds/, 'get', listAvailableDataSources)
 
 Mock.setup({
   timeout: 0
