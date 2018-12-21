@@ -53,6 +53,11 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "current-dso-list" */ './views/CurrentDsoList.vue')
     },
     {
+      path: '/ds-perms',
+      name: 'ds-perms',
+      component: () => import(/* webpackChunkName: "ds-perms" */ './views/DataSourcePerms.vue')
+    },
+    {
       path: '*',
       // redirect: { name: 'data-tree-home' }
       // 方便demo这个功能

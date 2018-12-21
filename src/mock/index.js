@@ -2,6 +2,7 @@ import Mock from 'mockjs'
 import { getDataTree, addTreeNode, renameTreeNode } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 import { getDsoProductList, setDsoCategory, deleteDso, listProducts, addProduct } from './current-dso-list'
+import { getDsPerms, setDsPerms, addDsAndPerms, deleteDsAndPerms, getAvailablePerms, listAvailableDataSources } from './ds-perms'
 
 var getWelcomeMsg = function getWelcomeMsg ({ url, type, body }) {
   return {
@@ -41,6 +42,13 @@ if (!integrationTest) {
 }
 
 Mock.mock(/\/downloadByPost/, 'post', downloadByPost)
+
+Mock.mock(/\/api\/ds-perms\/all/, 'get', getDsPerms)
+Mock.mock(/\/api\/ds-perms\/set-perms/, 'post', setDsPerms)
+Mock.mock(/\/api\/ds-perms\/add/, 'post', addDsAndPerms)
+Mock.mock(/\/api\/ds-perms\/delete/, 'post', deleteDsAndPerms)
+Mock.mock(/\/api\/ds-perms\/list-perms/, 'get', getAvailablePerms)
+Mock.mock(/\/api\/ds-perms\/list-available-ds/, 'get', listAvailableDataSources)
 
 Mock.setup({
   timeout: 0
