@@ -9,8 +9,8 @@ import BootstrapVue from 'bootstrap-vue'
 import '@/css/global.css'
 Vue.use(BootstrapVue)
 
-if (process.env.NODE_ENV !== 'production') require('./mock')
 Vue.use(iView)
+if (process.env.NODE_ENV !== 'production') require('./mock')
 Vue.config.productionTip = false
 
 new Vue({

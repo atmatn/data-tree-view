@@ -204,7 +204,8 @@ export const drawTable = function (params) {
               render: render,
               renderHeader: renderHeader,
               width: width,
-              fixed: fixed
+              fixed: fixed,
+              className: 'col-class'
             }
           }),
           data: data
@@ -218,7 +219,7 @@ export const drawTable = function (params) {
       }
     })
   } else {
-    debugger
+    // debugger
     var tblHtml = createTable(title)
     var $tbl = $(tblHtml)
     var colNames = _.map(cols, function (x) {
@@ -478,4 +479,137 @@ export const drawChart = function (params) {
   // debugger
   var myChart = echarts.init(e)
   myChart.setOption(option)
+}
+
+function getSql (params, kind, callback, errorCallback) {
+  var localRunNo = runNo
+  if (callback) {
+    addTaskByArgsScript()
+  }
+  var ret
+  var sql
+  if (typeof (params) === 'string') {
+    sql = params
+  } else {
+    sql = params.sql
+  }
+  $.ajax({
+    method: 'POST',
+    url: '/' + kind,
+    data: {
+      sql: sql
+    },
+    async: callback !== undefined,
+    success: function (result) {
+      // debugger;
+      if (callback) {
+        completeTaskByArgsScript(localRunNo)
+        callback(result)
+      } else {
+        ret = result
+      }
+    },
+    error: function (err) {
+      if (callback) {
+        completeTaskByArgsScript(localRunNo)
+      }
+      if (errorCallback) {
+        errorCallback(err)
+      }
+      console.log(JSON.stringify(err))
+      ret = NoResult
+    }
+  })
+  if (callback) {
+    ret = 'async'
+  }
+  return ret
+}
+
+export const get_hive = function getHive (params, callback, errorCallback) {
+  return getSql(params, 'hive', callback, errorCallback)
+}
+
+export const get_pgsql = function getPgSql (params, callback, errorCallback) {
+  return getSql(params, 'pgsql', callback, errorCallback)
+}
+
+export const get_presto = function getPresto (params, callback, errorCallback) {
+  return getSql(params, 'presto', callback, errorCallback)
+}
+
+export const get_url = function visitUrl (url, data) {
+  var ret
+  $.ajax({
+    method: 'GET',
+    async: false,
+    url: url,
+    data: data,
+    success: function (data) {
+      ret = data
+      return ret
+    },
+    error: function (data) {
+      ret = data
+    }
+  })
+  return ret
+}
+
+var runNo = 0
+var runState = [
+  {
+    completed: 0,
+    submitted: 0
+  }
+]
+
+export const startRun = function () {
+  runNo++
+  runState[runNo] = {
+    completed: 0,
+    submitted: 0
+  }
+}
+
+export const currentRunState = function () {
+  return runState[runNo]
+}
+
+export const addTaskByArgsScript = function () {
+  // 假设所有请求都是一气异步发出的，中间没有被下个RunNo打断的机会
+  currentRunState().submitted++
+}
+
+export const completeTaskByArgsScript = function (runNo) {
+  runState[runNo].completed++
+}
+
+// 目前不支持ES6的custom script，所以需要手工处理下multiline
+export const fixMultiline = function fixMultiline (scriptBody) {
+  // 处理multiline
+  // https://regex101.com/
+  var scriptBodyNew = scriptBody.replace(/multiline\s*\(\s*function\s*\(\s*\)\s*\{\s*\/\*((\s|.)*?)\*\/\s*\}\s*\)/gm, function (m0, m1) {
+    // count lines
+    var lines = m1.split(/(\n|\r)+/m)
+    var suffix = '/*\n'
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].match(/^\s*$/)) {
+
+      } else {
+        suffix += lines[i] + '\n'
+      }
+    }
+    suffix += '*/\n'
+    return JSON.stringify(m1) + suffix
+  })
+  return scriptBodyNew
+}
+
+export const wrapScript = function wrapScript (scriptBody, userParams, scriptId) {
+  // return `'use strict';(function(){${scriptBody}})();\n//# sourceURL=args_script${scriptId ? ('.' + scriptId) : ''}.js`
+  // return `(function(){${scriptBody}})();\n//# sourceURL=args_script${scriptId ? ('.' + scriptId) : ''}.js`
+  var prepend = `var userParams = ${JSON.stringify(userParams)};`
+  var newScript = `'use strict';(function(args){${prepend} ${fixMultiline(scriptBody)}\n})(args);\n//# sourceURL=my_custom_script.js`
+  return newScript
 }

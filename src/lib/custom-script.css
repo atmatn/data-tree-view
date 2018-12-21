@@ -242,7 +242,7 @@ cursor: pointer;
   .custom-table > thead > tr > td,
   .custom-table > tbody > tr > td,
   .custom-table > tfoot > tr > td {
-    padding: 8px;
+    padding: 2px;
     line-height: 1.42857143;
     vertical-align: top;
     border-top: 1px solid #dddddd;
@@ -290,4 +290,9 @@ cursor: pointer;
   
   .download-button {
   
+  }
+
+  .col-class .ivu-table-cell{
+    padding-left: 2px;
+    padding-right: 2px;
   }

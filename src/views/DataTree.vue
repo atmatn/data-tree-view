@@ -1,6 +1,10 @@
 <template>
 <div class="layout">
-  <div class="extra">
+  <Scroll height="1000">
+  <div>
+    <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
+  </div>
+  <div v-show="showDebug" class="extra">
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
@@ -66,24 +70,34 @@
       <Button @click="testSetDirectLinkAttrs">Set DirectLink Attrs</Button>
       <Button @click="testSetArgsScriptAttrs">Set ArgsScript Attrs</Button>
     </div>
+    <div>
+      Run Script (仅在“集成测试”模式有效):
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'attend_turn_rate', 'category_name': '高中'} }">attend_turn_rate</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'outvendor_repurchase', 'category_name': '高中', 'course_type': '公开课', 'second_name': '安卓精品课APP'} }">outvendor_repurchase</router-link>
+      &nbsp;
+      <router-link :to="{name: 'run-script', query: {'scriptId': 'ke_kernel', 'category_name': '高中', 'course_type': '公开课', 'second_name': '安卓精品课APP'} }">outvendor_repurchase</router-link>
+    </div>
   </div>
         <Layout>
             <Header>
             </Header>
             <Layout :style="{padding: '0 50px'}">
-                <Breadcrumb :style="{margin: '16px 0'}">
+                <!-- <Breadcrumb :style="{margin: '16px 0'}">
                     <BreadcrumbItem>Home</BreadcrumbItem>
                     <BreadcrumbItem>Components</BreadcrumbItem>
                     <BreadcrumbItem>Layout</BreadcrumbItem>
-                </Breadcrumb>
+                </Breadcrumb> -->
                 <Content :style="{padding: '0 0', minHeight: '100%', background: '#fff'}">
-                    <div class="extra">
+                    <div v-show="showDebug" class="extra">
                       <Button @click="openScript({scriptId: '123', params: { 'param_a': '1', 'param_b': '2' }})">Open Script 123</Button>
                       <br/>
                       <Button @click="openScript({scriptId: '456', params: {'param_a': 4, 'param_b': 5 } })">Open Script 456</Button>
                     </div>
                     <Layout>
-                        <Sider hide-trigger :style="{background: '#fff'}">
+                        <Sider hide-trigger :style="{background: '#fff'}" :width="300">
                               <menuTree></menuTree>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
@@ -94,6 +108,7 @@
             </Layout>
             <Footer class="layout-footer-center">2006-2018 &copy; Youdao</Footer>
         </Layout>
+        </Scroll>
     </div>
 </div>
 </template>
@@ -102,6 +117,7 @@
 import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
+import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
 // import {getDataTree} from '@/mock/index.js'
 
@@ -113,8 +129,10 @@ export default {
       next( function(vm) {
         vm.openScript({
           scriptId: to.query.scriptId,
-          params: to.query
+          params: to.query,
         })
+       // vm.$store.commit('updateTurnOn',{status:[to.query.title]})
+        //vm.$store.commit('updateTurnLight',{status:'KPI数据'})
       })
     } else {
       next()
@@ -143,6 +161,7 @@ export default {
     },
     // 通过vuex的处理reload data tree
     ...mapActions(["reloadDataTree"]),
+    ...mapActions(["setShowDebug"]),
     testAddToFolderNode () {
       axios.post('/api/data-tree/edit/add', {
         parentId: 15,
@@ -206,7 +225,7 @@ export default {
         id: 1,
         permList: [
           {
-            value: 'visible_perms',
+            value: 'visiblePerms',
             perms: ['ke_general','new_perm_1']
           }
         ]
@@ -217,7 +236,7 @@ export default {
         id: 15,
         permList: [
           {
-            value: 'executable_perms',
+            value: 'executablePerms',
             perms: ['ke_general','new_perm_2']
           }
         ]
@@ -228,7 +247,7 @@ export default {
         id: 16,
         permList: [
           {
-            value: 'executable_perms',
+            value: 'executablePerms',
             perms: ['ke_general','new_perm_3']
           }
         ]
@@ -297,7 +316,8 @@ export default {
   computed: {
     ...mapState({
       someMsg: "someMsg",
-      dataTreeNodes: "dataTreeNodes"
+      dataTreeNodes: "dataTreeNodes",
+      showDebug: 'showDebug'
     })
   },
   data () {
@@ -308,6 +328,7 @@ export default {
     }
   }
 }
+document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
 </script>
 
 <style scoped>
@@ -316,7 +337,7 @@ export default {
     background: #f5f7f9;
     position: relative;
     border-radius: 4px;
-    overflow: hidden;
+    overflow: auto;
 }
 .layout-logo{
     width: 100px;
@@ -336,12 +357,16 @@ export default {
 .layout-footer-center{
     text-align: center;
 }
+</style>
+
+<style lang="less">
 .extra {
     display: inline-block;
     border-style: solid;
     border-color: red;
     z-index: 10000;
-    max-height: 400px;
+    max-height: 600px;
+    width: 90%;
     overflow: auto;
 }
 </style>

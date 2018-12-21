@@ -1,152 +1,151 @@
 import _ from 'lodash'
-var mockTreeNodes = [
-  {
-    type: 'product',
-    id: 1,
-    title: '有道精品课',
-    visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
-    currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
-    containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+// 2018-12-19 by lisn：所有tree上所有xxx_perms的字段更名为xxxPerms
+// 2018-12-19 by lisn：product增加currentUserManageable字段
+var mockTreeNodes = [{
+  type: 'product',
+  id: 1,
+  title: '有道精品课',
+  visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+  currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+  containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
+  currentUserManageable: true,
+  creator: 'bob', // 创建者
+  children: [{
+    type: 'folder',
+    id: 15,
+    title: '链接',
+    currentUserExecutable: true,
+    computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+    containsExecutableForCurrentUser: true,
+    currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
     creator: 'bob', // 创建者
-    children: [
-      {
-        type: 'folder',
-        id: 15,
-        title: '链接',
-        currentUserExecutable: true,
-        computed_executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-        containsExecutableForCurrentUser: true,
-        currentUserManageable: true, // （后端计算出的属性，创建者或者与“manage_perms”相符的 currentUserManageable 才为 true）
-        creator: 'bob', // 创建者
-        children: [
-          {
-            type: 'direct-link',
-            id: 16,
-            title: 'KPI数据',
-            currentUserExecutable: true,
-            containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computed_executable_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-            currentUserManageable: true, // （后端计算出的属性）
-            creator: 'bob',
-            linkUrl: 'http://analyzer2.corp.youdao.com/'
-          },
-          {
-            type: 'direct-link',
-            id: 17,
-            title: '绝密KPI数据',
-            currentUserExecutable: false,
-            containsExecutableForCurrentUser: false, // （后端计算出的属性）
-            computed_executable_perms: ['ke_core'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computed_executable_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-            currentUserManageable: false, // （后端计算出的属性）
-            creator: 'mary'
-            // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的linkUrl
-            // linkUrl: '/xxx.html',
-          }
-        ]
-      },
-      {
-        type: 'folder',
-        id: 5,
-        title: '财务',
-        computed_executable_perms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visible_perms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-        currentUserManageable: true, // （后端计算出的属性）
-        creator: 'bob',
-        children: [
-          {
-            type: 'args-script',
-            id: 8,
-            title: '高中概要数据',
-            currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
-            containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝folder的computed_executable_perms）args-script的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
-            currentUserManageable: true, // （后端计算出的属性）
-            creator: 'bob',
-            scriptId: '123',
-            scriptParams: {
-              param_a: 1,
-              param_b: 2
-            }
-          },
-          {
-            type: 'args-script',
-            id: 9,
-            title: '实用英语概要数据',
-            currentUserExecutable: false, // （后端计算出的属性）当前用户是否有“执行”权限
-            containsExecutableForCurrentUser: false, // （后端计算出的属性）
-            computed_executable_perms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
-            currentUserManageable: false, // （后端计算出的属性）
-            creator: 'sammy'
-            // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的scriptId和params
-            // scriptId: '123',
-            // scriptParams: {
-            //   param_a: 3,
-            //   param_b: 4
-            // }
-          }
-        ]
-      },
-      {
-        type: 'folder',
-        id: 6,
-        title: '市场',
-        currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
-        computed_executable_perms: ['ke_general'],
-        currentUserManageable: true, // （后端计算出的属性）
-        containsExecutableForCurrentUser: true, // （后端计算出的属性）
-        creator: 'bob',
-        children: [
-          {
-            type: 'args-script',
-            id: 10,
-            title: 'Android端回访情况',
-            currentUserExecutable: true, // （后端计算出的属性）
-            containsExecutableForCurrentUser: true, // （后端计算出的属性）
-            computed_executable_perms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
-            currentUserManageable: true, // （后端计算出的属性）
-            creator: 'bob',
-            scriptId: '456',
-            scriptParams: {
-              param_a: 4,
-              param_b: 5
-            }
-          }
-        ]
-      },
-      {
-        type: 'folder',
-        id: 7,
-        title: '小工具',
-        currentUserExecutable: true, // （后端计算出的属性）
-        containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
-        computed_executable_perms: ['ke_general'], // （后端计算出的属性）
-        currentUserManageable: true, // （后端计算出的属性）
-        creator: 'bob',
-        children: [
-          // 空的
-        ]
-      }
+    children: [{
+      type: 'direct-link',
+      id: 16,
+      title: 'KPI数据',
+      currentUserExecutable: true,
+      containsExecutableForCurrentUser: true, // （后端计算出的属性）
+      computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+      currentUserManageable: true, // （后端计算出的属性）
+      creator: 'bob',
+      linkUrl: 'http://analyzer2.corp.youdao.com/'
+    },
+    {
+      type: 'direct-link',
+      id: 17,
+      title: '绝密KPI数据',
+      currentUserExecutable: false,
+      containsExecutableForCurrentUser: false, // （后端计算出的属性）
+      computedExecutablePerms: ['ke_core'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+      currentUserManageable: false, // （后端计算出的属性）
+      creator: 'mary'
+      // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的linkUrl
+      // linkUrl: '/xxx.html',
+    }
     ]
   },
   {
-    type: 'product',
-    id: 3,
-    title: '有道词典',
-    visible_perms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
-    currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+    type: 'folder',
+    id: 5,
+    title: '财务',
+    computedExecutablePerms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝product的visiblePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+    currentUserManageable: true, // （后端计算出的属性）
+    creator: 'bob',
+    children: [{
+      type: 'args-script',
+      id: 8,
+      title: '高中概要数据',
+      currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
+      containsExecutableForCurrentUser: true, // （后端计算出的属性）
+      computedExecutablePerms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝folder的computedExecutablePerms）args-script的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+      currentUserManageable: true, // （后端计算出的属性）
+      creator: 'bob',
+      scriptId: '123',
+      scriptParams: {
+        param_a: 1,
+        param_b: 2
+      }
+    },
+    {
+      type: 'args-script',
+      id: 9,
+      title: '实用英语概要数据',
+      currentUserExecutable: false, // （后端计算出的属性）当前用户是否有“执行”权限
+      containsExecutableForCurrentUser: false, // （后端计算出的属性）
+      computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
+      currentUserManageable: false, // （后端计算出的属性）
+      creator: 'sammy'
+      // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的scriptId和params
+      // scriptId: '123',
+      // scriptParams: {
+      //   param_a: 3,
+      //   param_b: 4
+      // }
+    }
+    ]
+  },
+  {
+    type: 'folder',
+    id: 6,
+    title: '市场',
+    currentUserExecutable: true, // （后端计算出的属性）当前用户是否有“执行”权限
+    computedExecutablePerms: ['ke_general'],
+    currentUserManageable: true, // （后端计算出的属性）
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
+    creator: 'bob',
+    children: [{
+      type: 'args-script',
+      id: 10,
+      title: 'Android端回访情况',
+      currentUserExecutable: true, // （后端计算出的属性）
+      containsExecutableForCurrentUser: true, // （后端计算出的属性）
+      computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
+      currentUserManageable: true, // （后端计算出的属性）
+      creator: 'bob',
+      scriptId: '456',
+      scriptParams: {
+        param_a: 4,
+        param_b: 5
+      }
+    }]
+  },
+  {
+    type: 'folder',
+    id: 7,
+    title: '小工具',
+    currentUserExecutable: true, // （后端计算出的属性）
+    containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
+    computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
+    currentUserManageable: true, // （后端计算出的属性）
     creator: 'bob',
     children: [
       // 空的
     ]
-  },
-  {
-    type: 'product',
-    id: 2,
-    title: '有道云笔记',
-    visible_perms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
-    currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
-    containsExecutableForCurrentUser: false // （后端计算出的属性）
   }
+  ]
+},
+{
+  type: 'product',
+  id: 3,
+  title: '有道词典',
+  visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+  currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
+  containsExecutableForCurrentUser: true, // （后端计算出的属性）
+  currentUserManageable: true,
+  creator: 'bob',
+  children: [
+    // 空的
+  ]
+},
+{
+  type: 'product',
+  id: 2,
+  title: '有道云笔记',
+  visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+  currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
+  currentUserManageable: false,
+  containsExecutableForCurrentUser: false // （后端计算出的属性）
+}
 ]
 
 var maxId = 100
@@ -191,41 +190,54 @@ function doIndex (target, parentId) {
 }
 doIndex()
 
-export const getDataTree = ({ url, type, body }) => {
+export const getDataTree = ({
+  url,
+  type,
+  body
+}) => {
   // 注意：
-  //   product 只有 “visible_perms”，没有 “executable_perms”
-  //   folder 只有 executable_perms”，没有 “visible_perms”
-  //   args-script 只有 executable_perms”，没有 “visible_perms”
+  //   product 只有 “visiblePerms”，没有 “executablePerms”
+  //   folder 只有 executablePerms”，没有 “visiblePerms”
+  //   args-script 只有 executablePerms”，没有 “visiblePerms”
 
   return {
     treeNodes: mockTreeNodes
   }
 }
 
-function addNode ({ parentId, type, title }) {
+function addNode ({
+  parentId,
+  type,
+  title
+}) {
   console.log(parentId)
 
   if (parentId === -1) {
     // 插入到root，插入的肯定是product类型
     if (type !== 'product') {
-      let err = { msg: 'parentId==-1，只能插入product节点！' }
+      let err = {
+        msg: 'parentId==-1，只能插入product节点！'
+      }
       throw err
     }
     let newNode = {
       type,
       id: (++maxId),
       title,
-      visible_perms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+      visiblePerms: ['ke_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
       currentUserVisible: true, //  （后端计算出的属性）当前用户是否有“可见”权限
       containsExecutableForCurrentUser: true, // （后端计算出的属性）本节点或其子孙节点是否含有当前用户可执行的叶子节点
-      creator: 'bob' // 创建者
+      creator: 'bob', // 创建者
+      children: []
     }
     mockTreeNodes.push(newNode)
     doIndex()
   } else {
     let target = indexMap[parentId]
     if (target === undefined) {
-      let err = { msg: `parentId===${parentId}没找到！` }
+      let err = {
+        msg: `parentId===${parentId}没找到！`
+      }
       throw err
     }
 
@@ -233,7 +245,9 @@ function addNode ({ parentId, type, title }) {
       // ok
     } else {
       // error
-      let err = { msg: `parentId===${parentId} type === ${target.type}，不能插入子节点！` }
+      let err = {
+        msg: `parentId===${parentId} type === ${target.type}，不能插入子节点！`
+      }
       throw err
     }
 
@@ -246,9 +260,10 @@ function addNode ({ parentId, type, title }) {
       let needCopy = [
         'currentUserExecutable',
         'containsExecutableForCurrentUser',
-        'computed_executable_perms',
+        'computedExecutablePerms',
         'currentUserManageable',
-        'creator']
+        'creator'
+      ]
       needCopy.forEach(x => {
         newNode[x] = _.cloneDeep(target[x])
       })
@@ -257,7 +272,7 @@ function addNode ({ parentId, type, title }) {
       // 插入leaf
       newNode.currentUserExecutable = true
       newNode.containsExecutableForCurrentUser = true
-      newNode.computed_executable_perms = ['ke_general']
+      newNode.computedExecutablePerms = ['ke_general']
       newNode.currentUserManageable = true
       newNode.creator = 'bob'
       if (type === 'direct-link') {
@@ -281,7 +296,11 @@ function addNode ({ parentId, type, title }) {
   }
 }
 
-export const addTreeNode = ({ url, type, body }) => {
+export const addTreeNode = ({
+  url,
+  type,
+  body
+}) => {
   console.log(body)
   var j = JSON.parse(body)
   console.log('inserting ' + JSON.stringify(j))
@@ -293,7 +312,11 @@ export const addTreeNode = ({ url, type, body }) => {
   }
 }
 
-export const renameTreeNode = ({ url, type, body }) => {
+export const renameTreeNode = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('renaming ' + JSON.stringify(j))
 
@@ -312,7 +335,11 @@ export const renameTreeNode = ({ url, type, body }) => {
     // 200 OK 即没问题
   }
 }
-export const moveTreeNode = ({ url, type, body }) => {
+export const moveTreeNode = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('moving ' + JSON.stringify(j))
 
@@ -359,7 +386,11 @@ export const moveTreeNode = ({ url, type, body }) => {
   }
 }
 
-export const getPerms = ({ url, type, body }) => {
+export const getPerms = ({
+  url,
+  type,
+  body
+}) => {
   debugger
   var j = JSON.parse(body)
   console.log('getting perms ' + JSON.stringify(j))
@@ -375,22 +406,21 @@ export const getPerms = ({ url, type, body }) => {
   var permList = []
   if (target.type === 'product') {
     permList.push({
-      value: 'visible_perms',
-      perms: _.cloneDeep(target.visible_perms)
+      value: 'visiblePerms',
+      perms: _.cloneDeep(target.visiblePerms)
     })
   } else {
     let parentNode = indexParentMap[j.id]
     let perms = []
-    if (_.difference(target.computed_executable_perms, parentNode.computed_executable_perms).length === 0 &&
-     _.difference(parentNode.computed_executable_perms, target.computed_executable_perms).length === 0) {
+    if (_.difference(target.computedExecutablePerms, parentNode.computedExecutablePerms).length === 0 &&
+      _.difference(parentNode.computedExecutablePerms, target.computedExecutablePerms).length === 0) {
       // 与父节点相同，则认为是继承的
       perms = []
-      console.log('2333'+target.computed_executable_perms)
     } else {
-      perms = _.cloneDeep(target.computed_executable_perms)
+      perms = _.cloneDeep(target.computedExecutablePerms)
     }
     permList.push({
-      value: 'executable_perms',
+      value: 'executablePerms',
       perms
     })
   }
@@ -401,7 +431,11 @@ export const getPerms = ({ url, type, body }) => {
   }
 }
 
-export const setPerms = ({ url, type, body }) => {
+export const setPerms = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('setting perms ' + JSON.stringify(j))
 
@@ -415,17 +449,17 @@ export const setPerms = ({ url, type, body }) => {
 
   var permList = j.permList
   if (target.type === 'product') {
-    target.visible_perms = _.clone(permList.find(x => x.value === 'visible_perms')).perms
+    target.visiblePerms = _.clone(permList.find(x => x.value === 'visiblePerms')).perms
   } else {
     let parentNode = indexMap[indexParentMap[j.id]]
     let parentPerms
     if (parentNode.type === 'product') {
-      parentPerms = parentNode.visible_perms
+      parentPerms = parentNode.visiblePerms
     } else {
-      parentPerms = parentNode.computed_executable_perms
+      parentPerms = parentNode.computedExecutablePerms
     }
-    let newPerms = permList.find(x => x.value === 'executable_perms').perms
-    target.computed_executable_perms = newPerms.length > 0 ? newPerms : parentPerms
+    let newPerms = permList.find(x => x.value === 'executablePerms').perms
+    target.computedExecutablePerms = newPerms.length > 0 ? newPerms : parentPerms
   }
 
   return {
@@ -433,7 +467,11 @@ export const setPerms = ({ url, type, body }) => {
   }
 }
 
-export const copyNode = ({ url, type, body }) => {
+export const copyNode = ({
+  url,
+  type,
+  body
+}) => {
   // 复制叶子节点
   var j = JSON.parse(body)
   console.log('copy node ' + JSON.stringify(j))
@@ -467,7 +505,11 @@ export const copyNode = ({ url, type, body }) => {
   }
 }
 
-export const getAttrs = ({ url, type, body }) => {
+export const getAttrs = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('get attrs ' + JSON.stringify(j))
 
@@ -491,32 +533,29 @@ export const getAttrs = ({ url, type, body }) => {
     // direct-link 的属性是linkUrl
     return {
       id: j.id,
-      attrs: [
-        {
-          title: '目标url',
-          attrKey: 'linkUrl',
-          type: 'url',
-          attrVal: target.linkUrl
-        }
-      ]
+      attrs: [{
+        title: '目标url',
+        attrKey: 'linkUrl',
+        type: 'url',
+        attrVal: target.linkUrl
+      }]
     }
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     return {
       id: j.id,
-      attrs: [
-        {
-          title: '脚本id',
-          attrKey: 'script_id',
-          type: 'script_id',
-          attrVal: target.scriptId
-        },
-        {
-          title: '脚本参数',
-          attrKey: 'script_params',
-          type: 'script_params',
-          attrVal: JSON.stringify(target.scriptParams)
-        }
+      attrs: [{
+        title: '脚本id',
+        attrKey: 'scriptId',
+        type: 'script_id',
+        attrVal: target.scriptId
+      },
+      {
+        title: '脚本参数',
+        attrKey: 'scriptParams',
+        type: 'script_params',
+        attrVal: target.scriptParams
+      }
       ]
     }
   } else {
@@ -528,7 +567,11 @@ export const getAttrs = ({ url, type, body }) => {
   }
 }
 
-export const setAttrs = ({ url, type, body }) => {
+export const setAttrs = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('set attrs ' + JSON.stringify(j))
 
@@ -547,12 +590,11 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
-      console.log(target.linkUrl)
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal
-    //target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
-    target.scriptParams =j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
+    // target.scriptParams = JSON.parse(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
+    target.scriptParams = j.attrs.find(x => x.attrKey === 'scriptParams').attrVal
     console.log(j.attrs.find(x => x.attrKey === 'scriptParams').attrVal)
   } else {
     // 其他也没有属性；目前也没有其他
@@ -562,7 +604,11 @@ export const setAttrs = ({ url, type, body }) => {
   }
 }
 
-export const deleteNode = ({ url, type, body }) => {
+export const deleteNode = ({
+  url,
+  type,
+  body
+}) => {
   var j = JSON.parse(body)
   console.log('delete node ' + JSON.stringify(j))
   let target = indexMap[j.id]
@@ -571,7 +617,6 @@ export const deleteNode = ({ url, type, body }) => {
       msg: `id=${j.id} 节点不存在！`
     }
     throw err
-
   }
 
   function removeFrom (arr, id) {
@@ -606,7 +651,11 @@ export const deleteNode = ({ url, type, body }) => {
   doIndex()
 }
 
-export const listPerms = ({ url, type, body }) => {
+export const listPerms = ({
+  url,
+  type,
+  body
+}) => {
   return {
     perms: [{
       title: '精品课general',

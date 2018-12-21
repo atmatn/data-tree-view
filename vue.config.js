@@ -55,7 +55,17 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
+      '/presto': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
       '/api/current-dso-list': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api/args-script': {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
@@ -65,7 +75,22 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
-      '/log': {
+      '/api/presto': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/log': : {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/snippet': {
+        target: 'http://localhost:18080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api/data-tree': {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
