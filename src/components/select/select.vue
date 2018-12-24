@@ -7,11 +7,11 @@
       <Col span="20">
         <Cascader
           v-model="onChange"
-          :data="convertTree(TreeNodes)"
+          :data="convertTree()"
           filterable
           :transfer="true"
           style="width:190px"
-        ></Cascader>
+          ></Cascader>
       </Col>
     </Row>
   </div>
@@ -23,36 +23,12 @@ import store from "@/store.js";
 export default {
   data() {
     return {
-      onChange: "",
+      onChange: [],
       val: "",
-      dataTreeNodes: this.$store.dispatch("reloadDataTree"),
-      result: []
+      result:[],
+      dataTreeNodes: this.$store.dispatch("reloadDataTree")
+      //result: []
     };
-  },
-  created(){
-      var result=[]
-      TreeNodes=this.$store.dispatch("reloadDataTree")
-      this.TreeNodes.forEach((item) => {
-        if (item.currentUserVisible === true || item.currentUserExecutable === true) {
-          let {
-            id: value,
-            title: label
-          } = item
-          if (item.children) {
-            var children = item.children
-            if (item.children.length !== 0) {
-              console.log(item.children)
-              children = Vue.commit('updateResult', children)
-            }
-          }
-          result.push({
-            value,
-            label,
-            children
-          })
-        }
-      })
-      console.log(result)
   },
   computed: {
     ...mapState({
@@ -76,33 +52,28 @@ export default {
     //     //console.log('2333'+onChange)
     //  // }
     // },
-    convertTree(tree) {
-      //  const result = []
-      //   tree.forEach((item) => {
-      //     if(item.currentUserVisible === true||item.currentUserExecutable===true){
-      //   let {
-      //       id: value,
-      //       title: label,
-      //       } = item
-      //   if (item.children){
-      //       var children=item.children
-      //       if(item.children.length !==0){
-      //         console.log(item.children)
-      //            children = this.$options.methods.convertTree.bind(this)(children)
-      //       }
-
-      //   }
-      //   //children = undefined?[]:children
-      //   result.push({
-      //       value,
-      //       label,
-      //       children
-      //               })
-      //         }
-      //                 })
-      //                 console.log(i+':'+result)
-      //              return result
-      //this.$store.commit("updateResult", { status: tree });
+    convertTree() {
+    //   this.result=this.TreeNodes
+    //   filterTree(tree)
+    //   function filterTree(tree) {
+    //   tree.filter((item) => {
+    //      let {
+    //         id: value,
+    //         title: label,
+    //         children:children
+    //     } = item
+    //      if (item.currentUserVisible===true) {
+    //          return true
+    //      } else if (item.children && item.children.length > 0) {
+    //          item.children = filterTree(item.children)
+    //          return item.children.length > 0
+    //      } else {
+    //          return false
+    //      }
+    // })
+    //   }
+    //   console.log(this.result)
+      //return result
     }
   }
 };

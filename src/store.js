@@ -21,8 +21,8 @@ export default new Vuex.Store({
     turnOn: [], // 选择哪一项展开
     turnLight: '', // 选择那一项高亮
     showDebug: true,
-    onSwitch: false,
-    result: []
+    onSwitch: false
+    // result: []
     // param_a: '',
     // param_a_value: ''
   },
@@ -71,29 +71,29 @@ export default new Vuex.Store({
     //   state.param_a = status
     //   state.param_a_value = status
     // },
-    updateResult: (state, { status }) => {
-      console.log(status)
-      status.forEach((item) => {
-        if (item.currentUserVisible === true || item.currentUserExecutable === true) {
-          let {
-            id: value,
-            title: label
-          } = item
-          if (item.children) {
-            var children = item.children
-            if (item.children.length !== 0) {
-              console.log(item.children)
-              children = Vue.commit('updateResult', children)
-            }
-          }
-          state.result.push({
-            value,
-            label,
-            children
-          })
-        }
-      })
-    },
+    // updateResult: (state, { status }) => {
+    //   console.log(status)
+    //   status.forEach((item) => {
+    //     if (item.currentUserVisible === true || item.currentUserExecutable === true) {
+    //       let {
+    //         id: value,
+    //         title: label
+    //       } = item
+    //       if (item.children) {
+    //         var children = item.children
+    //         if (item.children.length !== 0) {
+    //           console.log(item.children)
+    //           children = Vue.commit('updateResult', children)
+    //         }
+    //       }
+    //       state.result.push({
+    //         value,
+    //         label,
+    //         children
+    //       })
+    //     }
+    //   })
+    // },
     incrementQueringCount: (state, { val }) => {
       state.queryingCount += val
     },
@@ -163,9 +163,9 @@ export default new Vuex.Store({
     },
     setShowDebug ({ commit, state }, { val }) {
       commit('setShowDebug', { val })
-    },
-    changeResult ({ commit }, { status }) {
-    // commit('updateResult', { status })
     }
+    // changeResult ({ commit }, { status }) {
+    // // commit('updateResult', { status })
+    // }
   }
 })
