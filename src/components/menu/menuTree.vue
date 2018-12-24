@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <!-- <selects/> -->
+      <selects/>
     </div>
     <Menu theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
       <div v-if="TreeNodes">

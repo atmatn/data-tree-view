@@ -12,6 +12,10 @@
       :perms="perm"
       :attrs="attrs"
       :permsList="this.perms"
+      :param_a="this.param_a"
+      :param_a_value="this.param_a_value"
+      :param_b="this.param_b"
+      :param_b_value="this.param_b_value"
     ></forms>
   </div>
 </template>
@@ -249,7 +253,8 @@ export default {
       this.tips = "当前项:" + data.title + "-管理权限";
       this.addForm = data;
       this.functions = "setPerms";
-      console.log(data.id);
+      //this.$refs.param_a
+      console.log(this.$refs.param_a);
       axios
         .request({
           url: "/api/data-tree/edit/get-perms",
@@ -276,7 +281,10 @@ export default {
       this.tips = "当前项:" + data.title + "-设置属性";
       this.addForm = data;
       this.functions = "setAttrs";
-      console.log(data.id);
+      this.param_a=[]
+      this.param_a_value=[]
+      this.param_b=[]
+      this.param_b_value=[]
       axios
         .request({
           url: "/api/data-tree/edit/get-attrs",
@@ -298,6 +306,7 @@ export default {
           }
         });
       this.$store.commit("updateAllow", { status: false });
+      this.$store.commit("updateAllow2", { status: false });
     }
   }
 };
