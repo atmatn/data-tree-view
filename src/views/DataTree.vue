@@ -71,6 +71,15 @@
       <Button @click="testSetArgsScriptAttrs">Set ArgsScript Attrs</Button>
     </div>
     <div>
+      Move:
+      <Button @click="testMoveUp(1)">testMoveUpProduct</Button>
+      <Button @click="testMoveDown(1)">testMoveDownProduct</Button>
+      <Button @click="testMoveUp(15)">testMoveUpFolder</Button>
+      <Button @click="testMoveDown(15)">testMoveDownFolder</Button>
+      <Button @click="testMoveUp(16)">testMoveUpLeaf</Button>
+      <Button @click="testMoveDown(16)">testMoveDownLeaf</Button>
+    </div>
+    <div>
       Run Script (仅在“集成测试”模式有效):
       <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
       &nbsp;
@@ -310,6 +319,16 @@ export default {
     testDeleteProductNode() {
       axios.post('/api/data-tree/edit/delete', {
         id: 3
+      })
+    },
+    testMoveUp(id){
+      axios.post('/api/data-tree/edit/move-up', {
+        id: id
+      })
+    },
+    testMoveDown(id){
+      axios.post('/api/data-tree/edit/move-down', {
+        id: id
       })
     }
   },
