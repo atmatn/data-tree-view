@@ -20,7 +20,7 @@
   </div>
   <div v-else>
     <div v-if="model.type !== 'product' && model.children !== undefined && model.children.length === 0">
-      <MenuItem :name="model.title+model.id">{{model.title}} (空目录)</MenuItem>
+      <MenuItem :name="model.title+model.id">{{model.title}}（空目录）</MenuItem>
     </div>
     <div v-else>
       <div v-if="model.type=== 'product'&&model.currentUserVisible===false">
@@ -37,7 +37,7 @@
               placement="right"
             >
               {{model.title}}
-              (空产品) <icon type="md-lock"/>
+              （空产品） <icon type="md-lock"/>
             </Poptip>
           </template>
           <div v-if="isFolder">
@@ -51,7 +51,7 @@
             v-if="model.children!==undefined&&model.children.length !== 0"
             slot="title"
           >{{model.title}}</template>
-          <template v-else slot="title">{{model.title}}(空产品)</template>
+          <template v-else slot="title">{{model.title}}（空产品）</template>
           <div v-if="isFolder">
             <treeMenu v-for="item in model.children" :model="item"></treeMenu>
           </div>
