@@ -83,14 +83,14 @@ export default {
     params: Object
   },
   beforeRouteEnter(to, from, next) {
-    debugger
+    // debugger
     //不能用this, 可以 next ( vm => {  vm是组件实例})
     // next( vm => {
     //   vm.myParams = JSON.parse(JSON.stringify(to.query))
     // })
     console.log('calling: beforeRouteEnter')
     next( vm => {
-      debugger
+      // debugger
       vm.reload()
     })
   },
@@ -141,7 +141,7 @@ export default {
   methods: {
     // ...mapActions(["updateScriptParams"]),
     updateScriptParams: function({params}){
-      debugger
+      // debugger
       this.myParams = params
       this.$router.push({
         name: 'run-script',
@@ -287,6 +287,7 @@ export default {
                           padding: "2px",
                           width: parseInt(100.0 / widthTotal * layoutItem.width) + '%'
                       });
+                      // $layoutItem.text('xxxxxx')
                       $layoutLine.append($layoutItem);
 
                       //for debug
@@ -357,6 +358,7 @@ export default {
             runJs,
             set_snippet
               } = customScriptApi
+      this.clearDisp()
       let { args, layouts } = this.prepareForRun()
       let { dateFormat } = dateApi
       let moment = momentRef
@@ -370,7 +372,6 @@ export default {
       let $disp = $(this.$refs.content)
 
       let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
-      this.clearDisp()
       startRun()
       eval(wrapScript(this.scriptBody, params, this.myScriptId))
 
