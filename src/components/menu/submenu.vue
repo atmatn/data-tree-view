@@ -19,8 +19,8 @@
     </div>
   </div>
   <div v-else>
-    <div v-if="model.type !== 'product'&&model.children!==undefined&&model.children.length === 0">
-      <MenuItem :name="model.title+model.id">{{model.title}}(空目录)</MenuItem>
+    <div v-if="model.type !== 'product' && model.children !== undefined && model.children.length === 0">
+      <MenuItem :name="model.title+model.id">{{model.title}} (空目录)</MenuItem>
     </div>
     <div v-else>
       <div v-if="model.type=== 'product'&&model.currentUserVisible===false">
@@ -37,7 +37,7 @@
               placement="right"
             >
               {{model.title}}
-              <icon type="md-lock"/>(空产品)
+              (空产品) <icon type="md-lock"/>
             </Poptip>
           </template>
           <div v-if="isFolder">

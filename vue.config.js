@@ -80,7 +80,7 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
-      '/log': : {
+      '/log': {
         target: 'http://localhost:18080',
         ws: true,
         changeOrigin: true
