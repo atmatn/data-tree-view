@@ -236,6 +236,10 @@ export default {
           {
             value: 'visiblePerms',
             perms: ['ke_general','new_perm_1']
+          },
+          {
+            value: 'manageablePerms',
+            perms: ['mg_perm1']
           }
         ]
       })
@@ -247,6 +251,10 @@ export default {
           {
             value: 'executablePerms',
             perms: ['ke_general','new_perm_2']
+          },
+          {
+            value: 'manageablePerms',
+            perms: ['mg_perm2']
           }
         ]
       })
@@ -257,7 +265,11 @@ export default {
         permList: [
           {
             value: 'executablePerms',
-            perms: ['ke_general','new_perm_3']
+            perms: ['ke_general','new_perm_3'],
+          },
+          {
+            value: 'manageablePerms',
+            perms: ['mg_perm3']
           }
         ]
       })

@@ -472,6 +472,9 @@ export const setPerms = ({ url, type, body }) => {
     target.computedExecutablePerms =
       newPerms.length > 0 ? newPerms : parentPerms
   }
+  target.manageablePerms = _.clone(
+    permList.find(x => x.value === 'manageablePerms')
+  ).perms
 
   return {
     // 200 OK，就是没问题
