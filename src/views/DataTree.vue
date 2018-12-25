@@ -5,6 +5,7 @@
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
   <div v-show="showDebug" class="extra">
+    {{indexMap}}
     xxx{{allPermsList}}yyy
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
@@ -138,11 +139,10 @@ import menuTree from '@/components/menu/menuTree.vue'
 import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
 // import {getDataTree} from '@/mock/index.js'
 
-debugger
-store.dispatch("reloadPermsList")
+// debugger
+
 
 export default {
-
   components: {menuTree,DataTreeEditModal},
   beforeRouteEnter: function (to, from, next) {
     //debugger
@@ -158,6 +158,9 @@ export default {
     } else {
       next()
     }
+  },
+  mounted() {
+    this.$store.dispatch("reloadPermsList")
   },
   methods: {
     doShowEditModal () {
@@ -371,7 +374,8 @@ export default {
       someMsg: "someMsg",
       dataTreeNodes: "dataTreeNodes",
       showDebug: 'showDebug',
-      allPermsList: 'permsList'
+      allPermsList: 'permsList',
+      indexMap: 'indexMap'
     })
   },
   data () {

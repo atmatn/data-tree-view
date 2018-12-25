@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 
-import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown, getNode } from './data-tree'
+import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown} from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 import { getDsoProductList, setDsoCategory, deleteDso, listProducts, addProduct } from './current-dso-list'
 import { getDsPerms, setDsPerms, addDsAndPerms, deleteDsAndPerms, getAvailablePerms, listAvailableDataSources } from './ds-perms'
@@ -76,7 +76,7 @@ if (!integrationTest) {
   Mock.mock(/\/api\/data-tree\/edit\/list-perms/, 'post', listPerms)
   Mock.mock(/\/api\/data-tree\/edit\/move-up/, 'post', moveUp)
   Mock.mock(/\/api\/data-tree\/edit\/move-down/, 'post', moveDown)
-  Mock.mock(/\/api\/data-tree\/edit\/get-node/, 'post', getNode)
+  // Mock.mock(/\/api\/data-tree\/edit\/get-node/, 'post', getNode)
 }
 
 Mock.mock(/\/zk\/kafka/, 'get', getKafkaList)

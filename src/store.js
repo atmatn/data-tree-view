@@ -21,7 +21,8 @@ export default new Vuex.Store({
     turnOn: [], // 选择哪一项展开
     turnLight: '', // 选择那一项高亮
     showDebug: false,
-    onSwitch: false
+    onSwitch: false,
+    indexMap: {}
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -67,6 +68,9 @@ export default new Vuex.Store({
     },
     updateOnSwitch: (state, { status }) => {
       state.onSwitch = status
+    },
+    updateIndexMap: (state, { indexMap}) => {
+      state.indexMap = indexMap
     },
     // updateParam_a: (state, { status }) => {
     //   state.param_a = status
@@ -135,7 +139,48 @@ export default new Vuex.Store({
         url: '/api/data-tree',
         method: 'get'
       }).then(res => {
+        debugger
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
+        // id -> node
+        var indexMap = {}
+
+        // id -> parentId
+        var indexParentMap = {}
+
+        function doIndex (target, parentId) {
+          if (target === undefined) {
+            // 无参数调用，直接处理root array
+            doIndex(state.dataTreeNodes, -1)
+          } else if (Array.isArray(target)) {
+            // 清空索引，因为要重建
+            indexMap = {}
+            indexParentMap = {}
+            // root array
+            target.forEach(item => {
+              doIndex(item, -1)
+            })
+          } else {
+            // 索引当前节点
+            if (indexMap[target.id] !== undefined) {
+              let err = {
+                msg: `错误！tree 出现重复id=${target.id}`
+              }
+              throw err
+            }
+            indexMap[target.id] = target
+            indexParentMap[target.id] = parentId
+            // 递归往下
+            if (target.type === 'product' || target.type === 'folder') {
+              if (target.children !== undefined) {
+                target.children.forEach(item => {
+                  doIndex(item, target.id)
+                })
+              }
+            }
+          }
+        }
+        doIndex()
+        commit('updateIndexMap', { indexMap })
       })
     },
     reloadPermsList ({ commit }) {
@@ -166,6 +211,50 @@ export default new Vuex.Store({
     },
     setShowDebug ({ commit, state }, { val }) {
       commit('setShowDebug', { val })
+    },
+    getNodeType ({ commit, state }, { id }) {
+      return new Promise(function (resolve, reject) {
+        try {
+          if (id === -1) {
+            resolve('root')
+          }
+          let type = state.indexMap[id].type
+          resolve(type)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    getTypeAttrsTemplate ({ commit, state }, { type }) {
+      return new Promise(function (resolve, reject) {
+        var ret = []
+        if (type === 'direct-link') {
+          ret = [
+            {
+              title: '目标url',
+              attrKey: 'linkUrl',
+              type: 'url',
+              attrVal: ''
+            }
+          ]
+        } else if (type === 'args-script') {
+          ret = [
+            {
+              title: '脚本id',
+              attrKey: 'scriptId',
+              type: 'script_id',
+              attrVal: ''
+            },
+            {
+              title: '脚本参数',
+              attrKey: 'scriptParams',
+              type: 'script_params',
+              attrVal: {}
+            }
+          ]
+        }
+        resolve(ret)
+      })
     }
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })

@@ -7,8 +7,9 @@
       :mask-closable="false"
       class-name="vertical-center-modal"
     >
+      <Button @click="changeMode({id: -1, mode: 'add'})">新增产品</Button>
       <BrowsePane @changeMode="changeMode"></BrowsePane>
-      <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="changeMode({mode: 'browse'})"></AddPane><!--添加功能组件-->
+      <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane><!--添加功能组件-->
       <div slot="footer">
         <Button type="text" size="large" @click="close">关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
@@ -53,8 +54,12 @@ export default {
         id: id,
         mode:mode
       }
-
-    }
+    },
+    onCompleted: function() {
+      this.reloadDataTree() //完成后会从新加载数据
+      this.changeMode({mode: 'browse'})
+    },
+    ...mapActions(["reloadDataTree"])
   }
 };
 </script>

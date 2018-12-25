@@ -738,10 +738,10 @@ export const moveDown = ({ url, type, body }) => {
   }
 }
 
-export const getNode = ({ url, type, body }) => {
-  var j = JSON.parse(body)
-  console.log(`getNode: ${j.id}`)
-  let node = _.cloneDeep(indexMap[j.id])
-  delete node.children
-  return node
-}
+// export const getNode = ({ url, type, body }) => {
+//   var j = JSON.parse(body)
+//   console.log(`getNode: ${j.id}`)
+//   let node = _.cloneDeep(indexMap[j.id])
+//   delete node.children
+//   return node
+// }
