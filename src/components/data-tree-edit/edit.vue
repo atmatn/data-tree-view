@@ -5,7 +5,7 @@
 </div>
 </template>
 <script>
-import menuTrees from "@/components/modal/menuTreeEdit.vue";
+// import menuTrees from "@/components/modal/menuTreeEdit.vue";
 
 export default {
   components: { menuTrees },

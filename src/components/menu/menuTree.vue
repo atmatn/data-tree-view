@@ -15,8 +15,6 @@
     </Menu>
     <switchs></switchs>
     <!--转换开关-->
-    <modals></modals>
-    <!--模态框-->
   </div>
 </template>
 
@@ -26,7 +24,7 @@ import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
 import selects from "@/components/select/select.vue";
 import switchs from "@/components/switch/switch.vue";
-import modals from "@/components/modal/modal.vue";
+// import modals from "@/components/modal/modal.vue";
 export default {
   data() {
     return {
@@ -34,7 +32,7 @@ export default {
       onChangeStatus: []
     };
   },
-  components: { submenu, selects, switchs, modals },
+  components: { submenu, selects, switchs },
   computed: {
     ...mapState({
       TreeNodes: "dataTreeNodes"

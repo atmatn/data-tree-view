@@ -142,6 +142,15 @@ var mockTreeNodes = [
   },
   {
     type: 'product',
+    id: 10000,
+    title: '无权限测试产品',
+    visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
+    currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
+    currentUserManageable: false,
+    containsExecutableForCurrentUser: false // （后端计算出的属性）
+  },
+  {
+    type: 'product',
     id: 3,
     title: '有道词典',
     visiblePerms: ['dict_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
@@ -174,7 +183,7 @@ var indexMap = {}
 // id -> parentId
 var indexParentMap = {}
 
-function doIndex(target, parentId) {
+function doIndex (target, parentId) {
   if (target === undefined) {
     // 无参数调用，直接处理root array
     doIndex(mockTreeNodes, -1)
@@ -219,7 +228,7 @@ export const getDataTree = ({ url, type, body }) => {
   }
 }
 
-function addNode({ parentId, type, title }) {
+function addNode ({ parentId, type, title }) {
   console.log(parentId)
 
   if (parentId === -1) {
@@ -682,7 +691,8 @@ export const moveUp = ({ url, type, body }) => {
   var j = JSON.parse(body)
   console.log(`moveUp: ${j.id}`)
   let parentNodeId = indexParentMap[j.id]
-  let arr = (parentNodeId !== -1) ? indexMap[parentNodeId].children : mockTreeNodes
+  let arr =
+    parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
   var prevPos = -1
 
   arr.forEach((item, index) => {
@@ -708,7 +718,8 @@ export const moveDown = ({ url, type, body }) => {
   console.log(`moveDown: ${j.id}`)
 
   let parentNodeId = indexParentMap[j.id]
-  let arr = (parentNodeId !== -1) ? indexMap[parentNodeId].children : mockTreeNodes
+  let arr =
+    parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
   var prevPos = -1
   arr.forEach((item, index) => {
     if (item.id === j.id) {
@@ -725,4 +736,12 @@ export const moveDown = ({ url, type, body }) => {
   return {
     // 200 OK
   }
+}
+
+export const getNode = ({ url, type, body }) => {
+  var j = JSON.parse(body)
+  console.log(`getNode: ${j.id}`)
+  let node = _.cloneDeep(indexMap[j.id])
+  delete node.children
+  return node
 }

@@ -16,11 +16,11 @@ export default new Vuex.Store({
     wichToShow: false, // 决定是否显示无可执行权限的项
     allow: false, // 确定按钮是否可以关闭model
     allow2: false,
-    permsList: '', // 权限列表
+    permsList: [], // 权限列表
     queryingCount: 0,
     turnOn: [], // 选择哪一项展开
     turnLight: '', // 选择那一项高亮
-    showDebug: true,
+    showDebug: false,
     onSwitch: false
     // result: []
     // param_a: '',
@@ -55,6 +55,7 @@ export default new Vuex.Store({
       state.allow = status
     },
     updatePermsList: (state, { perms }) => {
+      debugger
       state.permsList = _.cloneDeep(perms)
       // console.log(state.permsList)
     },
@@ -137,11 +138,13 @@ export default new Vuex.Store({
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
       })
     },
-    reloadPermsList ({ commit, state }) {
+    reloadPermsList ({ commit }) {
+      debugger
       axios.request({
         url: '/api/data-tree/edit/list-perms',
         method: 'post'
       }).then(res => {
+        debugger
         commit('updatePermsList', { perms: res.data.perms })
       })
     },

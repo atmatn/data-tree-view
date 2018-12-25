@@ -32,12 +32,12 @@
           <template v-else slot="title">
             <Poptip
               trigger="hover"
-              title="缺少下列权限"
-              :content="'currentUserVisible = false'"
+              title=""
+              :content="model.visiblePerms.length===0?'该产品未设置访问权限,只有创建者能访问':'currentUserVisible = false'"
               placement="right"
             >
               {{model.title}}
-              （空产品） <icon type="md-lock"/>
+             <icon type="md-lock"/>
             </Poptip>
           </template>
           <div v-if="isFolder">

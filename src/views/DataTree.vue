@@ -5,6 +5,7 @@
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
   <div v-show="showDebug" class="extra">
+    xxx{{allPermsList}}yyy
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
@@ -80,6 +81,10 @@
       <Button @click="testMoveDown(16)">testMoveDownLeaf</Button>
     </div>
     <div>
+      <Input type="textarea" :rows="4" v-bind:value="nodeData" style="width: 800px;"/>
+      Get Node: <Button @click="testGetNode(1)">testGetNode</Button>
+    </div>
+    <div>
       Run Script (仅在“集成测试”模式有效):
       <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
       &nbsp;
@@ -108,6 +113,8 @@
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}" :width="300">
                               <menuTree></menuTree>
+                              <Button type="primary" @click="doShowEditModal()" >编辑模式</Button>
+                              <DataTreeEditModal v-model="showEditModal"></DataTreeEditModal>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                             <router-view/>
@@ -128,10 +135,15 @@ import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
+import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
 // import {getDataTree} from '@/mock/index.js'
 
+debugger
+store.dispatch("reloadPermsList")
+
 export default {
-  components: {menuTree},
+
+  components: {menuTree,DataTreeEditModal},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
@@ -148,7 +160,10 @@ export default {
     }
   },
   methods: {
-
+    doShowEditModal () {
+      debugger
+      this.showEditModal = true
+    },
     // 较为直接的处理
     getSomeData: function () {
       axios.request({
@@ -342,20 +357,31 @@ export default {
       axios.post('/api/data-tree/edit/move-down', {
         id: id
       })
+    },
+    testGetNode(id){
+      axios.post('/api/data-tree/edit/get-node', {
+        id: id
+      }).then( res => {
+        this.nodeData = JSON.stringify(res.data, null, 4)
+      })
     }
   },
   computed: {
     ...mapState({
       someMsg: "someMsg",
       dataTreeNodes: "dataTreeNodes",
-      showDebug: 'showDebug'
+      showDebug: 'showDebug',
+      allPermsList: 'permsList'
     })
   },
   data () {
     return {
       someData: "nothing",
       permText: '',
-      attrText: ''
+      attrText: '',
+      showEditModal: false,
+      nodeData: ''
+
     }
   }
 }
