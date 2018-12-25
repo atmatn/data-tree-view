@@ -9,7 +9,8 @@
     >
       <Button @click="changeMode({id: -1, mode: 'add'})">新增产品</Button>
       <BrowsePane @changeMode="changeMode"></BrowsePane>
-      <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane><!--添加功能组件-->
+      <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane>
+      <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
       <div slot="footer">
         <Button type="text" size="large" @click="close">关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
@@ -23,8 +24,9 @@ import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
 import Router from "vue-router";
 import AddPane from "@/components/data-tree-edit/AddPane.vue";
+import AttrsEditPane from "@/components/data-tree-edit/AttrsEditPane.vue";
 export default {
-  components: { BrowsePane,AddPane },
+  components: { BrowsePane,AddPane,AttrsEditPane },
   inject: ["reload"],
   props:{value:Boolean},
   data() {

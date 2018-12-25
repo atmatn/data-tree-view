@@ -204,7 +204,8 @@ export default {
                   props: { type: 'text' },
                   on: {
                     click: () => {
-                      this.getAttrs(data)
+                      // this.getAttrs(data)
+                      self.emitChangeMode(data.id, 'attrs-edit')
                     }
                   },
                   style: { color: 'pink' }

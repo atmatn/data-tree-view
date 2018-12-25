@@ -1,5 +1,5 @@
 <template>
-  <div>haha
+  <div>
     <div v-for="(item, index) in paramsList">
       <div>
         参数名{{index+1}}：
