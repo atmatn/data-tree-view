@@ -93,6 +93,39 @@ export default {
   methods: {
     save: function() {
       // ajax save
+      if(this.type='folder'&&itemTitle!==''){
+        //文件夹类型切不为空
+        
+      }else if(this.type='direct-link'&&directUrl!==''){
+        //链接类型且不为空
+      }else if(this.type='args-script'){
+        //链脚本类型且不为空
+      }else{
+        //失败
+      }
+      axios
+          .request({
+            url: "/api/data-tree/edit/add",
+            method: "post",
+            data: {
+              parentId: -1,
+              type: this.type,
+              title: this.itemTitle
+            }
+          })
+          .then(res => {
+            if (res.status !== 200) {
+              this.$store.commit("updateAllow", { status: false });
+              this.$Message.info(res.status);
+              this.success = "添加失败,请按F12打开控制台查看错误信息";
+            } else {
+              this.$Message.info("添加成功");
+              this.success = "已添加";
+              this.$store.commit("updateAllow", { status: true });
+              this.productName = "";
+              this.$store.dispatch("reloadDataTree"); //完成后会从新加载数据
+            }
+          });
       // completed
       this.$emit('completed')
     }
