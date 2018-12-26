@@ -22,7 +22,8 @@ let store = new Vuex.Store({
     turnLight: '', // 选择那一项高亮
     showDebug: false,
     onSwitch: false,
-    indexMap: {}
+    indexMap: {},
+    indexParentMap: {}
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -71,6 +72,9 @@ let store = new Vuex.Store({
     },
     updateIndexMap: (state, { indexMap }) => {
       state.indexMap = indexMap
+    },
+    updateIndexParentMap: (state, { indexParentMap }) => {
+      state.indexParentMap = indexParentMap
     },
     // updateParam_a: (state, { status }) => {
     //   state.param_a = status
@@ -182,6 +186,7 @@ let store = new Vuex.Store({
           }
           doIndex()
           commit('updateIndexMap', { indexMap })
+          commit('updateIndexParentMap', { indexParentMap })
           resolve(state.treeNodes)
         })
       })
@@ -329,46 +334,112 @@ let store = new Vuex.Store({
           if (state.dataTreeNodes.length === 0) {
             dispatch('reloadDataTree').then(res => {
               process(state.dataTreeNodes)
+              resolve(arr)
             })
           } else {
             process(state.dataTreeNodes)
+            resolve(arr)
           }
-          resolve(arr)
         } catch (e) {
           reject(e)
         }
       })
     },
+    // 获取可搜索的节点列表，包括folder和leaf
     getDataTreeSearchList ({ commit, dispatch, state }) {
+      let arr = []
+      let curProduct = {}
+
+      function process (node, prefix) {
+        if (node instanceof Array) {
+          node.forEach(n => {
+            if (n.children) {
+              // 产品有children，才会新建一个元素
+              curProduct = {
+                product: {
+                  title: n.title,
+                  id: n.id
+                },
+                items: []
+              }
+              arr.push(curProduct)
+              n.children.forEach(subNode => {
+                process(subNode, '')
+              })
+            }
+          })
+        } else {
+          // debugger
+          curProduct.items.push({
+            id: node.id,
+            title: prefix + node.title
+          })
+          if (node.children) {
+            node.children.forEach(subNode => {
+              process(subNode, prefix + node.title + ' / ')
+            })
+          }
+        }
+      }
+
       return new Promise(function (resolve, reject) {
         try {
-          let arr = [{
-            product: {
-              title: '有道精品课',
-              id: 1
-            },
-            items: [
-              {
-                id: 15,
-                title: '链接'
-              },
-              {
-                id: 16,
-                title: '链接 / KPI数据'
-              }
-            ]
-          }]
-          resolve(arr)
+          // let arr = [{
+          //   product: {
+          //     title: '有道精品课',
+          //     id: 1
+          //   },
+          //   items: [
+          //     {
+          //       id: 15,
+          //       title: '链接'
+          //     },
+          //     {
+          //       id: 16,
+          //       title: '链接 / KPI数据'
+          //     }
+          //   ]
+          // }]
+          if (state.dataTreeNodes.length === 0) {
+            dispatch('reloadDataTree').then(res => {
+              process(state.dataTreeNodes)
+              resolve(arr)
+            })
+          } else {
+            process(state.dataTreeNodes)
+            resolve(arr)
+          }
         } catch (e) {
           reject(e)
         }
       })
     },
+    // 获取到指定节点的祖先节点的id，返回的列表次序是从最上层到最下层。
+    // 从product开始
     getDataTreeAncestorIdList ({ commit, dispatch, state }, { id }) {
+      let arr = []
+      function process (curId) {
+        debugger
+        if (curId === -1) {
+          return
+        }
+        if (curId !== id) {
+          arr.push(curId)
+        }
+        process(state.indexParentMap[curId])
+      }
       return new Promise(function (resolve, reject) {
         try {
-          let arr = ['1', '15']
-          resolve(arr)
+          // let arr = ['1', '15']
+          if (state.dataTreeNodes.length === 0) {
+            dispatch('reloadDataTree').then(res => {
+              process(id)
+              resolve(arr.reverse())
+            })
+          } else {
+            process(id)
+            resolve(arr.reverse())
+          }
         } catch (e) {
           reject(e)
         }

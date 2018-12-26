@@ -91,6 +91,16 @@
       <Button @click="testGetFlattenProductFolders">testGetFlattenProductFolders</Button>
     </div>
     <div>
+      DataTreeSearchList:
+      <Input type="textarea" v-bind:value="dataTreeSearchListText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetDataTreeSearchList">testGetDataTreeSearchList</Button>
+    </div>
+    <div>
+      DataTreeAncestorIdList
+      <Input type="textarea" v-bind:value="dataTreeAncestorIdListText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetDataTreeAncestorIdList">testGetDataTreeAncestorIdList</Button>
+    </div>
+    <div>
       Run Script (仅在“集成测试”模式有效):
       <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
       &nbsp;
@@ -195,6 +205,18 @@ export default {
     ...mapActions(["getFlattenProductFolders"]),
     ...mapActions(["reloadDataTree"]),
     ...mapActions(["setShowDebug"]),
+    ...mapActions(["getDataTreeSearchList"]),
+    testGetDataTreeSearchList () {
+      this.getDataTreeSearchList().then( res => {
+        this.dataTreeSearchListText = JSON.stringify(res, null, 4)
+      })
+    },
+    ...mapActions(["getDataTreeAncestorIdList"]),
+    testGetDataTreeAncestorIdList () {
+      this.getDataTreeAncestorIdList({id: 17}).then( res => {
+        this.dataTreeAncestorIdListText = JSON.stringify(res, null, 4)
+      })
+    },
     testAddToFolderNode () {
       axios.post('/api/data-tree/edit/add', {
         parentId: 15,
@@ -396,7 +418,9 @@ export default {
       attrText: '',
       showEditModal: false,
       nodeData: '',
-      flattenProductFoldersText: ''
+      flattenProductFoldersText: '',
+      dataTreeSearchListText: '',
+      dataTreeAncestorIdListText: ''
     }
   }
 }
