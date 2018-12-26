@@ -20,6 +20,16 @@
       {{selected}}
       <SelectNode v-model="selected"></SelectNode>
     </div>
+    <div>
+      <h2>Select filterable</h2>
+      <Select filterable>
+        <OptionGroup :label="group1">
+        <Option :value="'v1'" :label="'k1'"></Option>
+        <Option :value="'v2'" :label="'k2'"></Option>
+        <Option :value="'s2'" :label="'v2'"></Option>
+      </OptionGroup>
+      </Select>
+    </div>
   </div>
 </template>
 

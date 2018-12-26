@@ -5,40 +5,46 @@
         <Button type="primary">搜索</Button>
       </Col>
       <Col span="20">
-        <Cascader
+        <!-- <Cascader
           v-model="onChange"
           :data="convertTree()"
           filterable
           :transfer="true"
           style="width:190px"
-          ></Cascader>
+        ></Cascader>-->
+        <Select v-model="selected" style="width:200px" @on-change="onChange" clearable>
+          <OptionGroup v-for="item in this.arr" :label="item.product.title">
+            <Option :value="item.product.id" label="/"></Option>
+            <Option v-for="items in item.folders" :value="items.id" :label="'/ ' + items.title"></Option>
+          </OptionGroup>
+        </Select>
       </Col>
     </Row>
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import store from "@/store.js";
+import { mapState, mapActions } from 'vuex'
+import store from '@/store.js'
 
 export default {
   data() {
     return {
       onChange: [],
-      val: "",
-      result:[],
-      dataTreeNodes: this.$store.dispatch("reloadDataTree")
+      val: '',
+      result: [],
+      dataTreeNodes: this.$store.dispatch('reloadDataTree')
       //result: []
-    };
+    }
   },
   computed: {
     ...mapState({
-      TreeNodes: "dataTreeNodes"
+      TreeNodes: 'dataTreeNodes'
     }),
     ...mapState({
-      turnOn: "turnOn"
+      turnOn: 'turnOn'
     }),
     ...mapState({
-      turnLight: "turnLight"
+      turnLight: 'turnLight'
     })
   },
   methods: {
@@ -53,28 +59,28 @@ export default {
     //  // }
     // },
     convertTree() {
-    //   this.result=this.TreeNodes
-    //   filterTree(tree)
-    //   function filterTree(tree) {
-    //   tree.filter((item) => {
-    //      let {
-    //         id: value,
-    //         title: label,
-    //         children:children
-    //     } = item
-    //      if (item.currentUserVisible===true) {
-    //          return true
-    //      } else if (item.children && item.children.length > 0) {
-    //          item.children = filterTree(item.children)
-    //          return item.children.length > 0
-    //      } else {
-    //          return false
-    //      }
-    // })
-    //   }
-    //   console.log(this.result)
+      //   this.result=this.TreeNodes
+      //   filterTree(tree)
+      //   function filterTree(tree) {
+      //   tree.filter((item) => {
+      //      let {
+      //         id: value,
+      //         title: label,
+      //         children:children
+      //     } = item
+      //      if (item.currentUserVisible===true) {
+      //          return true
+      //      } else if (item.children && item.children.length > 0) {
+      //          item.children = filterTree(item.children)
+      //          return item.children.length > 0
+      //      } else {
+      //          return false
+      //      }
+      // })
+      //   }
+      //   console.log(this.result)
       //return result
     }
   }
-};
+}
 </script>

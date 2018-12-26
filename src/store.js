@@ -338,7 +338,43 @@ let store = new Vuex.Store({
           reject(e)
         }
       })
+    },
+    getDataTreeSearchList ({ commit, dispatch, state }) {
+      return new Promise(function (resolve, reject) {
+        try {
+          let arr = [{
+            product: {
+              title: '有道精品课',
+              id: 1
+            },
+            items: [
+              {
+                id: 15,
+                title: '链接'
+              },
+              {
+                id: 16,
+                title: '链接 / KPI数据'
+              }
+            ]
+          }]
+          resolve(arr)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    getDataTreeAncestorIdList ({ commit, dispatch, state }, { id }) {
+      return new Promise(function (resolve, reject) {
+        try {
+          let arr = ['1', '15']
+          resolve(arr)
+        } catch (e) {
+          reject(e)
+        }
+      })
     }
+
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })
     // }

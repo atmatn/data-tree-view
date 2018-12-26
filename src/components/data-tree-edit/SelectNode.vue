@@ -2,7 +2,7 @@
   <div>
     <!-- value: {{value}}
     selected: {{selected}} -->
-    <Select v-model="selected" style="width:200px" @on-change="onChange" clearable>
+    <Select v-model="selected" style="width:200px" @on-change="onChange" clearable filterable>
       <OptionGroup v-for="item in this.arr" :label="item.product.title">
         <Option :value="item.product.id" label="/"></Option>
         <Option v-for="items in item.folders" :value="items.id" :label="'/ ' + items.title"></Option>
