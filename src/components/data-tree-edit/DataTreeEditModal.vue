@@ -13,6 +13,7 @@
       <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
       <RenamePane v-if="idAndMode.mode==='rename'" :idAndMode="idAndMode" @completed="onCompleted"></RenamePane>
       <DeleteNode v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNode>
+      <PermsEditPane v-if="idAndMode.mode==='perms-edit'" :idAndMode="idAndMode" @completed="onCompleted"></PermsEditPane>
       <div slot="footer">
         <Button type="error" size="large" @click="close" ghost>关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
@@ -22,6 +23,7 @@
 </template>
 <script>
 import BrowsePane from "@/components/data-tree-edit/BrowsePane.vue";
+import PermsEditPane from "_c/data-tree-edit/PermsEditPane.vue"
 import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
 import Router from "vue-router";
@@ -30,7 +32,7 @@ import AttrsEditPane from "@/components/data-tree-edit/AttrsEditPane.vue";
 import RenamePane from "@/components/data-tree-edit/RenamePane.vue";
 import DeleteNode from "@/components/data-tree-edit/DeleteNode.vue";
 export default {
-  components: { BrowsePane,AddPane,AttrsEditPane,RenamePane,DeleteNode },
+  components: { BrowsePane,AddPane,AttrsEditPane,RenamePane,DeleteNode,PermsEditPane },
   inject: ["reload"],
   props:{value:Boolean},
   data() {

@@ -5,8 +5,8 @@
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
   <div v-show="showDebug" class="extra">
-    {{indexMap}}
-    xxx{{allPermsList}}yyy
+    <!-- {{indexMap}} -->
+    <!-- xxx{{allPermsList}}yyy -->
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>

@@ -6,7 +6,7 @@ import _ from 'lodash'
 import $ from 'jquery'
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+let store = new Vuex.Store({
   state: {
     // 参考：https://vuex.vuejs.org/zh/guide/state.html
     someMsg: '',
@@ -56,7 +56,7 @@ export default new Vuex.Store({
       state.allow = status
     },
     updatePermsList: (state, { perms }) => {
-      debugger
+      // debugger
       state.permsList = _.cloneDeep(perms)
       // console.log(state.permsList)
     },
@@ -139,7 +139,7 @@ export default new Vuex.Store({
         url: '/api/data-tree',
         method: 'get'
       }).then(res => {
-        debugger
+        // debugger
         commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
         // id -> node
         var indexMap = {}
@@ -184,12 +184,12 @@ export default new Vuex.Store({
       })
     },
     reloadPermsList ({ commit }) {
-      debugger
+      // debugger
       axios.request({
         url: '/api/data-tree/edit/list-perms',
         method: 'post'
       }).then(res => {
-        debugger
+        // debugger
         commit('updatePermsList', { perms: res.data.perms })
       })
     },
@@ -296,3 +296,8 @@ export default new Vuex.Store({
     })
   }
 })
+
+// store.dispatch('reloadPermsList')
+// store.dispatch('reloadDataTree')
+
+export default store

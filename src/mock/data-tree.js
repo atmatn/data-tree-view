@@ -396,7 +396,7 @@ export const moveTreeNode = ({ url, type, body }) => {
 }
 
 export const getPerms = ({ url, type, body }) => {
-  debugger
+  // debugger
   var j = JSON.parse(body)
   console.log('getting perms ' + JSON.stringify(j))
 
@@ -687,7 +687,7 @@ export const listPerms = ({ url, type, body }) => {
 }
 
 export const moveUp = ({ url, type, body }) => {
-  debugger
+  // debugger
   var j = JSON.parse(body)
   console.log(`moveUp: ${j.id}`)
   let parentNodeId = indexParentMap[j.id]
@@ -713,7 +713,7 @@ export const moveUp = ({ url, type, body }) => {
 }
 
 export const moveDown = ({ url, type, body }) => {
-  debugger
+  // debugger
   var j = JSON.parse(body)
   console.log(`moveDown: ${j.id}`)
 

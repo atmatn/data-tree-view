@@ -10,16 +10,23 @@
       {{attrList}}
       <AttrsEdit v-model="attrList"></AttrsEdit>
     </div>
+    <div>
+      <h2>PermsEdit</h2>
+      {{permList}}
+      <PermsEdit v-model="permList"></PermsEdit>
+    </div>
   </div>
 </template>
 
 <script>
 import ScriptParamsInput from '_c/data-tree-edit/ScriptParamsInput.vue'
 import AttrsEdit from '_c/data-tree-edit/AttrsEdit.vue'
+import PermsEdit from '_c/data-tree-edit/PermsEdit.vue'
 export default {
   components: {
     ScriptParamsInput,
-    AttrsEdit
+    AttrsEdit,
+    PermsEdit
   },
   data: function() {
     return {
@@ -45,6 +52,10 @@ export default {
           type: 'url',
           attrVal: 'http://xxx'
         }
+      ],
+      permList: [
+        {"value": "executable_perms", "perms": ['ke_general'] },
+        {"value": "visible_perms","perms":[ 'dict_general'] }
       ]
     }
   }

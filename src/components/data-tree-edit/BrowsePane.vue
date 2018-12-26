@@ -168,7 +168,8 @@ export default {
                   props: { type: 'text' },
                   on: {
                     click: () => {
-                      this.getPerms(data)
+                      // this.getPerms(data)
+                      self.emitChangeMode(data.id, 'perms-edit')
                     }
                   },
                   style: { color: 'orange' }
