@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>新增节点</h3>
     {{mode}}
     {{currentNodeType}} -> {{newNodeType}}
     <div>
@@ -14,7 +15,7 @@
         <br>名称：
         <Input v-model.trim="newNodeTitle" placeholder="请输入要添加的名称..." style="width: 300px"/>
         <AttrsEdit v-model="newNodeAttrs"></AttrsEdit>
-        <Button @click="save()" type="primary">保存</Button>
+        <Button v-if="newNodeType !== ''" @click="save()" type="primary">保存</Button>
       </div>
     </div>
   </div>
@@ -42,6 +43,8 @@ export default {
             self.currentNodeType = type
             if( type === 'root') {
               this.newNodeType = 'product'
+            }else{
+              this.newNodeType = ''
             }
           })
         }
