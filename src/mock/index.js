@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 
-import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown} from './data-tree'
+import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 import { getDsoProductList, setDsoCategory, deleteDso, listProducts, addProduct } from './current-dso-list'
 import { getDsPerms, setDsPerms, addDsAndPerms, deleteDsAndPerms, getAvailablePerms, listAvailableDataSources } from './ds-perms'

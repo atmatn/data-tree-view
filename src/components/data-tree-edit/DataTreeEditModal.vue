@@ -7,12 +7,14 @@
       :mask-closable="false"
       class-name="vertical-center-modal"
     >
-      <Button @click="changeMode({id: -1, mode: 'add'})">新增产品</Button>
+      <Button type="primary" @click="changeMode({id: -1, mode: 'add'})" ghost>新增产品</Button>
       <BrowsePane @changeMode="changeMode"></BrowsePane>
       <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane>
       <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
+      <RenamePane v-if="idAndMode.mode==='rename'" :idAndMode="idAndMode" @completed="onCompleted"></RenamePane>
+      <DeleteNode v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNode>
       <div slot="footer">
-        <Button type="text" size="large" @click="close">关闭</Button>
+        <Button type="error" size="large" @click="close" ghost>关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
       </div>
     </Modal>
@@ -25,8 +27,10 @@ import store from "@/store.js";
 import Router from "vue-router";
 import AddPane from "@/components/data-tree-edit/AddPane.vue";
 import AttrsEditPane from "@/components/data-tree-edit/AttrsEditPane.vue";
+import RenamePane from "@/components/data-tree-edit/RenamePane.vue";
+import DeleteNode from "@/components/data-tree-edit/DeleteNode.vue";
 export default {
-  components: { BrowsePane,AddPane,AttrsEditPane },
+  components: { BrowsePane,AddPane,AttrsEditPane,RenamePane,DeleteNode },
   inject: ["reload"],
   props:{value:Boolean},
   data() {
@@ -41,9 +45,9 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      allow: "allow"
-    })
+    // ...mapState({
+    //   allow: "allow"
+    // })
   },
   methods: {
     close: function(){

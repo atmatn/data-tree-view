@@ -14,8 +14,8 @@ export default new Vuex.Store({
     // currentScriptParams: {},
     dataTreeNodes: [],
     wichToShow: false, // 决定是否显示无可执行权限的项
-    allow: false, // 确定按钮是否可以关闭model
-    allow2: false,
+    // allow: false, // 确定按钮是否可以关闭model
+    // allow2: false,
     permsList: [], // 权限列表
     queryingCount: 0,
     turnOn: [], // 选择哪一项展开
@@ -69,7 +69,7 @@ export default new Vuex.Store({
     updateOnSwitch: (state, { status }) => {
       state.onSwitch = status
     },
-    updateIndexMap: (state, { indexMap}) => {
+    updateIndexMap: (state, { indexMap }) => {
       state.indexMap = indexMap
     },
     // updateParam_a: (state, { status }) => {
@@ -225,6 +225,16 @@ export default new Vuex.Store({
         }
       })
     },
+    getNodeTitle ({ commit, state }, { id }) {
+      return new Promise(function (resolve, reject) {
+        try {
+          let title = state.indexMap[id].title
+          resolve(title)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
     getTypeAttrsTemplate ({ commit, state }, { type }) {
       return new Promise(function (resolve, reject) {
         var ret = []
@@ -259,5 +269,30 @@ export default new Vuex.Store({
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })
     // }
+  },
+  getFlattenProductFolders ({ commit, state }) {
+    return new Promise(function (resolve, reject) {
+      try {
+        let arr = [{
+          product: {
+            title: '',
+            id: 1
+          },
+          folders: [
+            {
+              id: 15,
+              title: '链接'
+            },
+            {
+              id: 16,
+              title: '链接 / KPI数据'
+            }
+          ]
+        }]
+        resolve(arr)
+      } catch (e) {
+        reject(e)
+      }
+    })
   }
 })
