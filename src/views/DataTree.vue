@@ -113,6 +113,7 @@
   </div>
         <Layout>
             <Header>
+              <div class="hdr"><h1>Analyzer2</h1><CredentialWarning></CredentialWarning></div>
             </Header>
             <Layout :style="{padding: '0 50px', minHeight: '80vh'}">
                 <!-- <Breadcrumb :style="{margin: '16px 0'}">
@@ -152,13 +153,14 @@ import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
 import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
+import CredentialWarning from "_c/CredentialWarning.vue"
 // import {getDataTree} from '@/mock/index.js'
 
 // debugger
 
 
 export default {
-  components: {menuTree,DataTreeEditModal},
+  components: {menuTree,DataTreeEditModal,CredentialWarning},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
@@ -464,5 +466,10 @@ export default {
     max-height: 600px;
     width: 90%;
     overflow: auto;
+}
+.hdr h1 {
+  display: inline-block;
+  color: white;
+  width: 10em;
 }
 </style>
