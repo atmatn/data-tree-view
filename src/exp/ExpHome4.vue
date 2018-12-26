@@ -15,6 +15,11 @@
       {{permList}}
       <PermsEdit v-model="permList"></PermsEdit>
     </div>
+    <div>
+      <h2>SelectNode</h2>
+      {{selected}}
+      <SelectNode v-model="selected"></SelectNode>
+    </div>
   </div>
 </template>
 
@@ -22,11 +27,13 @@
 import ScriptParamsInput from '_c/data-tree-edit/ScriptParamsInput.vue'
 import AttrsEdit from '_c/data-tree-edit/AttrsEdit.vue'
 import PermsEdit from '_c/data-tree-edit/PermsEdit.vue'
+import SelectNode from '@/components/data-tree-edit/SelectNode.vue'
 export default {
   components: {
     ScriptParamsInput,
     AttrsEdit,
-    PermsEdit
+    PermsEdit,
+    SelectNode
   },
   data: function() {
     return {
@@ -56,7 +63,8 @@ export default {
       permList: [
         {"value": "executable_perms", "perms": ['ke_general'] },
         {"value": "visible_perms","perms":[ 'dict_general'] }
-      ]
+      ],
+      selected: undefined
     }
   }
 }

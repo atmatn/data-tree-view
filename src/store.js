@@ -135,53 +135,57 @@ let store = new Vuex.Store({
     //   })
     // },
     reloadDataTree ({ commit, state }) {
-      axios.request({
-        url: '/api/data-tree',
-        method: 'get'
-      }).then(res => {
-        // debugger
-        commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
-        // id -> node
-        var indexMap = {}
+      return new Promise(function (resolve, reject) {
+        axios.request({
+          url: '/api/data-tree',
+          method: 'get'
+        }).then(res => {
+          // debugger
+          commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
+          // id -> node
+          var indexMap = {}
 
-        // id -> parentId
-        var indexParentMap = {}
+          // id -> parentId
+          var indexParentMap = {}
 
-        function doIndex (target, parentId) {
-          if (target === undefined) {
-            // 无参数调用，直接处理root array
-            doIndex(state.dataTreeNodes, -1)
-          } else if (Array.isArray(target)) {
-            // 清空索引，因为要重建
-            indexMap = {}
-            indexParentMap = {}
-            // root array
-            target.forEach(item => {
-              doIndex(item, -1)
-            })
-          } else {
-            // 索引当前节点
-            if (indexMap[target.id] !== undefined) {
-              let err = {
-                msg: `错误！tree 出现重复id=${target.id}`
+          function doIndex (target, parentId) {
+            if (target === undefined) {
+              // 无参数调用，直接处理root array
+              doIndex(state.dataTreeNodes, -1)
+            } else if (Array.isArray(target)) {
+              // 清空索引，因为要重建
+              indexMap = {}
+              indexParentMap = {}
+              // root array
+              target.forEach(item => {
+                doIndex(item, -1)
+              })
+            } else {
+              // 索引当前节点
+              if (indexMap[target.id] !== undefined) {
+                let err = {
+                  msg: `错误！tree 出现重复id=${target.id}`
+                }
+                throw err
               }
-              throw err
-            }
-            indexMap[target.id] = target
-            indexParentMap[target.id] = parentId
-            // 递归往下
-            if (target.type === 'product' || target.type === 'folder') {
-              if (target.children !== undefined) {
-                target.children.forEach(item => {
-                  doIndex(item, target.id)
-                })
+              indexMap[target.id] = target
+              indexParentMap[target.id] = parentId
+              // 递归往下
+              if (target.type === 'product' || target.type === 'folder') {
+                if (target.children !== undefined) {
+                  target.children.forEach(item => {
+                    doIndex(item, target.id)
+                  })
+                }
               }
             }
           }
-        }
-        doIndex()
-        commit('updateIndexMap', { indexMap })
+          doIndex()
+          commit('updateIndexMap', { indexMap })
+          resolve(state.treeNodes)
+        })
       })
+
     },
     reloadPermsList ({ commit }) {
       // debugger
@@ -266,7 +270,7 @@ let store = new Vuex.Store({
         resolve(ret)
       })
     },
-    getFlattenProductFolders ({ commit, state }) {
+    getFlattenProductFolders ({ commit, dispatch, state }) {
       // debugger
       let arr = []
       let curProduct = {}
@@ -322,7 +326,13 @@ let store = new Vuex.Store({
           //     }
           //   ]
           // }]
-          process(state.dataTreeNodes)
+          if (state.dataTreeNodes.length === 0) {
+            dispatch('reloadDataTree').then(res => {
+              process(state.dataTreeNodes)
+            })
+          } else {
+            process(state.dataTreeNodes)
+          }
           resolve(arr)
         } catch (e) {
           reject(e)

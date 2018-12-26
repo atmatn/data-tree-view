@@ -1,7 +1,7 @@
 <template>
-  <div>1.当前要复制的目标为:
+  <div>当前要复制的目标为:
     <span style="color:green">{{this.nodeTitle}}</span>
-    <br>2.请选择要复制到哪一项里面：
+    <br><Row><Col span="8"><h2>请选择要复制到哪一项里面：</h2></Col>
     <!-- <Select v-model="onChange" style="width:200px" @on-change="changeVal(onChange)" filterable>
       <OptionGroup
         v-for="item in TreeNodes"
@@ -15,21 +15,22 @@
         >{{ items.title }}</Option>
       </OptionGroup>
     </Select>-->
-    <SelectNodePane v-model="selected"></SelectNodePane>
+    <Col span="16"><SelectNode v-model="targetNodeId"></SelectNode></Col></Row>
     <br>
-    <Button @click="copys()" type="primary">复制</Button>
+    <Button v-if="targetNodeId !== undefined && targetNodeId !== null" @click="copys()" type="primary">复制</Button>
   </div>
 </template>
 <script>
 import axios from 'axios'
-import SelectNodePane from '@/components/data-tree-edit/SelectNodePane.vue'
+import SelectNode from '@/components/data-tree-edit/SelectNode.vue'
 export default {
   props: ['idAndMode'],
-  components: { SelectNodePane },
+  components: { SelectNode },
   data() {
     return {
       nodeTitle: '',
-      selected:[]
+      selected:undefined,
+      targetNodeId: null
     }
   },
   watch: {
@@ -43,14 +44,42 @@ export default {
             .then(title => {
               self.nodeTitle = title
             })
-          console.log('2333' + newVal)
+          //console.log('2333' + newVal)
         }
       },
       immediate: true
     }
   },
   methods: {
-    copys() {}
-  }
+    copys() {
+      debugger
+        axios
+          .request({
+            url: "/api/data-tree/edit/copy",
+            method: "post",
+            data: {
+              id: this.idAndMode.id,
+              parentId: this.targetNodeId
+            }
+          })
+          .then(res => {
+            if (res.status !== 200) {
+              this.$Message.info("复制失败");
+              // this.success = "移动失败,请按F12打开控制台查看错误信息";
+              // this.$store.commit("updateAllow", { status: false });
+            } else {
+              this.$Message.info("复制成功");
+              this.$emit('completed')
+              // this.success = "移动成功";
+              // this.$store.commit("updateAllow", { status: true });
+              // this.onChange = "";
+              // this.$store.dispatch("reloadDataTree");
+            }
+          });
+      }
+      // selected(datas){
+      //     console.log('222222222'+datas)
+      // }
+    }
 }
 </script>

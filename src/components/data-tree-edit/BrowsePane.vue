@@ -153,7 +153,7 @@ export default {
                   props: { type: 'text' },
                   on: {
                     click: () => {
-                      this.move(data)
+                      self.emitChangeMode(data.id, 'move')
                     }
                   },
                   style: { color: 'purple' }
