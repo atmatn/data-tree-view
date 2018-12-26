@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>管理权限</h3>
     <!-- {{permList}} -->
     节点：{{nodeTitle}}
     <PermsEdit v-model="permList"></PermsEdit>

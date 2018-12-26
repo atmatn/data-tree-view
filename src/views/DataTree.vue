@@ -1,6 +1,6 @@
 <template>
 <div class="layout">
-  <Scroll height="1000">
+  <!-- <Scroll height="1000"> -->
   <div>
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
@@ -104,7 +104,7 @@
         <Layout>
             <Header>
             </Header>
-            <Layout :style="{padding: '0 50px'}">
+            <Layout :style="{padding: '0 50px', minHeight: '80vh'}">
                 <!-- <Breadcrumb :style="{margin: '16px 0'}">
                     <BreadcrumbItem>Home</BreadcrumbItem>
                     <BreadcrumbItem>Components</BreadcrumbItem>
@@ -130,7 +130,7 @@
             </Layout>
             <Footer class="layout-footer-center">2006-2018 &copy; Youdao</Footer>
         </Layout>
-        </Scroll>
+        <!-- </Scroll> -->
     </div>
 </div>
 </template>
@@ -400,7 +400,7 @@ export default {
     }
   }
 }
-document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
+// document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
 </script>
 
 <style scoped>

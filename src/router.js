@@ -49,7 +49,7 @@ const router = new Router({
     {
       path: '/exp-home',
       name: 'exp-home',
-      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome4.vue')
+      component: () => import(/* webpackChunkName: "exp-home" */ './exp/ExpHome5.vue')
     },
     {
       path: '/summary-query',

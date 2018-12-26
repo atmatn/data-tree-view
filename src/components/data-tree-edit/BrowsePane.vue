@@ -3,7 +3,7 @@
     <Scroll>
       <Tree :data="dataTreeNodes" :render="renderContent.bind(this)"></Tree>
     </Scroll>
-    <h3>{{tips}}</h3>
+    <!-- <h3>{{tips}}</h3> -->
   </div>
 </template>
 <script>
@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       // dataTreeNodes: this.$store.dispatch('reloadDataTree'),
-      tips: '欢迎来到编辑页面！',
+      // tips: '欢迎来到编辑页面！',
       //addForm: '',
       //functions: '',
       oldPerms: [],
