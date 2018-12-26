@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Input v-model.trim="reName" style="width: 300px"/>
+    <Input v-model.trim="newName" style="width: 300px"/>
     <br>
     <Button @click="rename()" type="primary">更名</Button>
   </div>
@@ -20,7 +20,7 @@ export default {
         let self = this
         if (newVal.mode === 'rename') {
            this.$store.dispatch('getNodeTitle', {id: newVal.id}).then( title => {
-             self.reName = title
+             self.newName = title
            })
         console.log(newVal);
         }
@@ -30,7 +30,7 @@ export default {
   },
   methods:{
     rename(){
-      if (this.reName === "" || this.reName.length === 0) {
+      if (this.newName === "" || this.newName.length === 0) {
         this.$Message.info("输入的名称为空");
       } else {
         axios
@@ -39,7 +39,7 @@ export default {
             method: "post",
             data: {
               id: this.idAndMode.id,
-              title: this.reName
+              title: this.newName
             }
           })
           .then(res => {

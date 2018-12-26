@@ -106,7 +106,7 @@ export default {
                   props: { type: 'text' },
                   on: {
                     click: () => {
-                      this.copy(data)
+                      self.emitChangeMode(data.id, 'copy')
                     }
                   },
                   style: { color: 'green' }
