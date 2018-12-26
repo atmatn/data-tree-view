@@ -81,9 +81,14 @@
       <Button @click="testMoveUp(16)">testMoveUpLeaf</Button>
       <Button @click="testMoveDown(16)">testMoveDownLeaf</Button>
     </div>
-    <div>
+    <!-- <div>
       <Input type="textarea" :rows="4" v-bind:value="nodeData" style="width: 800px;"/>
       Get Node: <Button @click="testGetNode(1)">testGetNode</Button>
+    </div> -->
+    <div>
+      GetFlattenProductFolders:
+      <Input type="textarea" v-bind:value="flattenProductFoldersText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetFlattenProductFolders">testGetFlattenProductFolders</Button>
     </div>
     <div>
       Run Script (仅在“集成测试”模式有效):
@@ -187,6 +192,7 @@ export default {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     },
     // 通过vuex的处理reload data tree
+    ...mapActions(["getFlattenProductFolders"]),
     ...mapActions(["reloadDataTree"]),
     ...mapActions(["setShowDebug"]),
     testAddToFolderNode () {
@@ -367,6 +373,11 @@ export default {
       }).then( res => {
         this.nodeData = JSON.stringify(res.data, null, 4)
       })
+    },
+    testGetFlattenProductFolders() {
+      this.getFlattenProductFolders().then( res => {
+        this.flattenProductFoldersText = JSON.stringify(res, null, 4)
+      })
     }
   },
   computed: {
@@ -384,8 +395,8 @@ export default {
       permText: '',
       attrText: '',
       showEditModal: false,
-      nodeData: ''
-
+      nodeData: '',
+      flattenProductFoldersText: ''
     }
   }
 }

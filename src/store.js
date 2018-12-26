@@ -265,35 +265,73 @@ let store = new Vuex.Store({
         }
         resolve(ret)
       })
+    },
+    getFlattenProductFolders ({ commit, state }) {
+      // debugger
+      let arr = []
+      let curProduct = {}
+      function process (node, prefix) {
+        if (node instanceof Array) {
+          node.forEach(n => {
+            if (n.children) {
+              // 产品有children，才会新建一个元素
+              curProduct = {
+                product: {
+                  title: n.title,
+                  id: n.id
+                },
+                folders: []
+              }
+              arr.push(curProduct)
+              n.children.forEach(subNode => {
+                process(subNode, '')
+              })
+            }
+          })
+        } else {
+          if (node.type === 'folder' && node.children) {
+            // debugger
+            curProduct.folders.push({
+              id: node.id,
+              title: prefix + node.title
+            })
+            if (node.children) {
+              node.children.forEach(subNode => {
+                process(subNode, prefix + node.title + ' / ')
+              })
+            }
+          }
+        }
+      }
+
+      return new Promise(function (resolve, reject) {
+        try {
+          // let arr = [{
+          //   product: {
+          //     title: '',
+          //     id: 1
+          //   },
+          //   folders: [
+          //     {
+          //       id: 15,
+          //       title: '链接'
+          //     },
+          //     {
+          //       id: 16,
+          //       title: '链接 / KPI数据'
+          //     }
+          //   ]
+          // }]
+          process(state.dataTreeNodes)
+          resolve(arr)
+        } catch (e) {
+          reject(e)
+        }
+      })
     }
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })
     // }
-  },
-  getFlattenProductFolders ({ commit, state }) {
-    return new Promise(function (resolve, reject) {
-      try {
-        let arr = [{
-          product: {
-            title: '',
-            id: 1
-          },
-          folders: [
-            {
-              id: 15,
-              title: '链接'
-            },
-            {
-              id: 16,
-              title: '链接 / KPI数据'
-            }
-          ]
-        }]
-        resolve(arr)
-      } catch (e) {
-        reject(e)
-      }
-    })
   }
 })
 
