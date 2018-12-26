@@ -12,8 +12,10 @@
       <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane>
       <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
       <RenamePane v-if="idAndMode.mode==='rename'" :idAndMode="idAndMode" @completed="onCompleted"></RenamePane>
-      <DeleteNode v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNode>
       <PermsEditPane v-if="idAndMode.mode==='perms-edit'" :idAndMode="idAndMode" @completed="onCompleted"></PermsEditPane>
+      <DeleteNodePane v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNodePane>
+      <CopyNodePane v-if="idAndMode.mode==='copy'" :idAndMode="idAndMode" @completed="onCompleted"></CopyNodePane>
+      <MoveNodePane v-if="idAndMode.mode==='move'" :idAndMode="idAndMode" @completed="onCompleted"></MoveNodePane>
       <div slot="footer">
         <Button type="error" size="large" @click="close" ghost>关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
@@ -30,9 +32,11 @@ import Router from "vue-router";
 import AddPane from "@/components/data-tree-edit/AddPane.vue";
 import AttrsEditPane from "@/components/data-tree-edit/AttrsEditPane.vue";
 import RenamePane from "@/components/data-tree-edit/RenamePane.vue";
-import DeleteNode from "@/components/data-tree-edit/DeleteNode.vue";
+import DeleteNodePane from "@/components/data-tree-edit/DeleteNodePane.vue";
+import CopyNodePane from "@/components/data-tree-edit/CopyNodePane.vue";
+import MoveNodePane from "@/components/data-tree-edit/MoveNodePane.vue";
 export default {
-  components: { BrowsePane,AddPane,AttrsEditPane,RenamePane,DeleteNode,PermsEditPane },
+  components: { BrowsePane,AddPane,AttrsEditPane,RenamePane,DeleteNodePane,CopyNodePane,MoveNodePane, PermsEditPane },
   inject: ["reload"],
   props:{value:Boolean},
   data() {

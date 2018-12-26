@@ -265,35 +265,35 @@ let store = new Vuex.Store({
         }
         resolve(ret)
       })
+    },
+    getFlattenProductFolders ({ commit, state }) {
+      return new Promise(function (resolve, reject) {
+        try {
+          let arr = [{
+            product: {
+              title: '精品课',
+              id: 1
+            },
+            folders: [
+              {
+                id: 15,
+                title: '链接'
+              },
+              {
+                id: 16,
+                title: '链接 / KPI数据'
+              }
+            ]
+          }]
+          resolve(arr)
+        } catch (e) {
+          reject(e)
+        }
+      })
     }
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })
     // }
-  },
-  getFlattenProductFolders ({ commit, state }) {
-    return new Promise(function (resolve, reject) {
-      try {
-        let arr = [{
-          product: {
-            title: '',
-            id: 1
-          },
-          folders: [
-            {
-              id: 15,
-              title: '链接'
-            },
-            {
-              id: 16,
-              title: '链接 / KPI数据'
-            }
-          ]
-        }]
-        resolve(arr)
-      } catch (e) {
-        reject(e)
-      }
-    })
   }
 })
 
