@@ -104,7 +104,7 @@
         <Layout>
             <Header>
             </Header>
-            <Layout :style="{padding: '0 50px'}">
+            <Layout :style="{padding: '0 50px', minHeight: '80vh'}">
                 <!-- <Breadcrumb :style="{margin: '16px 0'}">
                     <BreadcrumbItem>Home</BreadcrumbItem>
                     <BreadcrumbItem>Components</BreadcrumbItem>
