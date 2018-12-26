@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <selects/>
+      <searchNodePane/>
     </div>
     <Menu theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
       <div v-if="TreeNodes">
@@ -13,8 +13,7 @@
         </h1>
       </div>
     </Menu>
-    <switchs></switchs>
-    <!--转换开关-->
+    <switchs></switchs><!--转换开关-->
   </div>
 </template>
 
@@ -22,9 +21,8 @@
 import submenu from "@/components/menu/submenu.vue";
 import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
-import selects from "@/components/select/select.vue";
 import switchs from "@/components/switch/switch.vue";
-// import modals from "@/components/modal/modal.vue";
+import searchNodePane from "@/components/select/searchNodePane.vue";
 export default {
   data() {
     return {
@@ -32,7 +30,7 @@ export default {
       onChangeStatus: []
     };
   },
-  components: { submenu, selects, switchs },
+  components: { submenu, searchNodePane, switchs },
   computed: {
     ...mapState({
       TreeNodes: "dataTreeNodes"

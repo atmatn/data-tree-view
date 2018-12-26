@@ -63,6 +63,7 @@ let store = new Vuex.Store({
     },
     updateTurnOn: (state, { status }) => {
       state.turnOn = status
+      console.log('3333333333' + status)
     },
     updateTurnLight: (state, { status }) => {
       state.turnLight = status
