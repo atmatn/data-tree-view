@@ -1,5 +1,6 @@
 <template>
   <span class="choice-area">
+    <div>{{value}}</div>
     <prompt v-model="value"></prompt>
     <i-select filterable v-model="value.val" style="width: 200px">
       <i-option v-for="(item,idx) in getListFromMeta(value.meta)" :value="item" v-bind:key="idx">{{ item }}</i-option>
