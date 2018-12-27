@@ -164,7 +164,8 @@ export default {
     prepareForRun() {
       var argDefs = this.argDefs
       var userParams = this.myParams
-      var $disp = $(this.$refs.content)
+      var $content = $(this.$refs.content)
+      var $disp = $("<div>").appendTo($content)
       var args = {};
       var layouts = {};
       // var debugging = true;
@@ -303,7 +304,8 @@ export default {
       }
       return {
         args,
-        layouts
+        layouts,
+        $disp
       }
     },
     doRun() {
@@ -358,8 +360,8 @@ export default {
             runJs,
             set_snippet
               } = customScriptApi
-      this.clearDisp()
-      let { args, layouts } = this.prepareForRun()
+      this.clearContent()
+      let { args, layouts, $disp } = this.prepareForRun()
       let { dateFormat } = dateApi
       let moment = momentRef
       let lib = {
@@ -369,7 +371,6 @@ export default {
           autoFormat: autoFormat
         }
       }
-      let $disp = $(this.$refs.content)
 
       let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
       startRun()
@@ -490,7 +491,7 @@ export default {
         }
       }
     },
-    clearDisp () {
+    clearContent () {
       // 清空结果
       this.$refs.content.innerHTML = "";
       if (this.myScriptId === "") {
@@ -503,7 +504,7 @@ export default {
       this.myScriptId = this.$route.query.scriptId
       this.autoRun = (this.$route.query.autoRun === 'true' || this.$route.query.autoRun === true)
 
-      this.clearDisp()
+      this.clearContent()
       console.log(`FETCHING ${this.myScriptId}`)
 
       // 读取script
