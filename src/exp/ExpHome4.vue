@@ -24,13 +24,20 @@
     <div>
       <h2>Select filterable</h2>
       <Select filterable>
-        <OptionGroup :label="group1">
+        <OptionGroup label="group1">
         <Option :value="'v1'" :label="'k1'"></Option>
         <Option :value="'v2'" :label="'k2'"></Option>
         <Option :value="'s2'" :label="'v2'"></Option>
       </OptionGroup>
       </Select>
     </div>
+    <div>
+      <h2>ArgChoice</h2>
+      <ArgChoice v-model="argChoiceData"></ArgChoice>
+      <Button @click="doChangeArgChoiceModel1">change model 1</Button>
+      <Button @click="doChangeArgChoiceModel2">change model 2</Button>
+    </div>
+
   </div>
 </template>
 
@@ -39,12 +46,14 @@ import ScriptParamsInput from '_c/data-tree-edit/ScriptParamsInput.vue'
 import AttrsEdit from '_c/data-tree-edit/AttrsEdit.vue'
 import PermsEdit from '_c/data-tree-edit/PermsEdit.vue'
 import SelectNode from '@/components/data-tree-edit/SelectNode.vue'
+import ArgChoice from '_c/args/ArgChoice.vue'
 export default {
   components: {
     ScriptParamsInput,
     AttrsEdit,
     PermsEdit,
-    SelectNode
+    SelectNode,
+    ArgChoice
   },
   data: function() {
     return {
@@ -75,7 +84,12 @@ export default {
         {"value": "executable_perms", "perms": ['ke_general'] },
         {"value": "visible_perms","perms":[ 'dict_general'] }
       ],
-      selected: undefined
+      selected: undefined,
+      argChoiceData: {
+        val: '公开课',
+        optional: false,
+        meta: "{\"val\":[\"任意\",\"公开课\",\"付费课\"],\"type\":\"listed\"}"
+      }
     }
   },
   methods: {
@@ -100,6 +114,20 @@ export default {
           attrVal: 'http://yyy'
         }
       ]
+    },
+    doChangeArgChoiceModel1() {
+      this.argChoiceData = {
+        val: '任意',
+        optional: false,
+        meta: "{\"val\":[\"任意\",\"公开课\",\"付费课\"],\"type\":\"listed\"}"
+      }
+    },
+    doChangeArgChoiceModel2() {
+      this.argChoiceData = {
+        val: '公开课',
+        optional: false,
+        meta: "{\"val\":[\"任意\",\"公开课\",\"付费课\"],\"type\":\"listed\"}"
+      }
     }
   }
 }

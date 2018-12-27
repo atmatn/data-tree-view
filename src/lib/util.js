@@ -2,7 +2,7 @@ import $ from 'jquery'
 import _ from 'underscore'
 var cacheMap = {}
 export const getListFromMeta = function getListFromMeta (meta) {
-  console.log(meta)
+  // console.log(meta)
   var metaObj = JSON.parse(meta)
   if (metaObj === null) {
     return []
