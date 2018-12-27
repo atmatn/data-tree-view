@@ -1,7 +1,7 @@
 const path = require('path')
 const resolve = dir => path.join(__dirname, dir)
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/ui' : '/ui'
-const BACKEND_SERVER = 'http://localhost:18080'
+const BACKEND_SERVER = 'htttp://ns013x.corp.youdao.com:18085'
 
 module.exports = {
   lintOnSave: false,

@@ -32,8 +32,8 @@
           <template v-else slot="title">
             <Poptip
               trigger="hover"
-              title=""
-              :content="model.visiblePerms.length===0?'该产品未设置访问权限,只有创建者能访问':'currentUserVisible = false'"
+              :title="model.visiblePerms.length===0?'':'需要如下权限之一才能访问'"
+              :content="model.visiblePerms.length===0?'该产品未设置访问权限,只有创建者能访问':model.visiblePerms.join(', ')"
               placement="right"
             >
               {{model.title}}
