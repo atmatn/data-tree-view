@@ -24,10 +24,12 @@ export default {
     }
   },
   watch: {
-    // value: function(v){
-    //     console.log("mod: " + v);
-    //     this.$emit("input", v);
-    // }
+    value: {
+      handler: function(v){
+        console.log("ArgChoice.value: " + v);
+        // this.$emit("input", v);
+      },
+      immediate: true
   },
   methods: {
     getListFromMeta
