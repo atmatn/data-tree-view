@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <MenuItem
-        :name="model.title+model.id"
+        :name="model.id"
         @click.native="openScript({scriptId: model.scriptId, params:model.scriptParams})"
       >{{model.title}}</MenuItem>
     </div>
@@ -15,16 +15,16 @@
       <locks v-if="wichToShow" :model="model"></locks>
     </div>
     <div v-else>
-      <MenuItem :name="model.title+model.id" @click.native="childClick">{{model.title}}</MenuItem>
+      <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else>
     <div v-if="model.type !== 'product' && model.children !== undefined && model.children.length === 0">
-      <MenuItem :name="model.title+model.id">{{model.title}}（空目录）</MenuItem>
+      <MenuItem :name="model.id">{{model.title}}（空目录）</MenuItem>
     </div>
     <div v-else>
       <div v-if="model.type=== 'product'&&model.currentUserVisible===false">
-        <submenu v-if="wichToShow===true" :name="model.title+model.id">
+        <submenu v-if="wichToShow===true" :name="model.id">
           <template
             v-if="model.children!==undefined&&model.children.length !== 0"
             slot="title"
@@ -32,12 +32,12 @@
           <template v-else slot="title">
             <Poptip
               trigger="hover"
-              title="缺少下列权限"
-              :content="'currentUserVisible = false'"
+              title=""
+              :content="model.visiblePerms.length===0?'该产品未设置访问权限,只有创建者能访问':'currentUserVisible = false'"
               placement="right"
             >
               {{model.title}}
-              （空产品） <icon type="md-lock"/>
+             <icon type="md-lock"/>
             </Poptip>
           </template>
           <div v-if="isFolder">
@@ -46,7 +46,7 @@
         </submenu>
       </div>
       <div v-else>
-        <submenu :name="model.title+model.id">
+        <submenu :name="model.id">
           <template
             v-if="model.children!==undefined&&model.children.length !== 0"
             slot="title"

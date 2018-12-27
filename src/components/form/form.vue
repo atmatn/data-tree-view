@@ -107,39 +107,44 @@
         <Button v-if="allow===false" @click="copys()" type="primary">复制</Button>
       </formItem>
     </Form>
+    <Scroll v-if="functions ==='setPerms'" >
     <Form v-if="functions==='setPerms'&&allow===false" @submit.native.prevent>
       <formItem>
         {{model.title}}的权限:
-        <div v-for="item in this.perms">{{item.value}}:{{item.perms}}</div>
-        <div
-          v-if="model.currentUserExecutable!==undefind"
-        >currentUserExecutable:{{model.currentUserExecutable}}</div>
-        <div
-          v-if="model.containsExecutableForCurrentUser!==undefind"
+        <!-- {{permSelected}} -->
+        <div v-for="(item,index) in this.oldPerms"><h5>{{item.value}}:{{item.perms}}</h5>
+          <div>权限列表：
+            <Select v-model="permSelected[index]" style="width:300px" multiple>
+              <Option
+                v-for="perm in allPermList"
+                :value="perm.title"
+              >{{perm.title}} ({{perm.value}})</Option>
+            </Select>
+            <br>
+          </div>
+        </div>
+        <Button @click="setPerms()" type="primary">保存</Button>
+        <!-- <div
+          v-if="model.currentUserExecutable!==undefined"
+        >currentUserExecutable:{{model.currentUserExecutable}}</div> -->
+        <!-- <div
+          v-if="model.containsExecutableForCurrentUser!==undefined"
         >containsExecutableForCurrentUser:{{model.containsExecutableForCurrentUser}}</div>
         <div
-          v-if="model.currentUserManageable!==undefind"
-        >currentUserManageable:{{model.currentUserManageable}}</div>
+          v-if="model.currentUserManageable!==undefined"
+        >currentUserManageable:{{model.currentUserManageable}}</div> -->
         <br>
-        <div v-if="!onSwitch">
+        <!-- <div v-if="!onSwitch">
           <Row>
             <Button @click="getParentPerms()" type="primary">继承父节点权限</Button>&nbsp;&nbsp;&nbsp;
             <Button @click="setSelfPerms()" type="primary">单独设置本节点权限</Button>
           </Row>
-        </div>
-        <div v-if="onSwitch">权限列表：
-          <Select v-model="permSelected" style="width:300px">
-            <Option
-              v-for="perm in this.permsList"
-              :value="perm.value"
-              :key="perm.title"
-            >{{perm.title}}:{{perm.value}}</Option>
-          </Select>
-          <br>
-          <Button @click="setPerms()" type="primary">设置</Button>
-        </div>
+        </div> -->
+        <!-- <div v-if="onSwitch">权限列表： -->
+
       </formItem>
     </Form>
+    </Scroll>
         <Scroll v-if="functions ==='setAttrs'" >
     <Form v-if="functions==='setAttrs'&&allow2===false" ref="setAttrs" @submit.native.prevent>
       <formItem>
@@ -191,8 +196,19 @@ import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
 import axios from "axios";
 export default {
-  props: ["model", "functions", "perms", "attrs", "permsList","param_a","param_a_value","param_b","param_b_value"],
+  props: ["model", "functions", "oldPerms", "attrs", "permsList","param_a","param_a_value","param_b","param_b_value"],
   watch: {
+    oldPerms: {
+      handler: function(newVal){
+        debugger
+        var permSelected = []
+        newVal.forEach( item => {
+          permSelected.push(_.cloneDeep(item.perms))
+        })
+        this.permSelected = permSelected
+      },
+      immediate: true
+    },
     model: function(newVal, oldVal) {
       this.scriptid = newVal.scriptId;
       this.urls = newVal.linkUrl;
@@ -222,7 +238,7 @@ export default {
       // param_a_value: [],
       // param_b: [],
       // param_b_value: [],
-      permSelected: "",
+      permSelected: [],
       dataTreeNodes: this.$store.dispatch("reloadDataTree"),
       onChange: ""
     };
@@ -239,6 +255,9 @@ export default {
     }),
     ...mapState({
       onSwitch: "onSwitch"
+    }),
+    ...mapState({
+      allPermList: "permsList"
     })
   },
   methods: {
@@ -498,13 +517,14 @@ export default {
       }
     },
     setPerms() {
+      console.log(this.permSelected);
       axios
         .request({
           url: "/api/data-tree/edit/set-perms",
           method: "post",
           data: {
             id: this.model.id,
-            permList: [{ value: "executablePerms", perms: this.permSelected }]
+            permList: [{'value':'','perms':this.permSelected}]
           }
         })
         .then(res => {

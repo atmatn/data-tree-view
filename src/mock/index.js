@@ -76,6 +76,7 @@ if (!integrationTest) {
   Mock.mock(/\/api\/data-tree\/edit\/list-perms/, 'post', listPerms)
   Mock.mock(/\/api\/data-tree\/edit\/move-up/, 'post', moveUp)
   Mock.mock(/\/api\/data-tree\/edit\/move-down/, 'post', moveDown)
+  // Mock.mock(/\/api\/data-tree\/edit\/get-node/, 'post', getNode)
 }
 
 Mock.mock(/\/zk\/kafka/, 'get', getKafkaList)

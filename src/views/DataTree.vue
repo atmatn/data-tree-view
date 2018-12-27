@@ -1,10 +1,12 @@
 <template>
 <div class="layout">
-  <Scroll height="1000">
+  <!-- <Scroll height="1000"> -->
   <div>
     <Button @click="setShowDebug({val: false})">Hide Debug</Button><Button @click="setShowDebug({val: true})">Show Debug</Button>
   </div>
   <div v-show="showDebug" class="extra">
+    <!-- {{indexMap}} -->
+    <!-- xxx{{allPermsList}}yyy -->
     <div>
       <router-link :to="{name: 'summary-query'}">明细查询工具</router-link>
       | <router-link :to="{name: 'exp-home'}">ExpHome</router-link>
@@ -79,6 +81,25 @@
       <Button @click="testMoveUp(16)">testMoveUpLeaf</Button>
       <Button @click="testMoveDown(16)">testMoveDownLeaf</Button>
     </div>
+    <!-- <div>
+      <Input type="textarea" :rows="4" v-bind:value="nodeData" style="width: 800px;"/>
+      Get Node: <Button @click="testGetNode(1)">testGetNode</Button>
+    </div> -->
+    <div>
+      GetFlattenProductFolders:
+      <Input type="textarea" v-bind:value="flattenProductFoldersText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetFlattenProductFolders">testGetFlattenProductFolders</Button>
+    </div>
+    <div>
+      DataTreeSearchList:
+      <Input type="textarea" v-bind:value="dataTreeSearchListText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetDataTreeSearchList">testGetDataTreeSearchList</Button>
+    </div>
+    <div>
+      DataTreeAncestorIdList
+      <Input type="textarea" v-bind:value="dataTreeAncestorIdListText" :rows="4" style="width: 800px;"/>
+      <Button @click="testGetDataTreeAncestorIdList">testGetDataTreeAncestorIdList</Button>
+    </div>
     <div>
       Run Script (仅在“集成测试”模式有效):
       <router-link :to="{name: 'run-script', query: {'scriptId': 'bring_vendor_analyze', 'showConsumeByBringDay': true} }">bring_vendor_analyze</router-link>
@@ -92,8 +113,9 @@
   </div>
         <Layout>
             <Header>
+              <div class="hdr"><h1>Analyzer2</h1><CredentialWarning></CredentialWarning></div>
             </Header>
-            <Layout :style="{padding: '0 50px'}">
+            <Layout :style="{padding: '0 50px', minHeight: '80vh'}">
                 <!-- <Breadcrumb :style="{margin: '16px 0'}">
                     <BreadcrumbItem>Home</BreadcrumbItem>
                     <BreadcrumbItem>Components</BreadcrumbItem>
@@ -108,6 +130,8 @@
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}" :width="300">
                               <menuTree></menuTree>
+                              <Button type="primary" @click="doShowEditModal()" >编辑模式</Button>
+                              <DataTreeEditModal v-model="showEditModal"></DataTreeEditModal>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                             <router-view/>
@@ -117,7 +141,7 @@
             </Layout>
             <Footer class="layout-footer-center">2006-2018 &copy; Youdao</Footer>
         </Layout>
-        </Scroll>
+        <!-- </Scroll> -->
     </div>
 </div>
 </template>
@@ -128,10 +152,15 @@ import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
+import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
+import CredentialWarning from "_c/CredentialWarning.vue"
 // import {getDataTree} from '@/mock/index.js'
 
+// debugger
+
+
 export default {
-  components: {menuTree},
+  components: {menuTree,DataTreeEditModal,CredentialWarning},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
@@ -147,8 +176,14 @@ export default {
       next()
     }
   },
+  mounted() {
+    this.$store.dispatch("reloadPermsList")
+  },
   methods: {
-
+    doShowEditModal () {
+      debugger
+      this.showEditModal = true
+    },
     // 较为直接的处理
     getSomeData: function () {
       axios.request({
@@ -169,8 +204,21 @@ export default {
       this.setSomeMsg('hello ' + Math.round(Math.random() * 100))
     },
     // 通过vuex的处理reload data tree
+    ...mapActions(["getFlattenProductFolders"]),
     ...mapActions(["reloadDataTree"]),
     ...mapActions(["setShowDebug"]),
+    ...mapActions(["getDataTreeSearchList"]),
+    testGetDataTreeSearchList () {
+      this.getDataTreeSearchList().then( res => {
+        this.dataTreeSearchListText = JSON.stringify(res, null, 4)
+      })
+    },
+    ...mapActions(["getDataTreeAncestorIdList"]),
+    testGetDataTreeAncestorIdList () {
+      this.getDataTreeAncestorIdList({id: 17}).then( res => {
+        this.dataTreeAncestorIdListText = JSON.stringify(res, null, 4)
+      })
+    },
     testAddToFolderNode () {
       axios.post('/api/data-tree/edit/add', {
         parentId: 15,
@@ -342,24 +390,43 @@ export default {
       axios.post('/api/data-tree/edit/move-down', {
         id: id
       })
+    },
+    testGetNode(id){
+      axios.post('/api/data-tree/edit/get-node', {
+        id: id
+      }).then( res => {
+        this.nodeData = JSON.stringify(res.data, null, 4)
+      })
+    },
+    testGetFlattenProductFolders() {
+      this.getFlattenProductFolders().then( res => {
+        this.flattenProductFoldersText = JSON.stringify(res, null, 4)
+      })
     }
   },
   computed: {
     ...mapState({
       someMsg: "someMsg",
       dataTreeNodes: "dataTreeNodes",
-      showDebug: 'showDebug'
+      showDebug: 'showDebug',
+      allPermsList: 'permsList',
+      indexMap: 'indexMap'
     })
   },
   data () {
     return {
       someData: "nothing",
       permText: '',
-      attrText: ''
+      attrText: '',
+      showEditModal: false,
+      nodeData: '',
+      flattenProductFoldersText: '',
+      dataTreeSearchListText: '',
+      dataTreeAncestorIdListText: ''
     }
   }
 }
-document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
+// document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
 </script>
 
 <style scoped>
@@ -399,5 +466,10 @@ document.body.parentNode.style.overflow = "hidden";//禁用浏览器的滚动条
     max-height: 600px;
     width: 90%;
     overflow: auto;
+}
+.hdr h1 {
+  display: inline-block;
+  color: white;
+  width: 10em;
 }
 </style>
