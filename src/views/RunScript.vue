@@ -435,6 +435,7 @@ export default {
         } else if (arg.type == "CHOICE") {
           var param = userParams[arg.id];
           var vals = getListFromMeta(arg.meta);
+          console.log(`CHOICE arg.id=${arg.id} init with param = ${param}, vals = ${JSON.stringify(vals)}`)
           var setToDefault = false;
           if (param !== undefined) {
             if (_.contains(vals, param)) {
@@ -519,6 +520,7 @@ export default {
         .then(res => {
           let argDefs = res.data.argDefs;
           argDefs.forEach(x => (x.val = null));
+          console.log('initializeArgDefs with userParams:' + JSON.stringify(this.myParams))
           this.initializeArgDefs({ argDefs, userParams: this.myParams });
           this.argDefs = argDefs;
           this.scriptBody = res.data.body;
