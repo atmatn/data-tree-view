@@ -2,6 +2,7 @@
   <div>
     <h3>设置属性</h3>
     节点: {{nodeTitle}}
+    <!-- {{idAndMode}} -->
     <AttrsEdit v-model="nodeAttrs"></AttrsEdit>
     <Button @click="save()" type="primary">保存</Button>
   </div>

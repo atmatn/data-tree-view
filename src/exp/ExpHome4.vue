@@ -9,6 +9,7 @@
       <h2>AttrsEdit</h2>
       {{attrList}}
       <AttrsEdit v-model="attrList"></AttrsEdit>
+      <Button @click="doChangeModel">change model</Button>
     </div>
     <div>
       <h2>PermsEdit</h2>
@@ -61,7 +62,7 @@ export default {
           title: '脚本参数',
           attrKey: 'scriptParams',
           type: 'script_params',
-          attrVal: { xxx: 'xxx', xxx: 'xxx' }
+          attrVal: { xxx1: 'xxx1_value' }
         },
         {
           title: '目标url',
@@ -75,6 +76,30 @@ export default {
         {"value": "visible_perms","perms":[ 'dict_general'] }
       ],
       selected: undefined
+    }
+  },
+  methods: {
+    doChangeModel() {
+      this.attrList = [
+        {
+          title: '脚本idyyy',
+          attrKey: 'scriptId',
+          type: 'script_id',
+          attrVal: 'yyy'
+        },
+        {
+          title: '脚本参数yyy',
+          attrKey: 'scriptParams',
+          type: 'script_params',
+          attrVal: { yyy1: 'yyy1_value', yyy2: 'yyy2_value' }
+        },
+        {
+          title: '目标urlyyy',
+          attrKey: 'linkUrl',
+          type: 'url',
+          attrVal: 'http://yyy'
+        }
+      ]
     }
   }
 }
