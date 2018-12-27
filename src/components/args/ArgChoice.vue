@@ -30,11 +30,12 @@ export default {
         // this.$emit("input", v);
       },
       immediate: true
+    }
   },
   methods: {
     getListFromMeta
   }
-};
+}
 </script>
 
 <style>
