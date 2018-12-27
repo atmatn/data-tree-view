@@ -58,7 +58,13 @@ export default {
         this.$store
           .dispatch('getDataTreeAncestorIdList', { id: this.bySelected })
           .then(arr => {
-            this.$store.commit('updateTurnOn', { status: arr })
+            if (arr.length === 1) {
+              this.$store.commit('updateTurnOn', {
+                status: [arr[0],this.bySelected]
+              })
+            } else {
+              this.$store.commit('updateTurnOn', { status: arr })
+            }
             this.$store.commit('updateTurnLight', { status: this.bySelected })
           })
       }
