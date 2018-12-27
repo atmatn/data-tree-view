@@ -29,21 +29,23 @@ export default {
   },
   props: ['mode', 'id', 'idAndMode'],
   watch: {
-    newNodeType: function (newVal) {
+    newNodeType: function(newVal) {
       let self = this
-      this.$store.dispatch('getTypeAttrsTemplate', {type:newVal}).then ( tmpl => {
-        self.newNodeAttrs = tmpl
-      })
+      this.$store
+        .dispatch('getTypeAttrsTemplate', { type: newVal })
+        .then(tmpl => {
+          self.newNodeAttrs = tmpl
+        })
     },
     idAndMode: {
       handler: function(newVal) {
         let self = this
         if (newVal.mode === 'add') {
-          this.$store.dispatch('getNodeType', {id: newVal.id}).then( type => {
+          this.$store.dispatch('getNodeType', { id: newVal.id }).then(type => {
             self.currentNodeType = type
-            if( type === 'root') {
+            if (type === 'root') {
               this.newNodeType = 'product'
-            }else{
+            } else {
               this.newNodeType = ''
             }
           })
@@ -63,35 +65,40 @@ export default {
   methods: {
     save: function() {
       axios
-          .request({
-            url: "/api/data-tree/edit/add",
-            method: "post",
-            data: {
-              parentId: this.idAndMode.id,
-              type: this.newNodeType,
-              title: this.newNodeTitle
-            }
-          })
-          .then(res => {
-            if (res.status !== 200) {
-              this.$Message.error(JSON.stringify(res.data))
-            } else {
-              if( this.newNodeAttrs.length > 0) {
-                axios.request({
-                  url: "/api/data-tree/edit/set-attrs",
+        .request({
+          url: '/api/data-tree/edit/add',
+          method: 'post',
+          data: {
+            parentId: this.idAndMode.id,
+            type: this.newNodeType,
+            title: this.newNodeTitle
+          }
+        })
+        .then(res => {
+          if (res.status !== 200) {
+            this.$Message.error(JSON.stringify(res.data))
+          } else {
+            if (this.newNodeAttrs.length > 0) {
+              axios
+                .request({
+                  url: '/api/data-tree/edit/set-attrs',
                   method: 'post',
                   data: {
                     id: res.data.id,
                     attrs: this.newNodeAttrs
                   }
-                }).then( res => {
-                  this.$emit('completed')
                 })
-              } else {
-                this.$emit('completed')
-              }
+                .then(res => {
+
+                  this.$emit('completed')
+                  this.$Message.info('添加成功')
+                })
+            } else {
+              this.$emit('completed')
+              this.$Message.info('添加成功')
             }
-          });
+          }
+        })
     }
   }
 }

@@ -23,7 +23,8 @@ let store = new Vuex.Store({
     showDebug: false,
     onSwitch: false,
     indexMap: {},
-    indexParentMap: {}
+    indexParentMap: {},
+    expandWitch: {} // 那一项要被展开
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -146,7 +147,20 @@ let store = new Vuex.Store({
           method: 'get'
         }).then(res => {
           // debugger
+
+          // 保存编辑目录树时的展开状态
+          // debugger
+          let expandList = []
+          Object.keys(state.indexMap).forEach(id => {
+            if (state.indexMap[id].expand === true ) {
+              expandList.push(id)
+            }
+          })
+          console.log('expandList = ' + expandList.join(','))
+
           commit('updateDataTreeNodes', { treeNodes: res.data.treeNodes })
+          let treeNodes = state.dataTreeNodes
+
           // id -> node
           var indexMap = {}
 
@@ -156,7 +170,7 @@ let store = new Vuex.Store({
           function doIndex (target, parentId) {
             if (target === undefined) {
               // 无参数调用，直接处理root array
-              doIndex(state.dataTreeNodes, -1)
+              doIndex(treeNodes, -1)
             } else if (Array.isArray(target)) {
               // 清空索引，因为要重建
               indexMap = {}
@@ -186,12 +200,17 @@ let store = new Vuex.Store({
             }
           }
           doIndex()
+
+          expandList.forEach(id => {
+            indexMap[id].expand = true
+          })
+
           commit('updateIndexMap', { indexMap })
           commit('updateIndexParentMap', { indexParentMap })
+
           resolve(state.treeNodes)
         })
       })
-
     },
     reloadPermsList ({ commit }) {
       // debugger
@@ -420,7 +439,7 @@ let store = new Vuex.Store({
     getDataTreeAncestorIdList ({ commit, dispatch, state }, { id }) {
       let arr = []
       function process (curId) {
-        debugger
+        // debugger
         if (curId === -1) {
           return
         }
