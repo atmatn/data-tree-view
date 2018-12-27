@@ -438,9 +438,12 @@ export default {
           console.log(`CHOICE arg.id=${arg.id} init with param = ${param}, vals = ${JSON.stringify(vals)}`)
           var setToDefault = false;
           if (param !== undefined) {
+            console.log('to check contains')
             if (_.contains(vals, param)) {
+              console.log('passed')
               arg.val = param;
             } else {
+              console.log('failed')
               //设置为空其实也有问题，改为设置为默认值
               if (!arg.optional) {
                 setToDefault = true;
