@@ -19,20 +19,28 @@ export default {
     value: Object
   },
   data: function() {
-    var list = []
-    // debugger
-    Object.keys(this.value).forEach(k => {
-      list.push({
-        paramName: k,
-        paramValue: this.value[k]
-      })
-    })
-
+    let list = this.transformToList()
     return {
       paramsList: list
     }
   },
+  watch: {
+    value: function(newVal){
+      this.paramsList = this.transformToList()
+    }
+  },
   methods: {
+    transformToList(){
+      var list = []
+      // debugger
+      Object.keys(this.value).forEach(k => {
+        list.push({
+          paramName: k,
+          paramValue: this.value[k]
+        })
+      })
+      return list
+    },
     doRemove(index) {
       this.paramsList.splice(index, 1)
       this.emitChange()

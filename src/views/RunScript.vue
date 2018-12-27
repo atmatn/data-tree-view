@@ -164,7 +164,8 @@ export default {
     prepareForRun() {
       var argDefs = this.argDefs
       var userParams = this.myParams
-      var $disp = $(this.$refs.content)
+      var $content = $(this.$refs.content)
+      var $disp = $("<div>").appendTo($content)
       var args = {};
       var layouts = {};
       // var debugging = true;
@@ -303,7 +304,8 @@ export default {
       }
       return {
         args,
-        layouts
+        layouts,
+        $disp
       }
     },
     doRun() {
@@ -358,8 +360,8 @@ export default {
             runJs,
             set_snippet
               } = customScriptApi
-      this.clearDisp()
-      let { args, layouts } = this.prepareForRun()
+      this.clearContent()
+      let { args, layouts, $disp } = this.prepareForRun()
       let { dateFormat } = dateApi
       let moment = momentRef
       let lib = {
@@ -369,7 +371,6 @@ export default {
           autoFormat: autoFormat
         }
       }
-      let $disp = $(this.$refs.content)
 
       let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
       startRun()
@@ -434,11 +435,15 @@ export default {
         } else if (arg.type == "CHOICE") {
           var param = userParams[arg.id];
           var vals = getListFromMeta(arg.meta);
+          console.log(`CHOICE arg.id=${arg.id} init with param = ${param}, vals = ${JSON.stringify(vals)}`)
           var setToDefault = false;
           if (param !== undefined) {
+            console.log('to check contains')
             if (_.contains(vals, param)) {
+              console.log('passed')
               arg.val = param;
             } else {
+              console.log('failed')
               //设置为空其实也有问题，改为设置为默认值
               if (!arg.optional) {
                 setToDefault = true;
@@ -490,7 +495,7 @@ export default {
         }
       }
     },
-    clearDisp () {
+    clearContent () {
       // 清空结果
       this.$refs.content.innerHTML = "";
       if (this.myScriptId === "") {
@@ -503,7 +508,7 @@ export default {
       this.myScriptId = this.$route.query.scriptId
       this.autoRun = (this.$route.query.autoRun === 'true' || this.$route.query.autoRun === true)
 
-      this.clearDisp()
+      this.clearContent()
       console.log(`FETCHING ${this.myScriptId}`)
 
       // 读取script
@@ -518,6 +523,7 @@ export default {
         .then(res => {
           let argDefs = res.data.argDefs;
           argDefs.forEach(x => (x.val = null));
+          console.log('initializeArgDefs with userParams:' + JSON.stringify(this.myParams))
           this.initializeArgDefs({ argDefs, userParams: this.myParams });
           this.argDefs = argDefs;
           this.scriptBody = res.data.body;
