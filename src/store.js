@@ -24,10 +24,13 @@ let store = new Vuex.Store({
     onSwitch: false,
     indexMap: {},
     indexParentMap: {},
-    expandWitch: {} // 那一项要被展开
+    expandWitch: {}, // 那一项要被展开
     // result: []
     // param_a: '',
     // param_a_value: ''
+    loginStatus:{
+      username: 'anonymous'
+    }
   },
   mutations: {
     // 参考：https://vuex.vuejs.org/zh/guide/mutations.html
@@ -464,8 +467,20 @@ let store = new Vuex.Store({
           reject(e)
         }
       })
+    },
+    reloadLoginStatus ({ commit, dispatch, state }) {
+      axios.request({
+        url: '/userNameV2',
+        method: 'get'
+      }).then(res => {
+        state.loginStatus = res.data
+      })
+    },
+    reload ({ commit, dispatch, state }) {
+      dispatch('reloadPermsList')
+      dispatch('reloadDataTree')
+      dispatch('reloadLoginStatus')
     }
-
     // changeResult ({ commit }, { status }) {
     // // commit('updateResult', { status })
     // }

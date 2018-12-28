@@ -113,7 +113,7 @@
   </div>
         <Layout>
             <Header>
-              <div class="hdr"><h1>Analyzer2</h1><CredentialWarning></CredentialWarning></div>
+              <div class="hdr"><div><h1><a href="/ui/data-tree/home">Analyzer2</a></h1> <a class="old-homepage-link" href="/overview.html">旧首页</a></div><CredentialWarning></CredentialWarning><LoginStatus></LoginStatus></div>
             </Header>
             <Layout :style="{padding: '0 50px', minHeight: '80vh'}">
                 <!-- <Breadcrumb :style="{margin: '16px 0'}">
@@ -154,13 +154,14 @@ import store from '@/store.js'
 import menuTree from '@/components/menu/menuTree.vue'
 import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
 import CredentialWarning from "_c/CredentialWarning.vue"
+import LoginStatus from '_c/LoginStatus.vue'
 // import {getDataTree} from '@/mock/index.js'
 
 // debugger
 
 
 export default {
-  components: {menuTree,DataTreeEditModal,CredentialWarning},
+  components: {menuTree,DataTreeEditModal,CredentialWarning,LoginStatus},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
@@ -177,7 +178,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("reloadPermsList")
+    // this.$store.dispatch("reloadPermsList")
   },
   methods: {
     doShowEditModal () {
@@ -467,9 +468,16 @@ export default {
     width: 90%;
     overflow: auto;
 }
+.hdr {
+  display: flex;
+  justify-content: space-between;
+}
 .hdr h1 {
   display: inline-block;
   color: white;
-  width: 10em;
+  // width: 10em;
+}
+.old-homepage-link {
+  margin-left: 1em;
 }
 </style>
