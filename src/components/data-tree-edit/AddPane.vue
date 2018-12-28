@@ -59,6 +59,8 @@ export default {
             self.currentNodeType = type
             if (type === 'root') {
               this.newNodeType = 'product'
+            } if (type === 'product') {
+              this.newNodeType = 'folder'
             } else {
               this.newNodeType = ''
             }
