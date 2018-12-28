@@ -13,16 +13,16 @@
         </h1>
       </div>
     </Menu>
-    <switchs></switchs>
+    <ShowNoPermsSwitch></ShowNoPermsSwitch>
     <!--转换开关-->
   </div>
 </template>
 
 <script>
-import MySubMenu from '@/components/menu/MySubMenu.vue'
+import MySubMenu from '@/components/data-tree-menu/MySubMenu.vue'
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
-import switchs from '@/components/switch/switch.vue'
+import ShowNoPermsSwitch from './ShowNoPermsSwitch.vue'
 import SearchPane from '@/components/data-tree-search/SearchPane.vue'
 export default {
   data() {
@@ -36,7 +36,7 @@ export default {
     // this.$store.commit('updateTurnOn', { status: [1, 5] })
     // this.$store.commit('updateTurnLight', { status: 8 })
   },
-  components: { MySubMenu, SearchPane, switchs },
+  components: { MySubMenu, SearchPane, ShowNoPermsSwitch },
   computed: {
     ...mapState({
       TreeNodes: 'dataTreeNodes'
