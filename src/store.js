@@ -13,7 +13,7 @@ let store = new Vuex.Store({
     // currentScriptId: '',
     // currentScriptParams: {},
     dataTreeNodes: [],
-    wichToShow: false, // 决定是否显示无可执行权限的项
+    switchToShow: false, // 决定是否显示无可执行权限的项
     // allow: false, // 确定按钮是否可以关闭model
     // allow2: false,
     permsList: [], // 权限列表
@@ -49,7 +49,7 @@ let store = new Vuex.Store({
       state.dataTreeNodes = _.cloneDeep(treeNodes)
     },
     updateWichToShow: (state, { status }) => {
-      state.wichToShow = status
+      state.switchToShow = status
     },
     updateAllow: (state, { status }) => {
       state.allow = status

@@ -26,7 +26,7 @@ export default {
   watch: {
     idAndMode: {
       handler: function(newVal) {
-        debugger
+        // debugger
         let self = this
         if (newVal.mode === 'attrs-edit') {
           axios.request({

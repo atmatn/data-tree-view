@@ -94,7 +94,7 @@ export default {
                   props: { type: 'text' },
                   on: {
                     click: () => {
-                      debugger
+                      // debugger
                       self.emitChangeMode(data.id, 'add')
                       // this.add(data)
                     }
@@ -234,7 +234,7 @@ export default {
       ])
     },
     emitChangeMode: function(id, mode){
-      debugger
+      // debugger
       this.$emit('changeMode', {id, mode})
     },
     up(data) {

@@ -42,8 +42,8 @@ export default {
   inject: ["reload"],
   props:{value:Boolean},
   data() {
-    var s = this
-    debugger
+    // var s = this
+    // debugger
     return {
       show: this.value,
       idAndMode: {
@@ -62,7 +62,7 @@ export default {
       this.$emit("input", false)
     },
     changeMode: function({id, mode}) {
-      debugger
+      // debugger
       console.log(`id=${id} mode=${mode}`)
       this.idAndMode = {
         id: id,

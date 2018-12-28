@@ -370,7 +370,7 @@ export default {
   methods: {
     ...mapActions(['updateSummaryQueryParams']),
     debug () {
-      debugger
+      // debugger
     },
     // onPreciseLinkClick() {
     //   // this.$Message.info('请在弹出页面中点击“查询”！');

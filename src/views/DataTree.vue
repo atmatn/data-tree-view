@@ -129,7 +129,7 @@
                     </div>
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}" :width="300">
-                              <menuTree></menuTree>
+                              <MenuTree></MenuTree>
                               <Button type="primary" @click="doShowEditModal()" >编辑模式</Button>
                               <DataTreeEditModal v-model="showEditModal"></DataTreeEditModal>
                         </Sider>
@@ -151,7 +151,7 @@ import axios from 'axios'
 // 参考：https://vuex.vuejs.org/zh/guide/state.html
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
-import menuTree from '@/components/menu/menuTree.vue'
+import MenuTree from '@/components/data-tree-menu/MenuTree.vue'
 import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
 import CredentialWarning from "_c/CredentialWarning.vue"
 import LoginStatus from '_c/LoginStatus.vue'
@@ -161,7 +161,7 @@ import LoginStatus from '_c/LoginStatus.vue'
 
 
 export default {
-  components: {menuTree,DataTreeEditModal,CredentialWarning,LoginStatus},
+  components: {MenuTree,DataTreeEditModal,CredentialWarning,LoginStatus},
   beforeRouteEnter: function (to, from, next) {
     //debugger
     if( to.name == 'run-script' ) {
@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     doShowEditModal () {
-      debugger
+      // debugger
       this.showEditModal = true
     },
     // 较为直接的处理
