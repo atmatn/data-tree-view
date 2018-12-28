@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>新增节点</h3>
-    <!-- {{currentNodeType}} -> {{newNodeType}} -->
+    {{currentNodeType}} -> {{newNodeType}}
     <div>
       <div>
         <div v-if="currentNodeType !== 'root'">请选择要添加的类型:
@@ -36,7 +36,7 @@ export default {
   props: ['mode', 'id', 'idAndMode'],
   watch: {
     newNodeType: function(newVal) {
-      debugger
+      // debugger
       let self = this
       this.$store
         .dispatch('getTypeAttrsTemplate', { type: newVal })
@@ -53,13 +53,14 @@ export default {
     },
     idAndMode: {
       handler: function(newVal) {
+        // debugger
         let self = this
         if (newVal.mode === 'add') {
           this.$store.dispatch('getNodeType', { id: newVal.id }).then(type => {
             self.currentNodeType = type
             if (type === 'root') {
               this.newNodeType = 'product'
-            } if (type === 'product') {
+            } else if (type === 'product') {
               this.newNodeType = 'folder'
             } else {
               this.newNodeType = ''
@@ -85,7 +86,7 @@ export default {
       this.newNodeTitle = v
     },
     setNodeType: function({type, done}) {
-
+      // debugger
       if( this.newNodeType === type) {
         // 不会调用watch，直接执行callback
         done()

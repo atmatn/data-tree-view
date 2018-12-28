@@ -57,14 +57,46 @@ export default {
           class: {
             'not-visible': true
           }
-        }, data.title + ' (您无权编辑)')
+        }, data.title + ' (您无权编辑此产品)')
       }
+
+      let permText
+      function translate(perms){
+        if(perms === undefined) {
+          return ''
+        }
+        if(perms.length === 0) {
+          return '未设置，仅创建者有权'
+        }
+        return perms.join(', ')
+      }
+      // let visiblePermsText = translate(data.visiblePerms)
+      // let computedExecutablePermsText = translate(data.computedExecutablePerms)
+      if( data.type === 'product' ) {
+        permText = `查看权限(${translate(data.visiblePerms)})`
+      } else {
+        permText = `执行权限(${translate(data.computedExecutablePerms)})`
+      }
+      // console.log('node')
+      // console.log(node)
+      // console.log('data')
+      // console.log(data)
       // debugger
       return h('span', [
         h('span', [
           data.currentUserVisible === false ||
           data.currentUserExecutable === false
-            ? null
+            ? h('span', [
+                h(
+                  'Button',
+                  {
+                    props: {
+
+                    }
+                  },
+                  data.title + ' （您无权编辑此项）'
+                )
+              ])
             : h('span', [
                 h(
                   'Button',
@@ -229,7 +261,12 @@ export default {
                 },
                 '↓'
               )
-            : null
+            : null,
+            h('span',{
+              class: {
+                'meta-label': true
+              }
+            },`id(${data.id}) 创建者(${data.creator}) ${permText}`)
         ])
       ])
     },
@@ -293,4 +330,17 @@ export default {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
+</style>
+
+
+<style>
+.meta-label {
+  display: inline-block;
+  /* display: none; */
+  margin-left: 1em;
+  color: lightgray;
+}
+/* li:hover > span > span > span.meta-label {
+  display: inline-block;
+} */
 </style>

@@ -6,6 +6,47 @@ import _ from 'lodash'
 import $ from 'jquery'
 Vue.use(Vuex)
 
+// 获取可搜索的节点列表，包括folder和leaf
+function generateDataTreeSearchList (dataTreeNodes) {
+  let arr = []
+  let curProduct = {}
+
+  function process (node, prefix) {
+    if (node instanceof Array) {
+      node.forEach(n => {
+        if (n.children) {
+          // 产品有children，才会新建一个元素
+          curProduct = {
+            product: {
+              title: n.title,
+              id: n.id
+            },
+            items: []
+          }
+          arr.push(curProduct)
+          n.children.forEach(subNode => {
+            process(subNode, '')
+          })
+        }
+      })
+    } else {
+      // debugger
+      curProduct.items.push({
+        id: node.id,
+        title: prefix + node.title
+      })
+      if (node.children) {
+        node.children.forEach(subNode => {
+          process(subNode, prefix + node.title + ' / ')
+        })
+      }
+    }
+  }
+
+  process(dataTreeNodes)
+  return arr
+}
+
 let store = new Vuex.Store({
   state: {
     // 参考：https://vuex.vuejs.org/zh/guide/state.html
@@ -25,10 +66,11 @@ let store = new Vuex.Store({
     indexMap: {},
     indexParentMap: {},
     expandWitch: {}, // 那一项要被展开
+    dataTreeSearchList: [],
     // result: []
     // param_a: '',
     // param_a_value: ''
-    loginStatus:{
+    loginStatus: {
       username: 'anonymous'
     }
   },
@@ -45,6 +87,9 @@ let store = new Vuex.Store({
     //   state.currentScriptParams = params
     // },
 
+    updateDataTreeSearchList: (state, { dataTreeSearchList }) => {
+      state.dataTreeSearchList = dataTreeSearchList
+    },
     updateDataTreeNodes: (state, { treeNodes }) => {
       state.dataTreeNodes = _.cloneDeep(treeNodes)
     },
@@ -208,6 +253,8 @@ let store = new Vuex.Store({
             indexMap[id].expand = true
           })
 
+          let dataTreeSearchList = generateDataTreeSearchList(treeNodes)
+          commit('updateDataTreeSearchList', { dataTreeSearchList })
           commit('updateIndexMap', { indexMap })
           commit('updateIndexParentMap', { indexParentMap })
 
@@ -368,75 +415,7 @@ let store = new Vuex.Store({
         }
       })
     },
-    // 获取可搜索的节点列表，包括folder和leaf
-    getDataTreeSearchList ({ commit, dispatch, state }) {
-      let arr = []
-      let curProduct = {}
 
-      function process (node, prefix) {
-        if (node instanceof Array) {
-          node.forEach(n => {
-            if (n.children) {
-              // 产品有children，才会新建一个元素
-              curProduct = {
-                product: {
-                  title: n.title,
-                  id: n.id
-                },
-                items: []
-              }
-              arr.push(curProduct)
-              n.children.forEach(subNode => {
-                process(subNode, '')
-              })
-            }
-          })
-        } else {
-          // debugger
-          curProduct.items.push({
-            id: node.id,
-            title: prefix + node.title
-          })
-          if (node.children) {
-            node.children.forEach(subNode => {
-              process(subNode, prefix + node.title + ' / ')
-            })
-          }
-        }
-      }
-
-      return new Promise(function (resolve, reject) {
-        try {
-          // let arr = [{
-          //   product: {
-          //     title: '有道精品课',
-          //     id: 1
-          //   },
-          //   items: [
-          //     {
-          //       id: 15,
-          //       title: '链接'
-          //     },
-          //     {
-          //       id: 16,
-          //       title: '链接 / KPI数据'
-          //     }
-          //   ]
-          // }]
-          if (state.dataTreeNodes.length === 0) {
-            dispatch('reloadDataTree').then(res => {
-              process(state.dataTreeNodes)
-              resolve(arr)
-            })
-          } else {
-            process(state.dataTreeNodes)
-            resolve(arr)
-          }
-        } catch (e) {
-          reject(e)
-        }
-      })
-    },
     // 获取到指定节点的祖先节点的id，返回的列表次序是从最上层到最下层。
     // 从product开始
     getDataTreeAncestorIdList ({ commit, dispatch, state }, { id }) {

@@ -13,7 +13,7 @@
           clearable
           :transfer="true"
         >
-          <OptionGroup v-for="item in this.arr" :value="item.id" :label="item.product.title">
+          <OptionGroup v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
             <Option v-for="itemss in item.items" :value="itemss.id" :label="itemss.title"></Option>
           </OptionGroup>
         </Select>
@@ -31,20 +31,14 @@ export default {
       // onChange: [],
       // val: '',
       arr: [],
-      dataTreeSearchList: this.$store
-        .dispatch('getDataTreeSearchList')
-        .then(arr => {
-          this.arr = arr
-        }),
       bySelected: ''
     }
   },
   computed: {
     ...mapState({
-      turnOn: 'turnOn'
-    }),
-    ...mapState({
-      turnLight: 'turnLight'
+      turnOn: 'turnOn',
+      turnLight: 'turnLight',
+      dataTreeSearchList: 'dataTreeSearchList'
     })
   },
   methods: {
