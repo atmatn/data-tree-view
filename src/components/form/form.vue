@@ -13,11 +13,11 @@
           v-if="type"
           style="color:green"
         >您当前选择了:{{this.type}}&nbsp;,&nbsp;parentId:{{model.id}}&nbsp;,&nbsp;itemName:{{this.itemName}}</div>
-        <Input v-if="this.opens === 'direct-link'" placeholder="请输入要添加的链接..." v-model.trim="urls"/>
-        <div v-if="this.opens === 'args-script'&&allow2===false">脚本id：
-          <Input v-if="allow2===false" placeholder="请输入要添加的脚本id..." v-model.trim="scriptid" style="width: 300px"/>
+        <Input v-if="this.opens === 'direct-link'&&this.type==='direct-link'" placeholder="请输入要添加的链接..." v-model.trim="urls"/>
+        <div v-if="this.opens === 'args-script'&&this.type==='args-script'">脚本id：
+          <Input v-if="this.type==='args-script'" placeholder="请输入要添加的脚本id..." v-model.trim="scriptid" style="width: 300px"/>
           <br>
-          <div v-if="allow2===false" v-for="(item,index) in this.args">
+          <div v-for="(item,index) in this.args">
             <Row>
               参数名{{index+1}}：
               <Input
@@ -36,7 +36,7 @@
             <br>
           </div>
         </div>
-        <Button v-if="this.opens === 'args-script'&&allow2===false" type="primary" @click="addAttrs()">添加参数</Button>
+        <Button v-if="this.opens === 'args-script'" type="primary" @click="addAttrs()">添加参数</Button>
         <br>
         <Button @click="save()" type="primary">保存</Button>
       </formItem>
@@ -107,41 +107,46 @@
         <Button v-if="allow===false" @click="copys()" type="primary">复制</Button>
       </formItem>
     </Form>
+    <Scroll v-if="functions ==='setPerms'" >
     <Form v-if="functions==='setPerms'&&allow===false" @submit.native.prevent>
       <formItem>
         {{model.title}}的权限:
-        <div v-for="item in this.perms">{{item.value}}:{{item.perms}}</div>
-        <div
-          v-if="model.currentUserExecutable!==undefind"
-        >currentUserExecutable:{{model.currentUserExecutable}}</div>
-        <div
-          v-if="model.containsExecutableForCurrentUser!==undefind"
+        <!-- {{permSelected}} -->
+        <div v-for="(item,index) in this.oldPerms"><h5>{{item.value}}:{{item.perms}}</h5>
+          <div>权限列表：
+            <Select v-model="permSelected[index]" style="width:300px" multiple>
+              <Option
+                v-for="perm in allPermList"
+                :value="perm.title"
+              >{{perm.title}} ({{perm.value}})</Option>
+            </Select>
+            <br>
+          </div>
+        </div>
+        <Button @click="setPerms()" type="primary">保存</Button>
+        <!-- <div
+          v-if="model.currentUserExecutable!==undefined"
+        >currentUserExecutable:{{model.currentUserExecutable}}</div> -->
+        <!-- <div
+          v-if="model.containsExecutableForCurrentUser!==undefined"
         >containsExecutableForCurrentUser:{{model.containsExecutableForCurrentUser}}</div>
         <div
-          v-if="model.currentUserManageable!==undefind"
-        >currentUserManageable:{{model.currentUserManageable}}</div>
+          v-if="model.currentUserManageable!==undefined"
+        >currentUserManageable:{{model.currentUserManageable}}</div> -->
         <br>
-        <div v-if="!onSwitch">
+        <!-- <div v-if="!onSwitch">
           <Row>
             <Button @click="getParentPerms()" type="primary">继承父节点权限</Button>&nbsp;&nbsp;&nbsp;
             <Button @click="setSelfPerms()" type="primary">单独设置本节点权限</Button>
           </Row>
-        </div>
-        <div v-if="onSwitch">权限列表：
-          <Select v-model="permSelected" style="width:300px">
-            <Option
-              v-for="perm in this.permsList"
-              :value="perm.value"
-              :key="perm.title"
-            >{{perm.title}}:{{perm.value}}</Option>
-          </Select>
-          <br>
-          <Button @click="setPerms()" type="primary">设置</Button>
-        </div>
+        </div> -->
+        <!-- <div v-if="onSwitch">权限列表： -->
+
       </formItem>
     </Form>
+    </Scroll>
         <Scroll v-if="functions ==='setAttrs'" >
-    <Form v-if="functions==='setAttrs'&&allow2===false" @submit.native.prevent>
+    <Form v-if="functions==='setAttrs'&&allow2===false" ref="setAttrs" @submit.native.prevent>
       <formItem>
         {{model.title}}的属性:
         <div v-for="item in this.attrs">{{item.title}}:{{item.attrVal}}</div>
@@ -191,8 +196,19 @@ import { mapState, mapActions } from "vuex";
 import store from "@/store.js";
 import axios from "axios";
 export default {
-  props: ["model", "functions", "perms", "attrs", "permsList"],
+  props: ["model", "functions", "oldPerms", "attrs", "permsList","param_a","param_a_value","param_b","param_b_value"],
   watch: {
+    oldPerms: {
+      handler: function(newVal){
+        debugger
+        var permSelected = []
+        newVal.forEach( item => {
+          permSelected.push(_.cloneDeep(item.perms))
+        })
+        this.permSelected = permSelected
+      },
+      immediate: true
+    },
     model: function(newVal, oldVal) {
       this.scriptid = newVal.scriptId;
       this.urls = newVal.linkUrl;
@@ -218,11 +234,11 @@ export default {
       productName: "",
       urls: "",
       scriptid: "",
-      param_a: [],
-      param_a_value: [],
-      param_b: [],
-      param_b_value: [],
-      permSelected: "",
+      // param_a: [],
+      // param_a_value: [],
+      // param_b: [],
+      // param_b_value: [],
+      permSelected: [],
       dataTreeNodes: this.$store.dispatch("reloadDataTree"),
       onChange: ""
     };
@@ -239,6 +255,9 @@ export default {
     }),
     ...mapState({
       onSwitch: "onSwitch"
+    }),
+    ...mapState({
+      allPermList: "permsList"
     })
   },
   methods: {
@@ -246,6 +265,7 @@ export default {
       this.opens = event;
     },
     addAttrs(something) {
+      debugger
       if (something === "" || something === null || something === undefined) {
         this.args.push({ value: null });
       } else {
@@ -330,22 +350,22 @@ export default {
                   if (this.opens === "direct-link") {
                          this.$store.commit("updateAllow2", { status: false });
                   }
-                  if (
-                    this.param_a.length !== 0 &&
-                    this.param_a_value.length !== 0
-                  ) {
+                  //console.log('23333L'+this.param_b.length);
+                  // if (
+                  //   this.param_b.length !== 0 &&
+                  //   this.param_b_value.length !== 0
+                  // ) {
                     var attrVals = {};
                     for (var i = 0; i < this.param_b.length; i++) {
                       attrVals[this.param_b[i]] = this.param_b_value[i];
                     }
+                    console.log('233'+attrVals)
                     if(this.scriptid===''){
-                      console.log('23333L'+this.scriptid);
                       var attrScript = [
                       { attrKey: "scriptId", attrVal: '' },
                       { attrKey: "scriptParams", attrVal: {'空':'空'} }
                     ];
                     }else if(this.scriptid!==''&&(attrVals==={}||attrVals===undefined)){
-                      console.log('233'+attrVals)
                       var attrScript = [
                       { attrKey: "scriptId", attrVal: this.scriptid },
                       { attrKey: "scriptParams", attrVal: {'空':'空'} }
@@ -358,7 +378,7 @@ export default {
                     }
                     attr = attrScript;
                     console.log('233'+attrVals)
-                  }
+                  //}
                 }
                 axios
                   .request({
@@ -497,13 +517,14 @@ export default {
       }
     },
     setPerms() {
+      console.log(this.permSelected);
       axios
         .request({
           url: "/api/data-tree/edit/set-perms",
           method: "post",
           data: {
             id: this.model.id,
-            permList: [{ value: "executablePerms", perms: this.permSelected }]
+            permList: [{'value':'','perms':this.permSelected}]
           }
         })
         .then(res => {

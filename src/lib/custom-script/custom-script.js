@@ -613,3 +613,15 @@ export const wrapScript = function wrapScript (scriptBody, userParams, scriptId)
   var newScript = `'use strict';(function(args){${prepend} ${fixMultiline(scriptBody)}\n})(args);\n//# sourceURL=my_custom_script.js`
   return newScript
 }
+
+export const createScriptEditLink = function(id) {
+  function createScriptLink(id){
+      var state = {
+          myScriptId: id
+      };
+      var urlState = $.extend({}, state);
+      var uri = "#"+encodeURIComponent( JSON.stringify(urlState) );
+      return uri;
+  }
+  return "/demo-custom-script.html"+createScriptLink(id)
+}

@@ -344,3 +344,14 @@ export const getKafkaList = ({
 }) => {
   return ["hd020:9092", "hd063:9092", "hd064:9092", "hd035:9092", "hd036:9092"]
 }
+
+export const getCustomScriptTitle = ({
+  url,
+  type,
+  body
+}) => {
+  return {
+    id: 123,
+    title: '标题123'
+  }
+}

@@ -16,5 +16,8 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: h => h(DataTreeWrapper)
+  render: h => h(DataTreeWrapper),
+  created () {
+    this.$store.dispatch('reload')
+  }
 }).$mount('#app')

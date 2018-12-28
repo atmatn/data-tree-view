@@ -5,6 +5,7 @@
     </div>
     <div class="title-line">
     <span class="script-title">{{scriptTitle}}</span> <span class="script-author">（作者：{{author}}）</span>
+    <div v-if="currentUserCanEdit"><a :href="scriptEditLink">查看脚本</a></div>
     </div>
     <br>
     <!-- <Button @click="changeParam">Change Param</Button> -->
@@ -29,7 +30,7 @@ import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
 import * as customScriptApi from '@/lib/custom-script'
 import * as dateApi from '@/lib/date-extension'
-import { startRun, currentRunState, wrapScript } from '@/lib/custom-script'
+import { startRun, currentRunState, wrapScript, createScriptEditLink } from '@/lib/custom-script'
 import PrestoProgress from "_c/PrestoProgress.vue"
 import { toPercent, limitFraction, autoFormat} from "@/lib/format"
 import momentRef from "moment"
@@ -55,7 +56,9 @@ export default {
       author: "",
       showProgress: false,
       runState: {},
-      autoRun: false
+      autoRun: false,
+      currentUserCanEdit: false,
+      scriptEditLink: ''
     };
     // return {
     //     myScriptId: this.$store.state.currentScriptId,
@@ -83,14 +86,14 @@ export default {
     params: Object
   },
   beforeRouteEnter(to, from, next) {
-    debugger
+    // debugger
     //不能用this, 可以 next ( vm => {  vm是组件实例})
     // next( vm => {
     //   vm.myParams = JSON.parse(JSON.stringify(to.query))
     // })
     console.log('calling: beforeRouteEnter')
     next( vm => {
-      debugger
+      // debugger
       vm.reload()
     })
   },
@@ -141,7 +144,7 @@ export default {
   methods: {
     // ...mapActions(["updateScriptParams"]),
     updateScriptParams: function({params}){
-      debugger
+      // debugger
       this.myParams = params
       this.$router.push({
         name: 'run-script',
@@ -164,7 +167,8 @@ export default {
     prepareForRun() {
       var argDefs = this.argDefs
       var userParams = this.myParams
-      var $disp = $(this.$refs.content)
+      var $content = $(this.$refs.content)
+      var $disp = $("<div>").appendTo($content)
       var args = {};
       var layouts = {};
       // var debugging = true;
@@ -287,6 +291,7 @@ export default {
                           padding: "2px",
                           width: parseInt(100.0 / widthTotal * layoutItem.width) + '%'
                       });
+                      // $layoutItem.text('xxxxxx')
                       $layoutLine.append($layoutItem);
 
                       //for debug
@@ -302,7 +307,8 @@ export default {
       }
       return {
         args,
-        layouts
+        layouts,
+        $disp
       }
     },
     doRun() {
@@ -357,7 +363,8 @@ export default {
             runJs,
             set_snippet
               } = customScriptApi
-      let { args, layouts } = this.prepareForRun()
+      this.clearContent()
+      let { args, layouts, $disp } = this.prepareForRun()
       let { dateFormat } = dateApi
       let moment = momentRef
       let lib = {
@@ -367,10 +374,8 @@ export default {
           autoFormat: autoFormat
         }
       }
-      let $disp = $(this.$refs.content)
 
       let RUN_SCRIPT_BASE_URL = '/ui/data-tree/run-script'
-      this.clearDisp()
       startRun()
       eval(wrapScript(this.scriptBody, params, this.myScriptId))
 
@@ -433,11 +438,15 @@ export default {
         } else if (arg.type == "CHOICE") {
           var param = userParams[arg.id];
           var vals = getListFromMeta(arg.meta);
+          console.log(`CHOICE arg.id=${arg.id} init with param = ${param}, vals = ${JSON.stringify(vals)}`)
           var setToDefault = false;
           if (param !== undefined) {
+            console.log('to check contains')
             if (_.contains(vals, param)) {
+              console.log('passed')
               arg.val = param;
             } else {
+              console.log('failed')
               //设置为空其实也有问题，改为设置为默认值
               if (!arg.optional) {
                 setToDefault = true;
@@ -489,7 +498,7 @@ export default {
         }
       }
     },
-    clearDisp () {
+    clearContent () {
       // 清空结果
       this.$refs.content.innerHTML = "";
       if (this.myScriptId === "") {
@@ -502,7 +511,7 @@ export default {
       this.myScriptId = this.$route.query.scriptId
       this.autoRun = (this.$route.query.autoRun === 'true' || this.$route.query.autoRun === true)
 
-      this.clearDisp()
+      this.clearContent()
       console.log(`FETCHING ${this.myScriptId}`)
 
       // 读取script
@@ -517,12 +526,14 @@ export default {
         .then(res => {
           let argDefs = res.data.argDefs;
           argDefs.forEach(x => (x.val = null));
+          console.log('initializeArgDefs with userParams:' + JSON.stringify(this.myParams))
           this.initializeArgDefs({ argDefs, userParams: this.myParams });
           this.argDefs = argDefs;
           this.scriptBody = res.data.body;
           this.scriptTitle = res.data.title;
           this.author = res.data.author;
-
+          this.currentUserCanEdit = res.data.currentUserCanEdit
+          this.scriptEditLink = createScriptEditLink(this.myScriptId)
           if (this.autoRun) {
             this.doRun()
           }

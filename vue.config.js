@@ -1,6 +1,8 @@
 const path = require('path')
 const resolve = dir => path.join(__dirname, dir)
 const BASE_URL = process.env.NODE_ENV === 'production' ? '/ui' : '/ui'
+const BACKEND_SERVER = 'http://localhost:18080'
+// const BACKEND_SERVER = 'http://ns013x.corp.youdao.com:18085'
 
 module.exports = {
   lintOnSave: false,
@@ -46,52 +48,62 @@ module.exports = {
       // 参考 https://cli.vuejs.org/zh/config/#devserver-proxy
       // 参考 https://github.com/chimurai/http-proxy-middleware#proxycontext-config
       '/api/summary-query': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/all-log-attrs': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/presto': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/current-dso-list': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/args-script': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/ds-perms': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/presto': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
-      '/log': : {
-        target: 'http://localhost:18080',
+      '/log': {
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/snippet': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       },
       '/api/data-tree': {
-        target: 'http://localhost:18080',
+        target: BACKEND_SERVER,
+        ws: true,
+        changeOrigin: true
+      },
+      '/api/custom-script': {
+        target: BACKEND_SERVER,
+        ws: true,
+        changeOrigin: true
+      },
+      '/userNameV2': {
+        target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
       }
