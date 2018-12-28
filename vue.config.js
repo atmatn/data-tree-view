@@ -101,6 +101,11 @@ module.exports = {
         target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
+      },
+      '/userNameV2': {
+        target: BACKEND_SERVER,
+        ws: true,
+        changeOrigin: true
       }
     }
   }
