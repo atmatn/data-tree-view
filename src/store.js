@@ -47,6 +47,48 @@ function generateDataTreeSearchList (dataTreeNodes) {
   return arr
 }
 
+function generateFlattenProductFolders (dataTreeNodes) {
+  // debugger
+  let arr = []
+  let curProduct = {}
+  function process (node, prefix) {
+    if (node instanceof Array) {
+      node.forEach(n => {
+        if (n.children) {
+          // 产品有children，才会新建一个元素
+          curProduct = {
+            product: {
+              title: n.title,
+              id: n.id
+            },
+            folders: []
+          }
+          arr.push(curProduct)
+          n.children.forEach(subNode => {
+            process(subNode, '')
+          })
+        }
+      })
+    } else {
+      if (node.type === 'folder' && node.children) {
+        // debugger
+        curProduct.folders.push({
+          id: node.id,
+          title: prefix + node.title
+        })
+        if (node.children) {
+          node.children.forEach(subNode => {
+            process(subNode, prefix + node.title + ' / ')
+          })
+        }
+      }
+    }
+  }
+
+  process(dataTreeNodes)
+  return arr
+}
+
 let store = new Vuex.Store({
   state: {
     // 参考：https://vuex.vuejs.org/zh/guide/state.html
@@ -66,7 +108,8 @@ let store = new Vuex.Store({
     indexMap: {},
     indexParentMap: {},
     expandWitch: {}, // 那一项要被展开
-    dataTreeSearchList: [],
+    dataTreeSearchList: [], // 用于目录树搜索
+    flattenProductFolders: [], // 用作选取复制、移动的目标目录
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -87,6 +130,9 @@ let store = new Vuex.Store({
     //   state.currentScriptParams = params
     // },
 
+    updateFlattenProductFolders: (state, { flattenProductFolders }) => {
+      state.flattenProductFolders = flattenProductFolders
+    },
     updateDataTreeSearchList: (state, { dataTreeSearchList }) => {
       state.dataTreeSearchList = dataTreeSearchList
     },
@@ -254,7 +300,9 @@ let store = new Vuex.Store({
           })
 
           let dataTreeSearchList = generateDataTreeSearchList(treeNodes)
+          let flattenProductFolders = generateFlattenProductFolders(treeNodes)
           commit('updateDataTreeSearchList', { dataTreeSearchList })
+          commit('updateFlattenProductFolders', { flattenProductFolders })
           commit('updateIndexMap', { indexMap })
           commit('updateIndexParentMap', { indexParentMap })
 
@@ -345,77 +393,6 @@ let store = new Vuex.Store({
         resolve(ret)
       })
     },
-    getFlattenProductFolders ({ commit, dispatch, state }) {
-      // debugger
-      let arr = []
-      let curProduct = {}
-      function process (node, prefix) {
-        if (node instanceof Array) {
-          node.forEach(n => {
-            if (n.children) {
-              // 产品有children，才会新建一个元素
-              curProduct = {
-                product: {
-                  title: n.title,
-                  id: n.id
-                },
-                folders: []
-              }
-              arr.push(curProduct)
-              n.children.forEach(subNode => {
-                process(subNode, '')
-              })
-            }
-          })
-        } else {
-          if (node.type === 'folder' && node.children) {
-            // debugger
-            curProduct.folders.push({
-              id: node.id,
-              title: prefix + node.title
-            })
-            if (node.children) {
-              node.children.forEach(subNode => {
-                process(subNode, prefix + node.title + ' / ')
-              })
-            }
-          }
-        }
-      }
-
-      return new Promise(function (resolve, reject) {
-        try {
-          // let arr = [{
-          //   product: {
-          //     title: '',
-          //     id: 1
-          //   },
-          //   folders: [
-          //     {
-          //       id: 15,
-          //       title: '链接'
-          //     },
-          //     {
-          //       id: 16,
-          //       title: '链接 / KPI数据'
-          //     }
-          //   ]
-          // }]
-          if (state.dataTreeNodes.length === 0) {
-            dispatch('reloadDataTree').then(res => {
-              process(state.dataTreeNodes)
-              resolve(arr)
-            })
-          } else {
-            process(state.dataTreeNodes)
-            resolve(arr)
-          }
-        } catch (e) {
-          reject(e)
-        }
-      })
-    },
-
     // 获取到指定节点的祖先节点的id，返回的列表次序是从最上层到最下层。
     // 从product开始
     getDataTreeAncestorIdList ({ commit, dispatch, state }, { id }) {
