@@ -3,7 +3,7 @@
     <div>
       <SearchNode/>
     </div>
-    <Menu theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
+    <Menu :style="{overflow: 'auto', height: '80vh'}" theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
       <div v-if="TreeNodes">
         <submenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></submenu>
       </div>
