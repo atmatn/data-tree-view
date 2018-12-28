@@ -1,7 +1,7 @@
 <template>
   <div class="browse-pane">
     <Scroll>
-      <Tree :data="dataTreeNodes" :render="renderContent.bind(this)"></Tree>
+      <Tree :data="dataTreeNodes" :render="renderContent.bind(this)" :highlight-current="true"></Tree>
     </Scroll>
     <!-- <h3>{{tips}}</h3> -->
   </div>
@@ -33,12 +33,12 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      allow: 'allow'
-    }),
-    ...mapState({
-      allow2: 'allow2'
-    }),
+    // ...mapState({
+    //   allow: 'allow'
+    // }),
+    // ...mapState({
+    //   allow2: 'allow2'
+    // }),
     ...mapState({
       dataTreeNodes: 'dataTreeNodes'
     }),
@@ -52,6 +52,13 @@ export default {
   methods: {
     renderContent: function(h, { root, node, data }) {
       var self = this
+      if(data.currentUserVisible === false) {
+        return h('Button', {
+          class: {
+            'not-visible': true
+          }
+        }, data.title + ' (您无权编辑)')
+      }
       // debugger
       return h('span', [
         h('span', [
@@ -195,8 +202,6 @@ export default {
                 '设置属性'
               )
             : null,
-          // data.type !== 'product' &&
-          // data.type !== 'folder' &&
           data.currentUserManageable === true
             ? h(
                 'Button',
@@ -211,8 +216,6 @@ export default {
                 '↑'
               )
             : null,
-          // data.type !== 'product' &&
-          // data.type !== 'folder' &&
           data.currentUserManageable === true
             ? h(
                 'Button',
@@ -276,6 +279,11 @@ export default {
     }
   }
 }
+// <style>
+// .ivu-tree-children:has(> li > span.not-visible){
+// display: none;
+// }
+// </style>
 </script>
 
 <style scoped>
