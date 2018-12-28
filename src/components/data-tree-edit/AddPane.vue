@@ -15,6 +15,7 @@
         <br>名称：
         <Input v-model.trim="newNodeTitle" placeholder="请输入要添加的名称..." style="width: 300px"/>
         <AttrsEdit v-model="newNodeAttrs"></AttrsEdit>
+        <ArgsScriptQuickAdd class="hint" :refAttrs="newNodeAttrs" @setTitle="setTitle" v-if="newNodeType === 'args-script'"></ArgsScriptQuickAdd>
         <Button v-if="newNodeType !== ''" @click="save()" type="primary">保存</Button>
       </div>
     </div>
@@ -23,9 +24,11 @@
 <script>
 import axios from 'axios'
 import AttrsEdit from '_c/data-tree-edit/AttrsEdit.vue'
+import ArgsScriptQuickAdd from '_c/data-tree-edit/ArgsScriptQuickAdd.vue'
 export default {
   components: {
-    AttrsEdit
+    AttrsEdit,
+    ArgsScriptQuickAdd
   },
   props: ['mode', 'id', 'idAndMode'],
   watch: {
@@ -63,6 +66,10 @@ export default {
     }
   },
   methods: {
+    setTitle: function(v){
+      // debugger
+      this.newNodeTitle = v
+    },
     save: function() {
       axios
         .request({
@@ -103,3 +110,10 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="less">
+.hint {
+  width: 100%;
+  padding-left: 80%;
+}
+</style>

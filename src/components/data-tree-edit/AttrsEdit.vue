@@ -1,6 +1,6 @@
 <template>
   <div>
-    value: {{value}}
+    <!-- value: {{value}} -->
     <div v-for="item in value" v-bind:key="item.attrKey">
       <span>{{item.title}}</span>
       <template v-if="item.type === 'script_id'">
