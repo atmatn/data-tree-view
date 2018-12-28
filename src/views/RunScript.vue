@@ -5,6 +5,7 @@
     </div>
     <div class="title-line">
     <span class="script-title">{{scriptTitle}}</span> <span class="script-author">（作者：{{author}}）</span>
+    <div v-if="currentUserCanEdit"><a :href="scriptEditLink">查看脚本</a></div>
     </div>
     <br>
     <!-- <Button @click="changeParam">Change Param</Button> -->
@@ -29,7 +30,7 @@ import _ from '@/lib/myunderscore.js'
 import underscore from '@/lib/myunderscore.js'
 import * as customScriptApi from '@/lib/custom-script'
 import * as dateApi from '@/lib/date-extension'
-import { startRun, currentRunState, wrapScript } from '@/lib/custom-script'
+import { startRun, currentRunState, wrapScript, createScriptEditLink } from '@/lib/custom-script'
 import PrestoProgress from "_c/PrestoProgress.vue"
 import { toPercent, limitFraction, autoFormat} from "@/lib/format"
 import momentRef from "moment"
@@ -55,7 +56,9 @@ export default {
       author: "",
       showProgress: false,
       runState: {},
-      autoRun: false
+      autoRun: false,
+      currentUserCanEdit: false,
+      scriptEditLink: ''
     };
     // return {
     //     myScriptId: this.$store.state.currentScriptId,
@@ -529,7 +532,8 @@ export default {
           this.scriptBody = res.data.body;
           this.scriptTitle = res.data.title;
           this.author = res.data.author;
-
+          this.currentUserCanEdit = res.data.currentUserCanEdit
+          this.scriptEditLink = createScriptEditLink(this.myScriptId)
           if (this.autoRun) {
             this.doRun()
           }
