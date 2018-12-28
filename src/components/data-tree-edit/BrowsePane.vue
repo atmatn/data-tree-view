@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="browse-pane">
     <Scroll>
       <Tree :data="dataTreeNodes" :render="renderContent.bind(this)"></Tree>
     </Scroll>
@@ -277,3 +277,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.browse-pane {
+  border-style: outset;
+  border-width: 1px;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+</style>

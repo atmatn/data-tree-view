@@ -9,13 +9,15 @@
     >
       <Button type="primary" @click="changeMode({id: -1, mode: 'add'})" ghost>新增产品</Button>
       <BrowsePane @changeMode="changeMode"></BrowsePane>
-      <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane>
-      <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
-      <RenamePane v-if="idAndMode.mode==='rename'" :idAndMode="idAndMode" @completed="onCompleted"></RenamePane>
-      <PermsEditPane v-if="idAndMode.mode==='perms-edit'" :idAndMode="idAndMode" @completed="onCompleted"></PermsEditPane>
-      <DeleteNodePane v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNodePane>
-      <CopyNodePane v-if="idAndMode.mode==='copy'" :idAndMode="idAndMode" @completed="onCompleted"></CopyNodePane>
-      <MoveNodePane v-if="idAndMode.mode==='move'" :idAndMode="idAndMode" @completed="onCompleted"></MoveNodePane>
+      <div class="highlight">
+        <AddPane v-if="idAndMode.mode==='add'" :idAndMode="idAndMode" @completed="onCompleted"></AddPane>
+        <AttrsEditPane v-if="idAndMode.mode==='attrs-edit'" :idAndMode="idAndMode" @completed="onCompleted"></AttrsEditPane>
+        <RenamePane v-if="idAndMode.mode==='rename'" :idAndMode="idAndMode" @completed="onCompleted"></RenamePane>
+        <PermsEditPane v-if="idAndMode.mode==='perms-edit'" :idAndMode="idAndMode" @completed="onCompleted"></PermsEditPane>
+        <DeleteNodePane v-if="idAndMode.mode==='delete'" :idAndMode="idAndMode" @completed="onCompleted"></DeleteNodePane>
+        <CopyNodePane v-if="idAndMode.mode==='copy'" :idAndMode="idAndMode" @completed="onCompleted"></CopyNodePane>
+        <MoveNodePane v-if="idAndMode.mode==='move'" :idAndMode="idAndMode" @completed="onCompleted"></MoveNodePane>
+      </div>
       <div slot="footer">
         <Button type="error" size="large" @click="close" ghost>关闭</Button>
         <!-- <Button v-if="allow===true" type="primary" size="large" @click="ok">确定</Button> -->
@@ -76,7 +78,7 @@ export default {
 };
 </script>
 <style lang="less">
-.vertical-center-modal {
+  .vertical-center-modal {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,6 +88,9 @@ export default {
     min-width: 45%;
     overflow-x: auto;
     overflow-y: auto;
+  }
+  .highlight {
+    background-color: lightyellow;
   }
 }
 </style>

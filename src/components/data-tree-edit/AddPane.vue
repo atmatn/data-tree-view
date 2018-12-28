@@ -1,8 +1,7 @@
 <template>
   <div>
     <h3>新增节点</h3>
-    {{mode}}
-    {{currentNodeType}} -> {{newNodeType}}
+    <!-- {{currentNodeType}} -> {{newNodeType}} -->
     <div>
       <div>
         <div v-if="currentNodeType !== 'root'">请选择要添加的类型:
@@ -11,11 +10,15 @@
             <Radio v-if="currentNodeType==='folder'" label="direct-link"/>
             <Radio v-if="currentNodeType==='folder'" label="args-script"/>
           </RadioGroup>
+          <template v-if="currentNodeType !== 'product'">
+            <ArgsScriptQuickAdd class="hint" :refAttrs="newNodeAttrs" @setTitle="setTitle" @setNodeType="setNodeType"></ArgsScriptQuickAdd>
+          </template>
         </div>
-        <br>名称：
-        <Input v-model.trim="newNodeTitle" placeholder="请输入要添加的名称..." style="width: 300px"/>
+        <div v-if="newNodeType !== ''" >
+          <br>名称：
+          <Input v-model.trim="newNodeTitle" placeholder="请输入要添加的名称..." style="width: 300px"/>
+        </div>
         <AttrsEdit v-model="newNodeAttrs"></AttrsEdit>
-        <ArgsScriptQuickAdd class="hint" :refAttrs="newNodeAttrs" @setTitle="setTitle" v-if="newNodeType === 'args-script'"></ArgsScriptQuickAdd>
         <Button v-if="newNodeType !== ''" @click="save()" type="primary">保存</Button>
       </div>
     </div>
@@ -33,11 +36,19 @@ export default {
   props: ['mode', 'id', 'idAndMode'],
   watch: {
     newNodeType: function(newVal) {
+      debugger
       let self = this
       this.$store
         .dispatch('getTypeAttrsTemplate', { type: newVal })
         .then(tmpl => {
           self.newNodeAttrs = tmpl
+          this.$nextTick( () => {
+            if(this.newNodeTypeReadyCallback !== null ) {
+              let callback = this.newNodeTypeReadyCallback
+              this.newNodeTypeReadyCallback = null
+              callback()
+            }
+          })
         })
     },
     idAndMode: {
@@ -62,13 +73,24 @@ export default {
       newNodeType: '',
       newNodeTitle: '',
       currentNodeType: '',
-      newNodeAttrs: []
+      newNodeAttrs: [],
+      newNodeTypeReadyCallback: null
     }
   },
   methods: {
     setTitle: function(v){
       // debugger
       this.newNodeTitle = v
+    },
+    setNodeType: function({type, done}) {
+
+      if( this.newNodeType === type) {
+        // 不会调用watch，直接执行callback
+        done()
+      }else{
+        this.newNodeTypeReadyCallback = done
+        this.newNodeType = type
+      }
     },
     save: function() {
       axios
@@ -113,7 +135,6 @@ export default {
 
 <style scoped lang="less">
 .hint {
-  width: 100%;
-  padding-left: 80%;
+  display: inline-block;
 }
 </style>

@@ -3,10 +3,10 @@
     <div v-for="(item, index) in paramsList">
       <div>
         参数名{{index+1}}：
-        <Input placeholder="请输入要添加的参数名..." v-model.trim="item.paramName" style="width: 250px" @on-change="emitChange"/>
+        <Input placeholder="请输入要添加的参数名..." v-model.trim="item.paramName" style="width: 30%" @on-change="emitChange"/>
         参数值{{index+1}}：
-        <Input placeholder="请输入要添加的参数值..." v-model.trim="item.paramValue" style="width: 250px" @on-change="emitChange"/>
-        <Button @click="doRemove(index)">删除</Button>
+        <Input placeholder="请输入要添加的参数值..." v-model.trim="item.paramValue" style="width: 30%" @on-change="emitChange"/>
+        <Button class="del-button" @click="doRemove(index)">删除</Button>
       </div>
     </div>
     <Button @click="doAdd">添加参数</Button>
@@ -67,5 +67,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .del-button {
+    display: inline-block;
+    margin-left: 1em;
+  }
 </style>

@@ -96,6 +96,11 @@ module.exports = {
         target: BACKEND_SERVER,
         ws: true,
         changeOrigin: true
+      },
+      '/api/custom-script': {
+        target: BACKEND_SERVER,
+        ws: true,
+        changeOrigin: true
       }
     }
   }
