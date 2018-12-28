@@ -36,7 +36,7 @@ export default {
   watch: {
     idAndMode: {
       handler: function(newVal) {
-        debugger
+        // debugger
         let self = this
         if (newVal.mode === 'move') {
           this.$store
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     doMove() {
-      debugger
+      // debugger
         axios
           .request({
             url: "/api/data-tree/edit/move",

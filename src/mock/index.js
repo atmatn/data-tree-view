@@ -30,7 +30,7 @@ var downloadByPost = function ({
   body
 }) {
   var m = body.match(/.*content=(.*?)&.*/)
-  debugger
+  // debugger
   var s = decodeURIComponent(m[1])
   return encodeURIComponent(s)
 }

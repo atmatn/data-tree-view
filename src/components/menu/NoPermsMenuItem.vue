@@ -5,6 +5,7 @@
       title="缺少下列权限"
       :content="this.model.computedExecutablePerms.toString()"
       placement="right"
+      :transfer="true"
     >
       {{this.model.title}}
       <icon type="md-lock"/>

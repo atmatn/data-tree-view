@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     doShowEditModal () {
-      debugger
+      // debugger
       this.showEditModal = true
     },
     // 较为直接的处理

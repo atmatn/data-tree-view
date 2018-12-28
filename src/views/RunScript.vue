@@ -98,7 +98,7 @@ export default {
     })
   },
   beforeRouteLeave(to, from, next) {
-    debugger
+    // debugger
     next()
     // next(false)
   },

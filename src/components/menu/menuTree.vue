@@ -1,11 +1,11 @@
 <template>
   <div>
     <div>
-      <SearchNode/>
+      <SearchPane/>
     </div>
     <Menu :style="{overflow: 'auto', height: '80vh'}" theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
       <div v-if="TreeNodes">
-        <submenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></submenu>
+        <MySubMenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></MySubMenu>
       </div>
       <div v-else>
         <h1 style="color:red">暂无数据
@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import submenu from '@/components/menu/submenu.vue'
+import MySubMenu from '@/components/menu/MySubMenu.vue'
 import { mapState, mapActions } from 'vuex'
 import store from '@/store.js'
 import switchs from '@/components/switch/switch.vue'
-import SearchNode from '@/components/select/SearchNode.vue'
+import SearchPane from '@/components/data-tree-search/SearchPane.vue'
 export default {
   data() {
     return {
@@ -36,7 +36,7 @@ export default {
     // this.$store.commit('updateTurnOn', { status: [1, 5] })
     // this.$store.commit('updateTurnLight', { status: 8 })
   },
-  components: { submenu, SearchNode, switchs },
+  components: { MySubMenu, SearchPane, switchs },
   computed: {
     ...mapState({
       TreeNodes: 'dataTreeNodes'

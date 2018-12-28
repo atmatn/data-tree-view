@@ -104,12 +104,12 @@ export default {
         url: '/api/current-dso-list/list-products',
         method: 'GET'
       }).then( res => {
-        debugger
+        // debugger
         this.allProductList = res.data.productList
       })
     },
     deleteDso (product) {
-      debugger
+      // debugger
       console.log('clicked delete')
       this.$Modal.confirm({
           title: '删除',

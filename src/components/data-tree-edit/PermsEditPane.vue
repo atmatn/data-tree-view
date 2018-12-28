@@ -21,7 +21,7 @@ components: {
   watch: {
     idAndMode: {
       handler: function(newVal) {
-        debugger
+        // debugger
         let self = this
         if (newVal.mode === 'perms-edit') {
           axios.request({

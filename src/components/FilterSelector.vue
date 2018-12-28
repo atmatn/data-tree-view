@@ -94,14 +94,14 @@ export default {
       this.arranging = true
     },
     catDragEnd (evt, dimCat) {
-      debugger
+      // debugger
       evt.preventDefault()
       console.log('拖动前的索引 :' + evt.oldIndex)
       console.log('拖动后的索引 :' + evt.newIndex)
       console.log(this.dimCatList)
    },
     dataDragEnd (evt, dimCat) {
-      debugger
+      // debugger
       evt.preventDefault()
       console.log('拖动前的索引 :' + evt.oldIndex)
       console.log('拖动后的索引 :' + evt.newIndex)

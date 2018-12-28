@@ -36,7 +36,7 @@ export default {
   watch: {
     idAndMode: {
       handler: function(newVal) {
-        debugger
+        // debugger
         let self = this
         if (newVal.mode === 'copy') {
           this.$store
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     copys() {
-      debugger
+      // debugger
         axios
           .request({
             url: "/api/data-tree/edit/copy",
