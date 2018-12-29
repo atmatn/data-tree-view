@@ -38,6 +38,32 @@ var mockTreeNodes = [
           },
           {
             type: 'direct-link',
+            id: 82,
+            title: '有道首页iframe',
+            currentUserExecutable: true,
+            containsExecutableForCurrentUser: true, // （后端计算出的属性）
+            computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            currentUserManageable: true, // （后端计算出的属性）
+            manageablePerms: ['ke_general'], // 管理权限，对于叶子节点，有权限者，可以“更名”，”移动“，“删除”，“管理权限”，“设置属性”，“上移”，“下移”
+            creator: 'bob',
+            linkUrl: 'http://www.youdao.com/',
+            openMode: 'iframe'
+          },
+          {
+            type: 'direct-link',
+            id: 83,
+            title: '有道首页new-window',
+            currentUserExecutable: true,
+            containsExecutableForCurrentUser: true, // （后端计算出的属性）
+            computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
+            currentUserManageable: true, // （后端计算出的属性）
+            manageablePerms: ['ke_general'], // 管理权限，对于叶子节点，有权限者，可以“更名”，”移动“，“删除”，“管理权限”，“设置属性”，“上移”，“下移”
+            creator: 'bob',
+            linkUrl: 'http://www.youdao.com/',
+            openMode: 'new-window'
+          },
+          {
+            type: 'direct-link',
             id: 17,
             title: '绝密KPI数据',
             currentUserExecutable: false,
@@ -296,6 +322,7 @@ function addNode ({ parentId, type, title }) {
       newNode.creator = 'bob'
       if (type === 'direct-link') {
         newNode.linkUrl = 'http://analyzer2.corp.youdao.com/'
+        newNode.openMode = 'iframe'
       } else if (type === 'args-script') {
         newNode.scriptId = '456'
         newNode.scriptParams = {
@@ -604,6 +631,10 @@ export const setAttrs = ({ url, type, body }) => {
   } else if (target.type === 'direct-link') {
     // direct-link 的属性是linkUrl
     target.linkUrl = j.attrs.find(x => x.attrKey === 'linkUrl').attrVal
+    let attrObj = j.attrs.find(x => x.attrKey === 'openMode')
+    if (attrObj) {
+      target.openMode = attrObj.attrVal
+    }
   } else if (target.type === 'args-script') {
     // args-script 的属性是scriptId和scriptParams
     target.scriptId = j.attrs.find(x => x.attrKey === 'scriptId').attrVal

@@ -15,7 +15,7 @@
       <NoPermsMenuItem v-if="switchToShow" :model="model"></NoPermsMenuItem>
     </div>
     <div v-else>
-      <MenuItem :name="model.id" @click.native="childClick">{{model.title}}</MenuItem>
+      <MenuItem :name="model.id" @click.native="onDirectLinkClick">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else>
@@ -77,10 +77,16 @@ export default {
     })
   },
   methods: {
-    childClick() {
-      window.open(this.model.linkUrl);
+    onDirectLinkClick() {
+      // window.open(this.model.linkUrl);
+      // debugger
+      let mode = this.model.openMode || 'iframe'
+      this.openDirectLink({
+        url: this.model.linkUrl,
+        mode
+      })
     },
-    ...mapActions(["openScript"])
+    ...mapActions(["openScript","openDirectLink"])
   },
   data() {
     return {

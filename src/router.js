@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import RunScript from './views/RunScript.vue'
+import RunDirectLink from './views/RunDirectLink.vue'
 import DataTree from './views/DataTree.vue'
 import DataTreeHome from './views/DataTreeHome.vue'
 import log from '@/lib/log'
@@ -20,6 +21,10 @@ const router = new Router({
         path: 'run-script',
         name: 'run-script',
         component: RunScript
+      }, {
+        path: 'run-direct-link',
+        name: 'run-direct-link',
+        component: RunDirectLink
       }, {
         path: 'home',
         name: 'data-tree-home',

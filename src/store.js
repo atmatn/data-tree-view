@@ -223,6 +223,18 @@ let store = new Vuex.Store({
         }
       })
     },
+
+    openDirectLink ({ commit }, { url, mode }) {
+      // debugger
+      // commit('updateScriptIdAndParams', { scriptId, params })
+      router.push({
+        name: 'run-direct-link',
+        query: {
+          url,
+          mode
+        }
+      })
+    },
     // updateScriptParams ({ commit, state }, { params }) {
     //   // debugger
     //   commit('updateScriptParams', { params })
@@ -373,6 +385,12 @@ let store = new Vuex.Store({
               attrKey: 'linkUrl',
               type: 'url',
               attrVal: ''
+            },
+            {
+              title: '打开方式',
+              attrKey: 'openMode',
+              type: 'open_url_mode',
+              attrVal: 'iframe'
             }
           ]
         } else if (type === 'args-script') {

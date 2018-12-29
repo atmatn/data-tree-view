@@ -11,6 +11,12 @@
       <template v-if="item.type === 'url'">
         <Input v-model.trim="item.attrVal"/>
       </template>
+      <template v-if="item.type === 'open_url_mode'">
+        <Select v-model="item.attrVal">
+          <Option value="iframe">iframe</Option>
+          <Option value="new-window">new-window</Option>
+        </Select>
+      </template>
     </div>
   </div>
 </template>
