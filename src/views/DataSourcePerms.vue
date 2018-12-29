@@ -99,7 +99,7 @@ export default {
         return this.availableDataSources
       }
       this.availableDataSources.map(x => {
-        if (x.toLowerCase().indexOf(str) >= 0) {
+        if (x.toLowerCase().indexOf(str.toLowerCase()) >= 0) {
           matchList.push(x);
         }
       });
