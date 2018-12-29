@@ -255,11 +255,39 @@ export default {
                   props: { type: 'default' },
                   on: {
                     click: () => {
+                      this.top(data)
+                    }
+                  }
+                },
+                '↑↑'
+              )
+            : null,
+          data.currentUserManageable === true
+            ? h(
+                'Button',
+                {
+                  props: { type: 'default' },
+                  on: {
+                    click: () => {
                       this.down(data)
                     }
                   }
                 },
                 '↓'
+              )
+            : null,
+          data.currentUserManageable === true
+            ? h(
+                'Button',
+                {
+                  props: { type: 'default' },
+                  on: {
+                    click: () => {
+                      this.bottom(data)
+                    }
+                  }
+                },
+                '↓↓'
               )
             : null,
             h('span',{
@@ -278,6 +306,26 @@ export default {
       axios
         .request({
           url: '/api/data-tree/edit/move-up',
+          method: 'post',
+          data: {
+            id:data.id,
+          }
+        })
+        .then(res => {
+          if (res.status !== 200) {
+            this.$Message.info('移动失败')
+            this.success = '移动失败,请按F12打开控制台查看错误信息'
+          } else {
+            this.$Message.info('移动成功')
+            this.success = '移动成功'
+            this.$store.dispatch('reloadDataTree')
+          }
+        })
+    },
+    top(data) {
+      axios
+        .request({
+          url: '/api/data-tree/edit/move-top',
           method: 'post',
           data: {
             id:data.id,
@@ -313,7 +361,27 @@ export default {
             this.$store.dispatch('reloadDataTree')
           }
         })
-    }
+    },
+    bottom(data) {
+      axios
+        .request({
+          url: '/api/data-tree/edit/move-bottom',
+          method: 'post',
+          data: {
+            id:data.id,
+          }
+        })
+        .then(res => {
+          if (res.status !== 200) {
+            this.$Message.info('移动失败')
+            this.success = '移动失败,请按F12打开控制台查看错误信息'
+          } else {
+            this.$Message.info('移动成功')
+            this.success = '移动成功'
+            this.$store.dispatch('reloadDataTree')
+          }
+        })
+    },
   }
 }
 // <style>

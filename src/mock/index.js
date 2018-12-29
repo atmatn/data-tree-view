@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 
-import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown } from './data-tree'
+import { getDataTree, addTreeNode, renameTreeNode, moveTreeNode, getPerms, setPerms, copyNode, getAttrs, setAttrs, deleteNode, listPerms, moveUp, moveDown, moveTop, moveBottom } from './data-tree'
 import { getQueries, getDataSourceList, getDataSourceDimList, getDateRangeAgg, updateDimCatList } from './summary-query'
 import { getDsoProductList, setDsoCategory, deleteDso, listProducts, addProduct } from './current-dso-list'
 import { getDsPerms, setDsPerms, addDsAndPerms, deleteDsAndPerms, getAvailablePerms, listAvailableDataSources } from './ds-perms'
@@ -38,6 +38,7 @@ var downloadByPost = function ({
 Mock.mock(/\/getWelcomeMsg/, 'get', getWelcomeMsg)
 
 // 集成测试时，暂时手工设置为true
+
 var integrationTest = true
 
 if (!integrationTest) {
@@ -77,6 +78,8 @@ if (!integrationTest) {
   Mock.mock(/\/api\/data-tree\/edit\/list-perms/, 'post', listPerms)
   Mock.mock(/\/api\/data-tree\/edit\/move-up/, 'post', moveUp)
   Mock.mock(/\/api\/data-tree\/edit\/move-down/, 'post', moveDown)
+  Mock.mock(/\/api\/data-tree\/edit\/move-top/, 'post', moveTop)
+  Mock.mock(/\/api\/data-tree\/edit\/move-bottom/, 'post', moveBottom)
   Mock.mock(/\/api\/custom-script\/title/, 'get', getCustomScriptTitle)
   // Mock.mock(/\/api\/data-tree\/edit\/get-node/, 'post', getNode)
 }

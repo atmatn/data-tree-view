@@ -332,7 +332,7 @@ let store = new Vuex.Store({
     updateSummaryQueryParams ({ commit, state }, payload) {
       console.log('action: updateSummaryQueryParams' + JSON.stringify(payload))
       const url = '/summary-query?' + $.param(payload)
-      debugger
+      // debugger
       router.push({
         path: url
       })

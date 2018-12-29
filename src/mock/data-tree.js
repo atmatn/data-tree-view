@@ -686,6 +686,39 @@ export const listPerms = ({ url, type, body }) => {
   }
 }
 
+function doMove ({ arr, id, op }) {
+  let curPos = -1
+  arr.forEach((item, index) => {
+    if (item.id === id) {
+      curPos = index
+    }
+  })
+
+  if (curPos >= 0) {
+    let targetPos = -1
+    if (op === 'up') {
+      targetPos = Math.max(0, curPos - 1)
+    } else if (op === 'down') {
+      targetPos = Math.min(arr.length, curPos + 1)
+    } else if (op === 'top') {
+      targetPos = 0
+    } else if (op === 'bottom') {
+      targetPos = arr.length - 1
+    }
+
+    if (targetPos >= 0) {
+      while (curPos !== targetPos) {
+        let step = curPos < targetPos ? 1 : -1
+        let swapPos = curPos + step
+        let swapNode = arr[curPos]
+        arr[curPos] = arr[swapPos]
+        arr[swapPos] = swapNode
+        curPos += step
+      }
+    }
+  }
+}
+
 export const moveUp = ({ url, type, body }) => {
   // debugger
   var j = JSON.parse(body)
@@ -693,20 +726,12 @@ export const moveUp = ({ url, type, body }) => {
   let parentNodeId = indexParentMap[j.id]
   let arr =
     parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
-  var prevPos = -1
-
-  arr.forEach((item, index) => {
-    if (item.id === j.id) {
-      prevPos = index
-    }
+  doMove({
+    arr,
+    id: j.id,
+    op: 'up'
   })
-  if (prevPos > 0) {
-    let tmp = arr[prevPos]
-    arr[prevPos] = arr[prevPos - 1]
-    arr[prevPos - 1] = tmp
-  } else {
-    console.log(`id = ${j.id} already at top`)
-  }
+
   return {
     // 200 OK
   }
@@ -720,19 +745,47 @@ export const moveDown = ({ url, type, body }) => {
   let parentNodeId = indexParentMap[j.id]
   let arr =
     parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
-  var prevPos = -1
-  arr.forEach((item, index) => {
-    if (item.id === j.id) {
-      prevPos = index
-    }
+  doMove({
+    arr,
+    id: j.id,
+    op: 'down'
   })
-  if (prevPos < arr.length - 1) {
-    let tmp = arr[prevPos]
-    arr[prevPos] = arr[prevPos + 1]
-    arr[prevPos + 1] = tmp
-  } else {
-    console.log(`id = ${j.id} already at bottom`)
+  return {
+    // 200 OK
   }
+}
+
+export const moveTop = ({ url, type, body }) => {
+  // debugger
+  var j = JSON.parse(body)
+  console.log(`moveTop: ${j.id}`)
+
+  let parentNodeId = indexParentMap[j.id]
+  let arr =
+    parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
+  doMove({
+    arr,
+    id: j.id,
+    op: 'top'
+  })
+  return {
+    // 200 OK
+  }
+}
+
+export const moveBottom = ({ url, type, body }) => {
+  // debugger
+  var j = JSON.parse(body)
+  console.log(`moveBottom: ${j.id}`)
+
+  let parentNodeId = indexParentMap[j.id]
+  let arr =
+    parentNodeId !== -1 ? indexMap[parentNodeId].children : mockTreeNodes
+  doMove({
+    arr,
+    id: j.id,
+    op: 'bottom'
+  })
   return {
     // 200 OK
   }
