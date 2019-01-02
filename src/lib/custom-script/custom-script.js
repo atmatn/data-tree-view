@@ -526,6 +526,71 @@ function getSql (params, kind, callback, errorCallback) {
   return ret
 }
 
+function getPrestoAsync (params, callback, errorCallback) {
+  var localRunNo = runNo
+  if (callback === undefined) {
+    let err = '必须提供callback!'
+    throw err
+  }
+  if (callback) {
+    addTaskByArgsScript()
+  }
+  var ret
+  var sql
+  if (typeof (params) === 'string') {
+    sql = params
+  } else {
+    sql = params.sql
+  }
+
+  let key
+  function checkAndProcess (result) {
+    if (result.responseJSON && result.responseJSON.completed === true) {
+      if (callback) {
+        completeTaskByArgsScript(localRunNo)
+        callback(result.responseJSON.data)
+      }
+      if (errorCallback) {
+        errorCallback(result.data)
+      }
+    } else {
+      // 继续查询
+      key = result.responseJSON && result.responseJSON.key
+      if (key !== undefined) {
+        setTimeout(function () {
+          console.log('checking result for key = ' + key)
+          $.ajax({
+            method: 'POST',
+            url: '/presto-async-check',
+            data: {
+              key: key
+            },
+            async: true,
+            complete: function (result) {
+              checkAndProcess(result)
+            }
+          })
+        }, 3000)
+      }
+    }
+  }
+  $.ajax({
+    method: 'POST',
+    url: '/presto-async',
+    data: {
+      sql: sql
+    },
+    async: callback !== undefined,
+    complete: function (result) {
+      checkAndProcess(result)
+    }
+  })
+  if (callback) {
+    ret = 'async'
+  }
+  return ret
+}
+
 export const get_hive = function getHive (params, callback, errorCallback) {
   return getSql(params, 'hive', callback, errorCallback)
 }
@@ -535,7 +600,11 @@ export const get_pgsql = function getPgSql (params, callback, errorCallback) {
 }
 
 export const get_presto = function getPresto (params, callback, errorCallback) {
-  return getSql(params, 'presto', callback, errorCallback)
+  if (callback) {
+    getPrestoAsync(params, callback, errorCallback)
+  } else {
+    return getSql(params, 'presto', callback, errorCallback)
+  }
 }
 
 export const get_url = function visitUrl (url, data) {
