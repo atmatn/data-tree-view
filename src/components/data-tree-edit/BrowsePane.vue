@@ -77,6 +77,8 @@ export default {
       } else {
         permText = `执行权限(${translate(data.computedExecutablePerms)})`
       }
+
+      permText = permText + ` 管理权限(${translate(data.manageablePerms)})`
       // console.log('node')
       // console.log(node)
       // console.log('data')
