@@ -97,16 +97,35 @@ export default {
               var parentElement = document.getElementsByClassName('my-menu')[0]
               debugger
 
-              var findOffsetTop = function(el) {
-                var offset = el.offsetTop
-                if (el !== parentElement) {
-                  offset += findOffsetTop(el.parentNode)
+              var findOffsetTop = function(el, containerElement) {
+                let offset = 0
+                let no = 1
+                while (el.offsetParent === null ) {
+                  el = el.parentNode
+                }
+                while (el !== containerElement.offsetParent) {
+                  console.log(`no ${no} offsetTop ${el.offsetTop} offsetParent ${el.offsetParent}`)
+                  offset += el.offsetTop
+                  el = el.offsetParent
+                  no++
                 }
                 return offset
               }
-              var topPos = findOffsetTop(myElement)
+              var topPos = findOffsetTop(myElement, parentElement)
               console.log(topPos)
-              parentElement.scrollTop = topPos;
+
+              if( parentElement.scrollHeight - topPos < 100) {
+                // 如果是在底部，那尽可能往下再滚滚
+                topPos += 100
+              } else {
+                // 上面留一些空间
+                topPos = topPos - 300
+              }
+              // UI不知道为何还没更新，如果项目处于最底部，会没展示出来。
+              // 先加个timeout来workaround
+              setTimeout( () => {
+                parentElement.scrollTop = topPos;
+              }, 300)
             })
           })
       }
