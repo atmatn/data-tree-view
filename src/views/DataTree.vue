@@ -129,11 +129,15 @@
                     </div>
                     <Layout>
                         <Sider hide-trigger :style="{background: '#fff'}" :width="300">
-                              <MenuTree></MenuTree>
-                              <Button type="primary" @click="doShowEditModal()" >编辑模式</Button>
+                              <menuTree v-if="isCollapsed === false"></menuTree>
+                              <Button type="primary" @click="doShowEditModal()" v-if="isCollapsed === false">编辑模式</Button>
                               <DataTreeEditModal v-model="showEditModal"></DataTreeEditModal>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
+                            <Button style="width:45px" @click="hiddenSider" size="small" shape="circle">
+                                  <Icon v-if="isCollapsed === true" type="ios-arrow-forward" size="5px"/>
+                                  <Icon v-else="isCollapsed === false" type="ios-arrow-back" size="5px"/>
+                            </Button
                             <router-view/>
                         </Content>
                     </Layout>
@@ -181,6 +185,9 @@ export default {
     // this.$store.dispatch("reloadPermsList")
   },
   methods: {
+    hiddenSider(){
+      this.isCollapsed=!this.isCollapsed
+    },
     doShowEditModal () {
       // debugger
       this.showEditModal = true
@@ -423,7 +430,8 @@ export default {
       nodeData: '',
       flattenProductFoldersText: '',
       dataTreeSearchListText: '',
-      dataTreeAncestorIdListText: ''
+      dataTreeAncestorIdListText: '',
+      isCollapsed: false
     }
   }
 }

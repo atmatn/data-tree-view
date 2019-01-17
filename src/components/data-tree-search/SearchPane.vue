@@ -38,8 +38,11 @@ export default {
     ...mapState({
       turnOn: 'turnOn',
       turnLight: 'turnLight',
-      dataTreeSearchList: 'dataTreeSearchList'
-    })
+      dataTreeSearchList: 'dataTreeSearchList',
+      indexMap: 'indexMap',
+      indexParentMap: 'indexParentMap',
+      TreeNodes: 'dataTreeNodes'
+    }),
   },
   methods: {
     onChange() {
@@ -60,9 +63,56 @@ export default {
               this.$store.commit('updateTurnOn', { status: arr })
             }
             this.$store.commit('updateTurnLight', { status: this.bySelected })
+            if (this.indexMap[this.bySelected].type === 'args-script') {
+              this.openScript({
+                scriptId: this.indexMap[this.bySelected].scriptId,
+                params: this.indexMap[this.bySelected].scriptParams
+              })
+            }
+            if (this.indexMap[this.bySelected].type === 'direct-link') {
+              window.open(this.indexMap[this.bySelected].linkUrl)
+            }
+            // var index = this.TreeNodes.indexOf(this.indexMap[arr[0]])
+            // if (arr.length > 1) {
+            //   var indexs = this.TreeNodes[index].children.indexOf(
+            //     this.indexMap[arr[1]]
+            //   )
+            //   var temp = this.TreeNodes[index].children[0]
+            //   this.TreeNodes[index].children[0] = this.TreeNodes[index].children[indexs]
+            //   this.TreeNodes[index].children[indexs] = temp
+            // }
+            // var temp = this.TreeNodes[0]
+            // this.TreeNodes[0] = this.TreeNodes[index]
+            // this.TreeNodes[index] = temp
+            this.$nextTick(() => {
+              //debugger
+              console.log(
+                document.getElementsByClassName(
+                  'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
+                )
+              )
+              var myElement = document.getElementsByClassName(
+                'ivu-menu-item-selected'
+              )[0]
+              var parentElement = document.getElementsByClassName('my-menu')[0]
+              debugger
+
+              var findOffsetTop = function(el) {
+                var offset = el.offsetTop
+                if (el !== parentElement) {
+                  offset += findOffsetTop(el.parentNode)
+                }
+                return offset
+              }
+              var topPos = findOffsetTop(myElement)
+              console.log(topPos)
+              parentElement.scrollTop = topPos;
+            })
           })
       }
-    }
+    },
+    ...mapActions(['openScript']),
+    ...mapActions(['reloadDataTree'])
   }
 }
 </script>

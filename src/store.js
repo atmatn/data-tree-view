@@ -110,6 +110,7 @@ let store = new Vuex.Store({
     expandWitch: {}, // 那一项要被展开
     dataTreeSearchList: [], // 用于目录树搜索
     flattenProductFolders: [], // 用作选取复制、移动的目标目录
+    whichAnchor: '', // 定位哪一项要跳转
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -138,6 +139,9 @@ let store = new Vuex.Store({
     },
     updateDataTreeNodes: (state, { treeNodes }) => {
       state.dataTreeNodes = _.cloneDeep(treeNodes)
+    },
+    updateWhichAnchor: (state, { status }) => {
+      state.whichAnchor = status
     },
     updateWichToShow: (state, { status }) => {
       state.switchToShow = status
@@ -308,7 +312,7 @@ let store = new Vuex.Store({
           doIndex()
 
           expandList.forEach(id => {
-            indexMap[id].expand = true
+            Vue.set(indexMap[id], 'expand', true)
           })
 
           let dataTreeSearchList = generateDataTreeSearchList(treeNodes)
@@ -410,6 +414,66 @@ let store = new Vuex.Store({
           ]
         }
         resolve(ret)
+      })
+    },
+    getScriptSearchList ({ commit, dispatch, state }) {
+      let arr = []
+      function process (node, prefix) {
+        if (node instanceof Array) {
+          node.forEach(n => {
+            if (n.children) {
+              n.children.forEach(subNode => {
+                process(subNode, '')
+              })
+            }
+          })
+        } else {
+          // debugger
+          if (node.scriptId !== undefined) {
+            arr.push({
+              id: node.scriptId,
+              node: node
+            })
+          }
+
+          if (node.children) {
+            node.children.forEach(subNode => {
+              process(subNode, node)
+            })
+          }
+        }
+      }
+
+      return new Promise(function (resolve, reject) {
+        try {
+          // let arr = [{
+          //   product: {
+          //     title: '有道精品课',
+          //     id: 1
+          //   },
+          //   items: [
+          //     {
+          //       id: 15,
+          //       title: '链接'
+          //     },
+          //     {
+          //       id: 16,
+          //       title: '链接 / KPI数据'
+          //     }
+          //   ]
+          // }]
+          if (state.dataTreeNodes.length === 0) {
+            dispatch('reloadDataTree').then(res => {
+              process(state.dataTreeNodes)
+              resolve(arr)
+            })
+          } else {
+            process(state.dataTreeNodes)
+            resolve(arr)
+          }
+        } catch (e) {
+          reject(e)
+        }
       })
     },
     // 获取到指定节点的祖先节点的id，返回的列表次序是从最上层到最下层。

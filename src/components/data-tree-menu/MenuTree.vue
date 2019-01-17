@@ -3,9 +3,16 @@
     <div>
       <SearchPane/>
     </div>
-    <Menu :style="{overflow: 'auto', height: '80vh'}" theme="dark" :active-name="turnLight" :open-names="turnOn" ref="side_menu">
+    <Menu
+      :style="{overflow: 'auto', height: '80vh'}"
+      :class="{'my-menu': true}"
+      theme="dark"
+      :active-name="turnLight"
+      :open-names="turnOn"
+      ref="side_menu"
+    >
       <div v-if="TreeNodes">
-        <MySubMenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)"></MySubMenu>
+        <MySubMenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)" class="parent"></MySubMenu>
       </div>
       <div v-else>
         <h1 style="color:red">暂无数据
@@ -46,6 +53,12 @@ export default {
     }),
     ...mapState({
       turnLight: 'turnLight'
+    }),
+    ...mapState({
+      indexMap: 'indexMap'
+    }),
+    ...mapState({
+      whichAnchor: 'whichAnchor'
     })
   },
   methods: {
@@ -55,24 +68,49 @@ export default {
         this.$refs.side_menu.updateOpened()
         this.$refs.side_menu.updateActiveName()
       })
-      // debugger
-      // console.log('23333333333333:'+this.$router.history.current.query.scriptId)
-      // var sid=this.$router.history.current.query.scriptId
-      // console.log(typeof sid)
-      //  store
-      //     .dispatch('getDataTreeAncestorIdList', { id: sid })
-      //     .then(arr => {
-      //       // if (arr.length === 1) {
-      //       //   this.$store.commit('updateTurnOn', {
-      //       //     status: [arr[0],sid]
-      //       //   })
-      //       // } else {
-      //       //   this.$store.commit('updateTurnOn', { status: arr })
-      //       // }
-      //       // this.$store.commit('updateTurnLight', { status: sid })
-      //     })
-      // return status;
+     if (
+        this.flagForSelect === false &&
+        this.$route.query.scriptId !== undefined
+      ) {
+        console.log(this.$route.query.scriptId)
+        this.$store.dispatch('getScriptSearchList').then(arr => {
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i].id === this.$route.query.scriptId) {
+              // console.log(arr[i].node);
+              var nodeId = arr[i].node.id
+              this.$store
+                .dispatch('getDataTreeAncestorIdList', { id: arr[i].node.id })
+                .then(arr => {
+                  if (arr.length === 1) {
+                    this.$store.commit('updateTurnOn', {
+                      status: [arr[0], arr[i].node.id]
+                    })
+                  } else {
+                    this.$store.commit('updateTurnOn', { status: arr })
+                  }
+                  this.$store.commit('updateTurnLight', { status: nodeId })
+                  if (this.indexMap[nodeId].type === 'args-script') {
+                    this.openScript({
+                      scriptId: this.indexMap[nodeId].scriptId,
+                      params: this.indexMap[nodeId].scriptParams
+                    })
+                  }
+                  // if (this.indexMap[nodeId].type === 'direct-link') {
+                  //   window.open(this.indexMap[nodeId].linkUrl)
+                  // }
+                  // var index = this.TreeNodes.indexOf(this.indexMap[arr[0]])
+                  // var temp = this.TreeNodes[0]
+                  // this.TreeNodes[0] = this.TreeNodes[index]
+                  // this.TreeNodes[index] = temp
+                  console.log(arr)
+                })
+            }
+          }
+        }),
+          (this.flagForSelect = true)
+      }
+    },
+    ...mapActions(['openScript'])
     }
   }
-}
 </script>

@@ -6,6 +6,7 @@
     <div v-else>
       <MenuItem
         :name="model.id"
+        :id="model.title"
         @click.native="openScript({scriptId: model.scriptId, params:model.scriptParams})"
       >{{model.title}}</MenuItem>
     </div>
@@ -15,11 +16,13 @@
       <NoPermsMenuItem v-if="switchToShow" :model="model"></NoPermsMenuItem>
     </div>
     <div v-else>
-      <MenuItem :name="model.id" @click.native="onDirectLinkClick">{{model.title}}</MenuItem>
+      <MenuItem :name="model.id" @click.native="onDirectLinkClick" :id="model.title">{{model.title}}</MenuItem>
     </div>
   </div>
   <div v-else>
-    <div v-if="model.type !== 'product' && model.children !== undefined && model.children.length === 0">
+    <div
+      v-if="model.type !== 'product' && model.children !== undefined && model.children.length === 0"
+    >
       <MenuItem :name="model.id">{{model.title}}（空目录）</MenuItem>
     </div>
     <div v-else>
@@ -37,7 +40,7 @@
               placement="right"
             >
               {{model.title}}
-             <icon type="md-lock"/>
+              <icon type="md-lock"/>
             </Poptip>
           </template>
           <div v-if="isFolder">
@@ -61,19 +64,19 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import NoPermsMenuItem from "@/components/data-tree-menu/NoPermsMenuItem.vue";
+import { mapState, mapActions } from 'vuex'
+import NoPermsMenuItem from '@/components/data-tree-menu/NoPermsMenuItem.vue'
 
 export default {
-  name: "MySubMenu",
-  props: ["model"],
+  name: 'MySubMenu',
+  props: ['model'],
   components: { NoPermsMenuItem },
   computed: {
     isFolder() {
-      return this.model.children && this.model.children.length;
+      return this.model.children && this.model.children.length
     },
     ...mapState({
-      switchToShow: "switchToShow"
+      switchToShow: 'switchToShow'
     })
   },
   methods: {
@@ -86,12 +89,12 @@ export default {
         mode
       })
     },
-    ...mapActions(["openScript","openDirectLink"])
+    ...mapActions(['openScript', 'openDirectLink'])
   },
   data() {
     return {
       //openName:this.model.title
-    };
+    }
   }
-};
+}
 </script>
