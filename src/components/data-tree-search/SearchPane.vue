@@ -1,10 +1,10 @@
 <template>
   <div>
     <Row>
-      <Col span="4">
-        <Button type="primary">搜索</Button>
+      <Col span="5">
+        <Button type="primary" :width="60">搜索</Button>
       </Col>
-      <Col span="20">
+      <Col span="19">
         <Select
           v-model="bySelected"
           style="width:190px"

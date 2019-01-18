@@ -255,19 +255,19 @@ var mockTreeNodes = [
   }
 ]
 
-for (let i = 0; i < 100; i++) {
-  let item = {
-    type: 'product',
-    id: 20000 + i,
-    title: '测试-' + i,
-    visiblePerms: ['ynote_general'],
-    currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
-    currentUserManageable: (i % 2 === 1),
-    manageablePerms: [],
-    containsExecutableForCurrentUser: (i % 2 === 1) // （后端计算出的属性）
-  }
-  mockTreeNodes.splice(i / 2 % 2 === 1 ? 1 : mockTreeNodes.length - 2, 0, item)
-}
+// for (let i = 0; i < 100; i++) {
+//   let item = {
+//     type: 'product',
+//     id: 20000 + i,
+//     title: '测试-' + i,
+//     visiblePerms: ['ynote_general'],
+//     currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
+//     currentUserManageable: (i % 2 === 1),
+//     manageablePerms: [],
+//     containsExecutableForCurrentUser: (i % 2 === 1) // （后端计算出的属性）
+//   }
+//   mockTreeNodes.splice(i / 2 % 2 === 1 ? 1 : mockTreeNodes.length - 2, 0, item)
+// }
 
 var maxId = 100
 
