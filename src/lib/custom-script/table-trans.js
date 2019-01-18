@@ -1,3 +1,4 @@
+import _ from 'underscore'
 export const collapseTable = function collapseTable (params) {
   var dontMakeToColNameIfOnlyOneMtr = (params.dontMakeToColNameIfOnlyOneMtr===undefined?true:false);
   var dontMakeToColNameIfOnlyUndefined = (params.dontMakeToColNameIfOnlyUndefined===undefined?true:false);
@@ -451,4 +452,81 @@ export const orderByProperty = function orderByProperty(prop) {
           return equality;
       }
   };
+}
+
+
+export const splitTable = function splitTable (params) {
+  var source = params.source
+  var splitByCols = []
+  if (typeof (params.splitByCol) === 'string') {
+    splitByCols.push(params.splitByCol)
+  } else {
+    splitByCols = params.splitByCol
+  }
+  var tableList = []
+  var m = {}
+  _.each(source.data, function (d) {
+    var c = _.map(splitByCols, (splitByCol) => {
+      return d[splitByCol]
+    }).join('_')
+    if (m[c] === undefined) {
+      m[c] = []
+    }
+    m[c].push(d)
+  })
+  // debugger;
+  Object.keys(m).forEach(k => {
+    tableList.push({
+      key: k,
+      data: m[k],
+      cols: source.cols
+    })
+  })
+  tableList = tableList.sort(orderByProperty('key'))
+  return tableList
+}
+
+global.drawTableList = function drawTableList (params) {
+  var source = params.source
+  var splitByCols
+  if (typeof (params.splitByCol) === 'string' ) {
+    splitByCols = [params.splitByCol]
+  } else if (typeof (params.splitByCol) === 'object' && params.splitByCol instanceof Array) {
+    splitByCols = params.splitByCol
+  }
+
+  _.each(source, function (tbl) {
+    drawTable({
+      title: params.title + ' 【' + splitByCols.join(' , ') + '】 = 【' + _.map(splitByCols, function (c) { return tbl.data[0][c] }).join(' , ') + '】',
+      source: tbl,
+      '$target': params['$target'],
+      renderMap: params.renderMap,
+      renderHeaderMap: params.renderHeaderMap,
+      headerMap: params.headerMap,
+      widthMap: params.widthMap,
+      simple: params.simple
+    })
+  })
+}
+
+global.drawChartList = function drawTableList (params) {
+  var source = params.source
+  var splitByCols
+  if (typeof (params.splitByCol) === 'string') {
+    splitByCols = [params.splitByCol]
+  } else if (typeof (params.splitByCol) === 'object' && params.splitByCol instanceof Array ) {
+    splitByCols = params.splitByCol
+  }
+  _.each(source, function (tbl) {
+    drawChart({
+      title: params.title + ' 【' + splitByCols.join(' , ') + '】 = 【' + _.map(splitByCols, function (c) { return tbl.data[0][c] }).join(' , ') + '】',
+      source: tbl,
+      '$target': params['$target'],
+      chartType: params.chartType,
+      x: params.x,
+      y: params.y,
+      yList: params.yList,
+      headerMap: params.headerMap
+    })
+  })
 }

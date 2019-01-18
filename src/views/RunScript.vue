@@ -361,7 +361,10 @@ export default {
             appendBase,
             appendSum,
             runJs,
-            set_snippet
+            set_snippet,
+            splitTable,
+            drawTableList,
+            drawChartList
               } = customScriptApi
       this.clearContent()
       let { args, layouts, $disp } = this.prepareForRun()

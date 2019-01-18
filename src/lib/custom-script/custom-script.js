@@ -601,7 +601,7 @@ export const get_pgsql = function getPgSql (params, callback, errorCallback) {
 
 export const get_presto = function getPresto (params, callback, errorCallback) {
   if (callback) {
-    getPrestoAsync(params, callback, errorCallback)
+    return getPrestoAsync(params, callback, errorCallback)
   } else {
     return getSql(params, 'presto', callback, errorCallback)
   }
@@ -683,14 +683,31 @@ export const wrapScript = function wrapScript (scriptBody, userParams, scriptId)
   return newScript
 }
 
-export const createScriptEditLink = function(id) {
-  function createScriptLink(id){
-      var state = {
-          myScriptId: id
-      };
-      var urlState = $.extend({}, state);
-      var uri = "#"+encodeURIComponent( JSON.stringify(urlState) );
-      return uri;
+export const createScriptEditLink = function (id) {
+  function createScriptLink (id) {
+    var state = {
+      myScriptId: id
+    }
+    var urlState = $.extend({}, state)
+    var uri = '#' + encodeURIComponent(JSON.stringify(urlState))
+    return uri
   }
-  return "/demo-custom-script.html"+createScriptLink(id)
+  return '/demo-custom-script.html' + createScriptLink(id)
 }
+
+// eslint-disable-next-line
+Object.defineProperty (Object.prototype, "extendWith" , {
+  writable: true,
+  enumerable: false, // Make it nonenumerable
+  configurable: true,
+  value: function (o,p) { // Its value is this function
+    // 增加单个属性语法
+    if (typeof (o) === 'string' && p !== undefined) {
+      var newObj = $.extend({}, this)
+      newObj[o] = p
+      return newObj
+    } else {
+      return $.extend({}, this, o)
+    }
+  }
+})
