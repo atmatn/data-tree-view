@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       dataTreeNodes: this.$store.dispatch('reloadDataTree'),
-      onChangeStatus: []
+      onChangeStatus: [],
+      flagForSelect: false
     }
   },
   created() {
@@ -68,7 +69,7 @@ export default {
         this.$refs.side_menu.updateOpened()
         this.$refs.side_menu.updateActiveName()
       })
-     if (
+      if (
         this.flagForSelect === false &&
         this.$route.query.scriptId !== undefined
       ) {
@@ -95,22 +96,38 @@ export default {
                       params: this.indexMap[nodeId].scriptParams
                     })
                   }
-                  // if (this.indexMap[nodeId].type === 'direct-link') {
-                  //   window.open(this.indexMap[nodeId].linkUrl)
-                  // }
-                  // var index = this.TreeNodes.indexOf(this.indexMap[arr[0]])
-                  // var temp = this.TreeNodes[0]
-                  // this.TreeNodes[0] = this.TreeNodes[index]
-                  // this.TreeNodes[index] = temp
-                  console.log(arr)
                 })
             }
           }
         }),
           (this.flagForSelect = true)
+        this.$nextTick(() => {
+          //debugger
+          console.log(
+            document.getElementsByClassName(
+              'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
+            )
+          )
+          var myElement = document.getElementsByClassName(
+            'ivu-menu-item-selected'
+          )[0]
+          var parentElement = document.getElementsByClassName('my-menu')[0]
+          debugger
+
+          var findOffsetTop = function(el) {
+            var offset = el.offsetTop
+            if (el !== parentElement) {
+              offset += findOffsetTop(el.parentNode)
+            }
+            return offset
+          }
+          var topPos = findOffsetTop(myElement)
+          console.log(topPos)
+          parentElement.scrollTop = topPos
+        })
       }
     },
     ...mapActions(['openScript'])
-    }
   }
+}
 </script>

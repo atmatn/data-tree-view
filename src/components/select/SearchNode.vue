@@ -12,8 +12,9 @@
           filterable
           clearable
           :transfer="true"
+          @on-clear="clear"
         >
-          <OptionGroup v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
+          <OptionGroup v-for="item in this.arr" :value="item.id" :label="item.product.title">
             <Option v-for="itemss in item.items" :value="itemss.id" :label="itemss.title"></Option>
           </OptionGroup>
         </Select>
@@ -31,22 +32,35 @@ export default {
       // onChange: [],
       // val: '',
       arr: [],
+      dataTreeSearchList: this.$store
+        .dispatch('getDataTreeSearchList')
+        .then(arr => {
+          this.arr = arr
+        }),
       bySelected: ''
     }
   },
   computed: {
     ...mapState({
-      turnOn: 'turnOn',
-      turnLight: 'turnLight',
-      dataTreeSearchList: 'dataTreeSearchList',
-      indexMap: 'indexMap',
-      indexParentMap: 'indexParentMap',
-      TreeNodes: 'dataTreeNodes'
+      turnOn: 'turnOn'
     }),
+    ...mapState({
+      turnLight: 'turnLight'
+    }),
+    ...mapState({
+      indexMap: 'indexMap'
+    }),
+    ...mapState({
+      indexParentMap: 'indexParentMap'
+    }),
+    ...mapState({
+      TreeNodes: 'dataTreeNodes'
+    })
   },
   methods: {
     onChange() {
-      //var nodeId = []
+      var self = this
+      console.log('bySelected:' + this.bySelected)
       if (
         this.bySelected !== null &&
         this.bySelected !== '' &&
@@ -57,7 +71,7 @@ export default {
           .then(arr => {
             if (arr.length === 1) {
               this.$store.commit('updateTurnOn', {
-                status: [arr[0],this.bySelected]
+                status: [arr[0], this.bySelected]
               })
             } else {
               this.$store.commit('updateTurnOn', { status: arr })
@@ -85,41 +99,25 @@ export default {
               var parentElement = document.getElementsByClassName('my-menu')[0]
               debugger
 
-              var findOffsetTop = function(el, containerElement) {
-                let offset = 0
-                let no = 1
-                while (el.offsetParent === null ) {
-                  el = el.parentNode
-                }
-                while (el !== containerElement.offsetParent) {
-                  console.log(`no ${no} offsetTop ${el.offsetTop} offsetParent ${el.offsetParent}`)
-                  offset += el.offsetTop
-                  el = el.offsetParent
-                  no++
+              var findOffsetTop = function(el) {
+                var offset = el.offsetTop
+                if (el !== parentElement) {
+                  offset += findOffsetTop(el.parentNode)
                 }
                 return offset
               }
-              var topPos = findOffsetTop(myElement, parentElement)
+              var topPos = findOffsetTop(myElement)
               console.log(topPos)
-
-              if( parentElement.scrollHeight - topPos < 100) {
-                // 如果是在底部，那尽可能往下再滚滚
-                topPos += 100
-              } else {
-                // 上面留一些空间
-                topPos = topPos - 300
-              }
-              // UI不知道为何还没更新，如果项目处于最底部，会没展示出来。
-              // 先加个timeout来workaround
-              setTimeout( () => {
-                parentElement.scrollTop = topPos;
-              }, 300)
+              parentElement.scrollTop = topPos;
             })
           })
       }
     },
     ...mapActions(['openScript']),
-    ...mapActions(['reloadDataTree'])
+    ...mapActions(['reloadDataTree']),
+    clear() {
+      // this.reloadDataTree()
+    }
   }
 }
 </script>
