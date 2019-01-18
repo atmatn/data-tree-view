@@ -13,8 +13,8 @@
           clearable
           :transfer="true"
         >
-          <OptionGroup v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
-            <Option v-for="itemss in item.items" :value="itemss.id" :label="itemss.title"></Option>
+          <OptionGroup v-if="switchToShow || item.hasPrivillage" v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
+            <Option v-for="elem in item.items" :value="elem.id" :label="elem.title"></Option>
           </OptionGroup>
         </Select>
       </Col>
@@ -42,7 +42,8 @@ export default {
       dataTreeSearchList: 'dataTreeSearchList',
       indexMap: 'indexMap',
       indexParentMap: 'indexParentMap',
-      TreeNodes: 'dataTreeNodes'
+      TreeNodes: 'dataTreeNodes',
+      switchToShow: 'switchToShow'
     }),
   },
   methods: {

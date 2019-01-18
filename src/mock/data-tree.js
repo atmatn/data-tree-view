@@ -285,7 +285,8 @@ for (let i = 0; i < 100; i++) {
     currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
     currentUserManageable: (i % 2 === 1),
     manageablePerms: [],
-    containsExecutableForCurrentUser: (i % 2 === 1) // （后端计算出的属性）
+    containsExecutableForCurrentUser: (i % 2 === 1), // （后端计算出的属性）
+    children: (i % 2 === 1) ? undefined : []
   }
   mockTreeNodes.splice(i / 2 % 2 === 1 ? 1 : mockTreeNodes.length - 2, 0, item)
 }

@@ -12,7 +12,7 @@
       ref="side_menu"
     >
       <div v-if="dataTreeNodes">
-        <MySubMenu v-for="item in dataTreeNodes" :model="item" :name="getOn(item.title)" class="parent"></MySubMenu>
+        <MySubMenu v-for="item in dataTreeNodes" :model="item" :class="{ parent: true, 'active-menu-item': (item.id === currentSelectedNodeId)}" :currentSelectedNodeId="currentSelectedNodeId"></MySubMenu>
       </div>
       <div v-else>
         <h1 style="color:red">暂无数据
@@ -64,16 +64,16 @@ export default {
         .then(arr => {
           let selectedNode = this.indexMap[nodeId]
           let expandIdChain = _.cloneDeep(arr)
-          if(selectedNode.type === 'folder') {
-            // 选中的是目录
+          if(selectedNode.type === 'folder' || selectedNode.type === 'product') {
+            // 选中的是folder或product
             expandIdChain.push(nodeId)
           }
           // this.$store.commit('updateExpandChain', { status: expandChain })
           // this.$store.commit('updateCurrentActiveNode', { status: this.nodeId })
           if (selectedNode.type === 'args-script') {
             this.openScript({
-              scriptId: this.indexMap[this.nodeId].scriptId,
-              params: this.indexMap[this.nodeId].scriptParams
+              scriptId: this.indexMap[nodeId].scriptId,
+              params: this.indexMap[nodeId].scriptParams
             })
           }
           if (this.indexMap[nodeId].type === 'direct-link') {
@@ -86,31 +86,40 @@ export default {
         })
     },
     updateTreeUI({expandIdChain, currentSelectedNodeId}) {
+      let self = this
+      // debugger
       this.expandIdChain = expandIdChain
       this.currentSelectedNodeId = currentSelectedNodeId
 
       this.$nextTick(() => {
-        debugger
+        // debugger
         this.$refs.side_menu.updateOpened()
         this.$refs.side_menu.updateActiveName()
         this.$nextTick( () => {
-            //debugger
-          console.log(
-            document.getElementsByClassName(
-              'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
-            )
-          )
+          // 滚动到相应位置
+
+          let currentSelectedNode = this.indexMap[currentSelectedNodeId]
+          if (currentSelectedNode.type === 'product') {
+
+          } else if (currentSelectedNode.type === 'folder') {
+
+          } else {
+
+          }
+
           var myElement = document.getElementsByClassName(
-            'ivu-menu-item-selected'
+            'active-menu-item'
           )[0]
           var parentElement = document.getElementsByClassName('my-menu')[0]
-          debugger
-
+          
           var findOffsetTop = function(el, containerElement) {
             let offset = 0
             let no = 1
-            while (el.offsetParent === null ) {
+            while (el && el.offsetParent === null) {
               el = el.parentNode
+            }
+            if (el === null || el === undefined) {
+              return 0
             }
             while (el !== containerElement.offsetParent) {
               console.log(`no ${no} offsetTop ${el.offsetTop} offsetParent ${el.offsetParent}`)
@@ -135,10 +144,12 @@ export default {
           setTimeout( () => {
             parentElement.scrollTop = topPos;
           }, 300)
+
+
         })
       })
     },
-    getOn(status) {
+    // getOn(status) {
       //this.turnOn =status
       // this.$nextTick(() => {
       //   this.$refs.side_menu.updateOpened()
@@ -146,38 +157,38 @@ export default {
       // })
 
       // 处理的是粘贴网址，打开对应scriptId的目录树的项
-      if (
-        this.flagForSelect === false &&
-        this.$route.query.scriptId !== undefined
-      ) {
-        console.log(this.$route.query.scriptId)
-        this.$store.dispatch('getScriptSearchList').then(arr => {
-          for (var i = 0; i < arr.length; i++) {
-            if (arr[i].id === this.$route.query.scriptId) {
-              // console.log(arr[i].node);
-              var nodeId = arr[i].node.id
-              this.$store
-                .dispatch('getDataTreeAncestorIdList', { id: arr[i].node.id })
-                .then(arr => {
-                  if (arr.length === 1) {
-                    this.$store.commit('updateExpandChain', {
-                      status: [arr[0], arr[i].node.id]
-                    })
-                  } else {
-                    this.$store.commit('updateExpandChain', { status: arr })
-                  }
-                  this.$store.commit('updateCurrentActiveNode', { status: nodeId })
-                  if (this.indexMap[nodeId].type === 'args-script') {
-                    this.openScript({
-                      scriptId: this.indexMap[nodeId].scriptId,
-                      params: this.indexMap[nodeId].scriptParams
-                    })
-                  }
-                })
-            }
-          }
-        })
-        this.flagForSelect = true
+      // if (
+      //   this.flagForSelect === false &&
+      //   this.$route.query.scriptId !== undefined
+      // ) {
+      //   console.log(this.$route.query.scriptId)
+      //   this.$store.dispatch('getScriptSearchList').then(arr => {
+      //     for (var i = 0; i < arr.length; i++) {
+      //       if (arr[i].id === this.$route.query.scriptId) {
+      //         // console.log(arr[i].node);
+      //         var nodeId = arr[i].node.id
+      //         this.$store
+      //           .dispatch('getDataTreeAncestorIdList', { id: arr[i].node.id })
+      //           .then(arr => {
+      //             if (arr.length === 1) {
+      //               this.$store.commit('updateExpandChain', {
+      //                 status: [arr[0], arr[i].node.id]
+      //               })
+      //             } else {
+      //               this.$store.commit('updateExpandChain', { status: arr })
+      //             }
+      //             this.$store.commit('updateCurrentActiveNode', { status: nodeId })
+      //             if (this.indexMap[nodeId].type === 'args-script') {
+      //               this.openScript({
+      //                 scriptId: this.indexMap[nodeId].scriptId,
+      //                 params: this.indexMap[nodeId].scriptParams
+      //               })
+      //             }
+      //           })
+      //       }
+      //     }
+      //   })
+      //   this.flagForSelect = true
 
         // 滚到对应的项
         // this.$nextTick(() => {
@@ -204,9 +215,23 @@ export default {
         //   console.log(topPos)
         //   parentElement.scrollTop = topPos
         // })
-      }
-    },
+      // }
+    // },
     ...mapActions(['openScript'])
   }
 }
 </script>
+<style lang="less">
+// .active-menu-item {
+//   border-style: solid;
+//   border-color: red;
+//   color: red;
+//   background-color: red;
+// }
+.active-menu-item .ivu-menu-submenu-title {
+  border-style: solid;
+  border-color: green;
+  color: green;
+  background-color: green;
+}
+</style>

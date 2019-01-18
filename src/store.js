@@ -6,7 +6,7 @@ import _ from 'lodash'
 import $ from 'jquery'
 Vue.use(Vuex)
 
-// 获取可搜索的节点列表，包括folder和leaf
+// 获取可搜索的节点列表，包括 product, folder 和 leaf
 function generateDataTreeSearchList (dataTreeNodes) {
   let arr = []
   let curProduct = {}
@@ -14,18 +14,23 @@ function generateDataTreeSearchList (dataTreeNodes) {
   function process (node, prefix) {
     if (node instanceof Array) {
       node.forEach(n => {
-        if (n.children) {
-          // 产品有children，才会新建一个元素
-          curProduct = {
-            product: {
-              title: n.title,
-              id: n.id
-            },
-            items: []
-          }
-          arr.push(curProduct)
+        curProduct = {
+          product: {
+            title: n.title,
+            id: n.id
+          },
+          items: [],
+          hasPrivillage: n.currentUserVisible
+        }
+        curProduct.items.push({
+          id: n.id,
+          title: n.title  + (n.currentUserVisible ? '' : ' (无权限)'),
+          hasPrivillage: n.currentUserVisible
+        })
+        arr.push(curProduct)
+        if(n.children){
           n.children.forEach(subNode => {
-            process(subNode, '')
+            process(subNode, n.title + ' / ')
           })
         }
       })
@@ -33,7 +38,8 @@ function generateDataTreeSearchList (dataTreeNodes) {
       // debugger
       curProduct.items.push({
         id: node.id,
-        title: prefix + node.title
+        title: prefix + node.title + (node.currentUserExecutable ? '' : ' (无权限)'),
+        hasPrivillage: node.currentUserExecutable
       })
       if (node.children) {
         node.children.forEach(subNode => {
@@ -44,6 +50,7 @@ function generateDataTreeSearchList (dataTreeNodes) {
   }
 
   process(dataTreeNodes)
+  // debugger
   return arr
 }
 
@@ -143,7 +150,7 @@ let store = new Vuex.Store({
     updateWhichAnchor: (state, { status }) => {
       state.whichAnchor = status
     },
-    updateWichToShow: (state, { status }) => {
+    updateSwitchToShow: (state, { status }) => {
       state.switchToShow = status
     },
     updateAllow: (state, { status }) => {
@@ -335,8 +342,8 @@ let store = new Vuex.Store({
         commit('updatePermsList', { perms: res.data.perms })
       })
     },
-    changeWichToShow ({ commit }, { status }) {
-      commit('updateWichToShow', { status })
+    updateSwitchToShow ({ commit }, { status }) {
+      commit('updateSwitchToShow', { status })
     },
     changeOnSwitch ({ commit }, { status }) {
       commit('updateOnSwitch', { status })
