@@ -101,8 +101,8 @@ let store = new Vuex.Store({
     // allow2: false,
     permsList: [], // 权限列表
     queryingCount: 0,
-    turnOn: [], // 选择哪一项展开
-    turnLight: '', // 选择那一项高亮
+    // turnOn: [], // 选择哪一项展开
+    // turnLight: '', // 选择那一项高亮
     showDebug: false,
     onSwitch: false,
     indexMap: {},
@@ -160,12 +160,12 @@ let store = new Vuex.Store({
       state.permsList = _.cloneDeep(perms)
       // console.log(state.permsList)
     },
-    updateTurnOn: (state, { status }) => {
-      state.turnOn = status
-    },
-    updateTurnLight: (state, { status }) => {
-      state.turnLight = status
-    },
+    // updateExpandChain: (state, { status }) => {
+    //   state.turnOn = status
+    // },
+    // updateCurrentActiveNode: (state, { status }) => {
+    //   state.turnLight = status
+    // },
     updateOnSwitch: (state, { status }) => {
       state.onSwitch = status
     },

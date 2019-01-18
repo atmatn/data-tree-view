@@ -6,7 +6,7 @@
       </Col>
       <Col span="20">
         <Select
-          v-model="bySelected"
+          v-model="selectedNodeId"
           style="width:190px"
           @on-change="onChange"
           filterable
@@ -37,16 +37,16 @@ export default {
         .then(arr => {
           this.arr = arr
         }),
-      bySelected: ''
+      selectedNodeId: ''
     }
   },
   computed: {
-    ...mapState({
-      turnOn: 'turnOn'
-    }),
-    ...mapState({
-      turnLight: 'turnLight'
-    }),
+    // ...mapState({
+    //   turnOn: 'turnOn'
+    // }),
+    // ...mapState({
+    //   turnLight: 'turnLight'
+    // }),
     ...mapState({
       indexMap: 'indexMap'
     }),
@@ -60,31 +60,31 @@ export default {
   methods: {
     onChange() {
       var self = this
-      console.log('bySelected:' + this.bySelected)
+      console.log('selectedNodeId:' + this.selectedNodeId)
       if (
-        this.bySelected !== null &&
-        this.bySelected !== '' &&
-        this.bySelected !== undefined
+        this.selectedNodeId !== null &&
+        this.selectedNodeId !== '' &&
+        this.selectedNodeId !== undefined
       ) {
         this.$store
-          .dispatch('getDataTreeAncestorIdList', { id: this.bySelected })
+          .dispatch('getDataTreeAncestorIdList', { id: this.selectedNodeId })
           .then(arr => {
             if (arr.length === 1) {
-              this.$store.commit('updateTurnOn', {
-                status: [arr[0], this.bySelected]
+              this.$store.commit('updateExpandChain', {
+                status: [arr[0], this.selectedNodeId]
               })
             } else {
-              this.$store.commit('updateTurnOn', { status: arr })
+              this.$store.commit('updateExpandChain', { status: arr })
             }
-            this.$store.commit('updateTurnLight', { status: this.bySelected })
-            if (this.indexMap[this.bySelected].type === 'args-script') {
+            this.$store.commit('updateCurrentActiveNode', { status: this.selectedNodeId })
+            if (this.indexMap[this.selectedNodeId].type === 'args-script') {
               this.openScript({
-                scriptId: this.indexMap[this.bySelected].scriptId,
-                params: this.indexMap[this.bySelected].scriptParams
+                scriptId: this.indexMap[this.selectedNodeId].scriptId,
+                params: this.indexMap[this.selectedNodeId].scriptParams
               })
             }
-            if (this.indexMap[this.bySelected].type === 'direct-link') {
-              window.open(this.indexMap[this.bySelected].linkUrl)
+            if (this.indexMap[this.selectedNodeId].type === 'direct-link') {
+              window.open(this.indexMap[this.selectedNodeId].linkUrl)
             }
             this.$nextTick(() => {
               //debugger

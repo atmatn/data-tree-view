@@ -1,18 +1,18 @@
 <template>
   <div>
     <div>
-      <SearchPane/>
+      <SearchPane @open-item="openItem"/>
     </div>
     <Menu
       :style="{overflow: 'auto', height: '80vh'}"
       :class="{'my-menu': true}"
       theme="dark"
-      :active-name="turnLight"
-      :open-names="turnOn"
+      :active-name="currentSelectedNodeId"
+      :open-names="expandIdChain"
       ref="side_menu"
     >
-      <div v-if="TreeNodes">
-        <MySubMenu v-for="item in TreeNodes" :model="item" :name="getOn(item.title)" class="parent"></MySubMenu>
+      <div v-if="dataTreeNodes">
+        <MySubMenu v-for="item in dataTreeNodes" :model="item" :name="getOn(item.title)" class="parent"></MySubMenu>
       </div>
       <div v-else>
         <h1 style="color:red">暂无数据
@@ -34,26 +34,21 @@ import SearchPane from '@/components/data-tree-search/SearchPane.vue'
 export default {
   data() {
     return {
-      dataTreeNodes: this.$store.dispatch('reloadDataTree'),
+      expandIdChain: [],
+      currentSelectedNodeId: '',
       onChangeStatus: [],
       flagForSelect: false
     }
   },
   created() {
     // console.log('23333333333333:' + this.$router.history.current.query.scriptId)
-    // this.$store.commit('updateTurnOn', { status: [1, 5] })
-    // this.$store.commit('updateTurnLight', { status: 8 })
+    // this.$store.commit('updateExpandChain', { status: [1, 5] })
+    // this.$store.commit('updateCurrentActiveNode', { status: 8 })
   },
   components: { MySubMenu, SearchPane, ShowNoPermsSwitch },
   computed: {
     ...mapState({
-      TreeNodes: 'dataTreeNodes'
-    }),
-    ...mapState({
-      turnOn: 'turnOn'
-    }),
-    ...mapState({
-      turnLight: 'turnLight'
+      dataTreeNodes: 'dataTreeNodes'
     }),
     ...mapState({
       indexMap: 'indexMap'
@@ -63,12 +58,94 @@ export default {
     })
   },
   methods: {
-    getOn(status) {
-      //this.turnOn =status
+    openItem({nodeId}) {
+      this.$store
+        .dispatch('getDataTreeAncestorIdList', { id: nodeId })
+        .then(arr => {
+          let selectedNode = this.indexMap[nodeId]
+          let expandIdChain = _.cloneDeep(arr)
+          if(selectedNode.type === 'folder') {
+            // 选中的是目录
+            expandIdChain.push(nodeId)
+          }
+          // this.$store.commit('updateExpandChain', { status: expandChain })
+          // this.$store.commit('updateCurrentActiveNode', { status: this.nodeId })
+          if (selectedNode.type === 'args-script') {
+            this.openScript({
+              scriptId: this.indexMap[this.nodeId].scriptId,
+              params: this.indexMap[this.nodeId].scriptParams
+            })
+          }
+          if (this.indexMap[nodeId].type === 'direct-link') {
+            window.open(this.indexMap[nodeId].linkUrl)
+          }
+          this.updateTreeUI({
+            expandIdChain,
+            currentSelectedNodeId: nodeId
+          })
+        })
+    },
+    updateTreeUI({expandIdChain, currentSelectedNodeId}) {
+      this.expandIdChain = expandIdChain
+      this.currentSelectedNodeId = currentSelectedNodeId
+
       this.$nextTick(() => {
+        debugger
         this.$refs.side_menu.updateOpened()
         this.$refs.side_menu.updateActiveName()
+        this.$nextTick( () => {
+            //debugger
+          console.log(
+            document.getElementsByClassName(
+              'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
+            )
+          )
+          var myElement = document.getElementsByClassName(
+            'ivu-menu-item-selected'
+          )[0]
+          var parentElement = document.getElementsByClassName('my-menu')[0]
+          debugger
+
+          var findOffsetTop = function(el, containerElement) {
+            let offset = 0
+            let no = 1
+            while (el.offsetParent === null ) {
+              el = el.parentNode
+            }
+            while (el !== containerElement.offsetParent) {
+              console.log(`no ${no} offsetTop ${el.offsetTop} offsetParent ${el.offsetParent}`)
+              offset += el.offsetTop
+              el = el.offsetParent
+              no++
+            }
+            return offset
+          }
+          var topPos = findOffsetTop(myElement, parentElement)
+          console.log(topPos)
+
+          if( parentElement.scrollHeight - topPos < 100) {
+            // 如果是在底部，那尽可能往下再滚滚
+            topPos += 100
+          } else {
+            // 上面留一些空间
+            topPos = topPos - 300
+          }
+          // UI不知道为何还没更新，如果项目处于最底部，会没展示出来。
+          // 先加个timeout来workaround
+          setTimeout( () => {
+            parentElement.scrollTop = topPos;
+          }, 300)
+        })
       })
+    },
+    getOn(status) {
+      //this.turnOn =status
+      // this.$nextTick(() => {
+      //   this.$refs.side_menu.updateOpened()
+      //   this.$refs.side_menu.updateActiveName()
+      // })
+
+      // 处理的是粘贴网址，打开对应scriptId的目录树的项
       if (
         this.flagForSelect === false &&
         this.$route.query.scriptId !== undefined
@@ -83,13 +160,13 @@ export default {
                 .dispatch('getDataTreeAncestorIdList', { id: arr[i].node.id })
                 .then(arr => {
                   if (arr.length === 1) {
-                    this.$store.commit('updateTurnOn', {
+                    this.$store.commit('updateExpandChain', {
                       status: [arr[0], arr[i].node.id]
                     })
                   } else {
-                    this.$store.commit('updateTurnOn', { status: arr })
+                    this.$store.commit('updateExpandChain', { status: arr })
                   }
-                  this.$store.commit('updateTurnLight', { status: nodeId })
+                  this.$store.commit('updateCurrentActiveNode', { status: nodeId })
                   if (this.indexMap[nodeId].type === 'args-script') {
                     this.openScript({
                       scriptId: this.indexMap[nodeId].scriptId,
@@ -99,32 +176,34 @@ export default {
                 })
             }
           }
-        }),
-          (this.flagForSelect = true)
-        this.$nextTick(() => {
-          //debugger
-          console.log(
-            document.getElementsByClassName(
-              'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
-            )
-          )
-          var myElement = document.getElementsByClassName(
-            'ivu-menu-item-selected'
-          )[0]
-          var parentElement = document.getElementsByClassName('my-menu')[0]
-          debugger
-
-          var findOffsetTop = function(el) {
-            var offset = el.offsetTop
-            if (el !== parentElement) {
-              offset += findOffsetTop(el.parentNode)
-            }
-            return offset
-          }
-          var topPos = findOffsetTop(myElement)
-          console.log(topPos)
-          parentElement.scrollTop = topPos
         })
+        this.flagForSelect = true
+
+        // 滚到对应的项
+        // this.$nextTick(() => {
+        //   //debugger
+        //   console.log(
+        //     document.getElementsByClassName(
+        //       'ivu-menu-item ivu-menu-item-active ivu-menu-item-selected'
+        //     )
+        //   )
+        //   var myElement = document.getElementsByClassName(
+        //     'ivu-menu-item-selected'
+        //   )[0]
+        //   var parentElement = document.getElementsByClassName('my-menu')[0]
+        //   debugger
+
+        //   var findOffsetTop = function(el) {
+        //     var offset = el.offsetTop
+        //     if (el !== parentElement) {
+        //       offset += findOffsetTop(el.parentNode)
+        //     }
+        //     return offset
+        //   }
+        //   var topPos = findOffsetTop(myElement)
+        //   console.log(topPos)
+        //   parentElement.scrollTop = topPos
+        // })
       }
     },
     ...mapActions(['openScript'])

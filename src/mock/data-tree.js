@@ -1,6 +1,23 @@
 import _ from 'lodash'
 // 2018-12-19 by lisn：所有tree上所有xxx_perms的字段更名为xxxPerms
 // 2018-12-19 by lisn：product增加currentUserManageable字段
+let bottomChildren = [
+  {
+    type: 'folder',
+    id: 7778,
+    title: '老工具',
+    currentUserExecutable: true, // （后端计算出的属性）
+    containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
+    computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
+    currentUserManageable: true, // （后端计算出的属性）
+    manageablePerms: [],
+    creator: 'bob',
+    children: [
+      // 空的
+    ]
+  }
+]
+
 var mockTreeNodes = [
   {
     type: 'product',
@@ -226,22 +243,7 @@ var mockTreeNodes = [
     currentUserManageable: true,
     manageablePerms: [],
     creator: 'bob',
-    children: [
-      {
-        type: 'folder',
-        id: 7778,
-        title: '老工具',
-        currentUserExecutable: true, // （后端计算出的属性）
-        containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
-        computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
-        currentUserManageable: true, // （后端计算出的属性）
-        manageablePerms: [],
-        creator: 'bob',
-        children: [
-          // 空的
-        ]
-      }
-    ]
+    children: bottomChildren
   },
   {
     type: 'product',
@@ -255,19 +257,38 @@ var mockTreeNodes = [
   }
 ]
 
-// for (let i = 0; i < 100; i++) {
-//   let item = {
-//     type: 'product',
-//     id: 20000 + i,
-//     title: '测试-' + i,
-//     visiblePerms: ['ynote_general'],
-//     currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
-//     currentUserManageable: (i % 2 === 1),
-//     manageablePerms: [],
-//     containsExecutableForCurrentUser: (i % 2 === 1) // （后端计算出的属性）
-//   }
-//   mockTreeNodes.splice(i / 2 % 2 === 1 ? 1 : mockTreeNodes.length - 2, 0, item)
-// }
+// bottomChildren 弄复杂一点
+for (let i = 0; i < 100; i++) {
+  let item = {
+    type: 'folder',
+    id: 30000 + i,
+    title: '测试Folder-' + i,
+    currentUserExecutable: true, // （后端计算出的属性）
+    containsExecutableForCurrentUser: false, // （后端计算出的属性）为false是因为本节点目前是空的，不包含可执行的叶子节点
+    computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
+    currentUserManageable: true, // （后端计算出的属性）
+    manageablePerms: [],
+    creator: 'bob',
+    children: [
+      // 空的
+    ]
+  }
+  bottomChildren.splice(i / 2 % 2 === 1 ? 0 : bottomChildren.length, 0, item)
+}
+
+for (let i = 0; i < 100; i++) {
+  let item = {
+    type: 'product',
+    id: 20000 + i,
+    title: '测试-' + i,
+    visiblePerms: ['ynote_general'],
+    currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
+    currentUserManageable: (i % 2 === 1),
+    manageablePerms: [],
+    containsExecutableForCurrentUser: (i % 2 === 1) // （后端计算出的属性）
+  }
+  mockTreeNodes.splice(i / 2 % 2 === 1 ? 1 : mockTreeNodes.length - 2, 0, item)
+}
 
 var maxId = 100
 
