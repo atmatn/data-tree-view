@@ -1,20 +1,20 @@
 <template>
   <div>
     <Row>
-      <Col span="4">
-        <Button type="primary">搜索</Button>
+      <Col span="5">
+        <Button type="primary" :width="60">搜索</Button>
       </Col>
-      <Col span="20">
+      <Col span="19">
         <Select
-          v-model="bySelected"
+          v-model="selectedNodeId"
           style="width:190px"
           @on-change="onChange"
           filterable
           clearable
           :transfer="true"
         >
-          <OptionGroup v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
-            <Option v-for="itemss in item.items" :value="itemss.id" :label="itemss.title"></Option>
+          <OptionGroup v-if="switchToShow || item.hasPrivillage" v-for="item in dataTreeSearchList" :value="item.id" :label="item.product.title">
+            <Option v-for="elem in item.items" :value="elem.id" :label="elem.title"></Option>
           </OptionGroup>
         </Select>
       </Col>
@@ -23,6 +23,7 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import _ from 'lodash'
 // import store from '@/store.js'
 
 export default {
@@ -31,38 +32,35 @@ export default {
       // onChange: [],
       // val: '',
       arr: [],
-      bySelected: ''
+      selectedNodeId: ''
     }
   },
   computed: {
     ...mapState({
-      turnOn: 'turnOn',
-      turnLight: 'turnLight',
-      dataTreeSearchList: 'dataTreeSearchList'
-    })
+      // turnOn: 'turnOn',
+      // turnLight: 'turnLight',
+      dataTreeSearchList: 'dataTreeSearchList',
+      indexMap: 'indexMap',
+      indexParentMap: 'indexParentMap',
+      TreeNodes: 'dataTreeNodes',
+      switchToShow: 'switchToShow'
+    }),
   },
   methods: {
     onChange() {
       //var nodeId = []
       if (
-        this.bySelected !== null &&
-        this.bySelected !== '' &&
-        this.bySelected !== undefined
+        this.selectedNodeId !== null &&
+        this.selectedNodeId !== '' &&
+        this.selectedNodeId !== undefined
       ) {
-        this.$store
-          .dispatch('getDataTreeAncestorIdList', { id: this.bySelected })
-          .then(arr => {
-            if (arr.length === 1) {
-              this.$store.commit('updateTurnOn', {
-                status: [arr[0],this.bySelected]
-              })
-            } else {
-              this.$store.commit('updateTurnOn', { status: arr })
-            }
-            this.$store.commit('updateTurnLight', { status: this.bySelected })
-          })
+        this.$emit("open-item", {
+          nodeId: this.selectedNodeId
+        })
       }
-    }
+    },
+    // ...mapActions(['openScript']),
+    // ...mapActions(['reloadDataTree'])
   }
 }
 </script>

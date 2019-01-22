@@ -128,13 +128,17 @@
                       <Button @click="openScript({scriptId: '456', params: {'param_a': 4, 'param_b': 5 } })">Open Script 456</Button>
                     </div>
                     <Layout>
-                        <Sider hide-trigger :style="{background: '#fff'}" :width="300">
-                              <MenuTree></MenuTree>
-                              <Button type="primary" @click="doShowEditModal()" >编辑模式</Button>
+                        <Sider hide-trigger :style="{background: '#fff'}" :width="240" v-show="isCollapsed === false">
+                              <menuTree></menuTree>
+                              <Button type="primary" @click="doShowEditModal()">编辑模式</Button>
                               <DataTreeEditModal v-model="showEditModal"></DataTreeEditModal>
                         </Sider>
                         <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
-                            <router-view/>
+                          <Button style="width:45px" @click="hiddenSider" size="small">
+                              <Icon v-if="isCollapsed === true" type="ios-arrow-forward" size="small"/>
+                              <Icon v-else="isCollapsed === false" type="ios-arrow-back" size="small"/>
+                          </Button>
+                              <router-view/>
                         </Content>
                     </Layout>
                 </Content>
@@ -170,17 +174,17 @@ export default {
           scriptId: to.query.scriptId,
           params: to.query,
         })
-       // vm.$store.commit('updateTurnOn',{status:[to.query.title]})
-        //vm.$store.commit('updateTurnLight',{status:'KPI数据'})
       })
     } else {
       next()
     }
   },
   mounted() {
-    // this.$store.dispatch("reloadPermsList")
   },
   methods: {
+    hiddenSider(){
+      this.isCollapsed=!this.isCollapsed
+    },
     doShowEditModal () {
       // debugger
       this.showEditModal = true
@@ -423,7 +427,8 @@ export default {
       nodeData: '',
       flattenProductFoldersText: '',
       dataTreeSearchListText: '',
-      dataTreeAncestorIdListText: ''
+      dataTreeAncestorIdListText: '',
+      isCollapsed: false
     }
   }
 }

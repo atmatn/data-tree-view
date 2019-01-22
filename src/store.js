@@ -6,7 +6,7 @@ import _ from 'lodash'
 import $ from 'jquery'
 Vue.use(Vuex)
 
-// 获取可搜索的节点列表，包括folder和leaf
+// 获取可搜索的节点列表，包括 product, folder 和 leaf
 function generateDataTreeSearchList (dataTreeNodes) {
   let arr = []
   let curProduct = {}
@@ -14,18 +14,23 @@ function generateDataTreeSearchList (dataTreeNodes) {
   function process (node, prefix) {
     if (node instanceof Array) {
       node.forEach(n => {
-        if (n.children) {
-          // 产品有children，才会新建一个元素
-          curProduct = {
-            product: {
-              title: n.title,
-              id: n.id
-            },
-            items: []
-          }
-          arr.push(curProduct)
+        curProduct = {
+          product: {
+            title: n.title,
+            id: n.id
+          },
+          items: [],
+          hasPrivillage: n.currentUserVisible
+        }
+        curProduct.items.push({
+          id: n.id,
+          title: n.title  + (n.currentUserVisible ? '' : ' (无权限)'),
+          hasPrivillage: n.currentUserVisible
+        })
+        arr.push(curProduct)
+        if(n.children){
           n.children.forEach(subNode => {
-            process(subNode, '')
+            process(subNode, n.title + ' / ')
           })
         }
       })
@@ -33,7 +38,8 @@ function generateDataTreeSearchList (dataTreeNodes) {
       // debugger
       curProduct.items.push({
         id: node.id,
-        title: prefix + node.title
+        title: prefix + node.title + (node.currentUserExecutable ? '' : ' (无权限)'),
+        hasPrivillage: node.currentUserExecutable
       })
       if (node.children) {
         node.children.forEach(subNode => {
@@ -44,6 +50,7 @@ function generateDataTreeSearchList (dataTreeNodes) {
   }
 
   process(dataTreeNodes)
+  // debugger
   return arr
 }
 
@@ -101,8 +108,8 @@ let store = new Vuex.Store({
     // allow2: false,
     permsList: [], // 权限列表
     queryingCount: 0,
-    turnOn: [], // 选择哪一项展开
-    turnLight: '', // 选择那一项高亮
+    // turnOn: [], // 选择哪一项展开
+    // turnLight: '', // 选择那一项高亮
     showDebug: false,
     onSwitch: false,
     indexMap: {},
@@ -110,6 +117,7 @@ let store = new Vuex.Store({
     expandWitch: {}, // 那一项要被展开
     dataTreeSearchList: [], // 用于目录树搜索
     flattenProductFolders: [], // 用作选取复制、移动的目标目录
+    whichAnchor: '', // 定位哪一项要跳转
     // result: []
     // param_a: '',
     // param_a_value: ''
@@ -139,7 +147,10 @@ let store = new Vuex.Store({
     updateDataTreeNodes: (state, { treeNodes }) => {
       state.dataTreeNodes = _.cloneDeep(treeNodes)
     },
-    updateWichToShow: (state, { status }) => {
+    updateWhichAnchor: (state, { status }) => {
+      state.whichAnchor = status
+    },
+    updateSwitchToShow: (state, { status }) => {
       state.switchToShow = status
     },
     updateAllow: (state, { status }) => {
@@ -156,13 +167,12 @@ let store = new Vuex.Store({
       state.permsList = _.cloneDeep(perms)
       // console.log(state.permsList)
     },
-    updateTurnOn: (state, { status }) => {
-      state.turnOn = status
-      console.log('3333333333' + status)
-    },
-    updateTurnLight: (state, { status }) => {
-      state.turnLight = status
-    },
+    // updateExpandChain: (state, { status }) => {
+    //   state.turnOn = status
+    // },
+    // updateCurrentActiveNode: (state, { status }) => {
+    //   state.turnLight = status
+    // },
     updateOnSwitch: (state, { status }) => {
       state.onSwitch = status
     },
@@ -308,7 +318,7 @@ let store = new Vuex.Store({
           doIndex()
 
           expandList.forEach(id => {
-            indexMap[id].expand = true
+            Vue.set(indexMap[id], 'expand', true)
           })
 
           let dataTreeSearchList = generateDataTreeSearchList(treeNodes)
@@ -332,8 +342,8 @@ let store = new Vuex.Store({
         commit('updatePermsList', { perms: res.data.perms })
       })
     },
-    changeWichToShow ({ commit }, { status }) {
-      commit('updateWichToShow', { status })
+    updateSwitchToShow ({ commit }, { status }) {
+      commit('updateSwitchToShow', { status })
     },
     changeOnSwitch ({ commit }, { status }) {
       commit('updateOnSwitch', { status })
@@ -410,6 +420,66 @@ let store = new Vuex.Store({
           ]
         }
         resolve(ret)
+      })
+    },
+    getScriptSearchList ({ commit, dispatch, state }) {
+      let arr = []
+      function process (node, prefix) {
+        if (node instanceof Array) {
+          node.forEach(n => {
+            if (n.children) {
+              n.children.forEach(subNode => {
+                process(subNode, '')
+              })
+            }
+          })
+        } else {
+          // debugger
+          if (node.scriptId !== undefined) {
+            arr.push({
+              id: node.scriptId,
+              node: node
+            })
+          }
+
+          if (node.children) {
+            node.children.forEach(subNode => {
+              process(subNode, node)
+            })
+          }
+        }
+      }
+
+      return new Promise(function (resolve, reject) {
+        try {
+          // let arr = [{
+          //   product: {
+          //     title: '有道精品课',
+          //     id: 1
+          //   },
+          //   items: [
+          //     {
+          //       id: 15,
+          //       title: '链接'
+          //     },
+          //     {
+          //       id: 16,
+          //       title: '链接 / KPI数据'
+          //     }
+          //   ]
+          // }]
+          if (state.dataTreeNodes.length === 0) {
+            dispatch('reloadDataTree').then(res => {
+              process(state.dataTreeNodes)
+              resolve(arr)
+            })
+          } else {
+            process(state.dataTreeNodes)
+            resolve(arr)
+          }
+        } catch (e) {
+          reject(e)
+        }
       })
     },
     // 获取到指定节点的祖先节点的id，返回的列表次序是从最上层到最下层。

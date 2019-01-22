@@ -2,7 +2,7 @@
   <Row>
     <Col span="15">显示无权限的项:</Col>
     <Col span="9">
-      <i-Switch class="form-inline" @on-change="changeWichToShow({status: !switchToShow})"/>
+      <i-Switch class="form-inline" @on-change="updateSwitchToShow({status: !switchToShow})"/>
     </Col>
   </Row>
 </template>
@@ -16,7 +16,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(["changeWichToShow"])
+    ...mapActions(["updateSwitchToShow"])
   }
 };
 </script>
