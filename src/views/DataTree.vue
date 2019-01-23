@@ -159,7 +159,7 @@ import MenuTree from '@/components/data-tree-menu/MenuTree.vue'
 import DataTreeEditModal from "@/components/data-tree-edit/DataTreeEditModal.vue";
 import CredentialWarning from "_c/CredentialWarning.vue"
 import LoginStatus from '_c/LoginStatus.vue'
-import CommonLink from '@/views/CommonLink.vue'
+import CommonLink from '_c/CommonLink.vue'
 // import {getDataTree} from '@/mock/index.js'
 
 // debugger
