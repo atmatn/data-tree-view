@@ -11,6 +11,7 @@ let bottomChildren = [
     computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
     currentUserManageable: true, // （后端计算出的属性）
     manageablePerms: [],
+    computedManageablePerms: ['ke_general'], // （后端计算出的属性）
     creator: 'bob',
     children: [
       // 空的
@@ -29,6 +30,7 @@ var mockTreeNodes = [
     currentUserManageable: true,
     creator: 'bob', // 创建者
     manageablePerms: ['ke_general'], // 管理权限，对于“product”有权限者，可以“更名”，“删除”，“管理权限”，“上移”，“下移”
+    computedManageablePerms: ['ke_general'], // （后端计算出的属性）用户是否有当前节点的管理权限；默认继承计算；除非当前节点自己设置了manageable_perms
     children: [
       {
         type: 'folder',
@@ -40,6 +42,7 @@ var mockTreeNodes = [
         currentUserManageable: true, // （后端计算出的属性，创建者或者与“manageable_perms”相符的 currentUserManageable 才为 true；如果manageable_perms为空，并且当前用户不是creator，则也设定为false）
         creator: 'bob', // 创建者
         manageablePerms: [], // 管理权限，对于“folder”，有权限者，可以 “更名”，”移动“，“删除”，“管理权限”，“上移”，“下移”
+        computedManageablePerms: ['ke_general'], // （后端计算出的属性）
         children: [
           {
             type: 'direct-link',
@@ -50,6 +53,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             manageablePerms: ['ke_general'], // 管理权限，对于叶子节点，有权限者，可以“更名”，”移动“，“删除”，“管理权限”，“设置属性”，“上移”，“下移”
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'bob',
             linkUrl: 'http://analyzer2.corp.youdao.com/'
           },
@@ -62,6 +66,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             manageablePerms: ['ke_general'], // 管理权限，对于叶子节点，有权限者，可以“更名”，”移动“，“删除”，“管理权限”，“设置属性”，“上移”，“下移”
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'bob',
             linkUrl: 'http://www.youdao.com/',
             openMode: 'iframe'
@@ -75,6 +80,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_general'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             manageablePerms: ['ke_general'], // 管理权限，对于叶子节点，有权限者，可以“更名”，”移动“，“删除”，“管理权限”，“设置属性”，“上移”，“下移”
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'bob',
             linkUrl: 'http://www.youdao.com/',
             openMode: 'new-window'
@@ -88,7 +94,8 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_core'], // （后端计算出的属性，如果没有配置，会直接拷贝父节点(folder)的computedExecutablePerms）folder的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: false, // （后端计算出的属性）
             creator: 'mary',
-            manageablePerms: ['ke_general']
+            manageablePerms: ['ke_general'],
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的linkUrl
             // linkUrl: '/xxx.html',
           }
@@ -102,6 +109,7 @@ var mockTreeNodes = [
         currentUserManageable: true, // （后端计算出的属性）
         creator: 'bob',
         manageablePerms: ['ke_general'],
+        computedManageablePerms: ['ke_general'], // （后端计算出的属性）
         children: [
           {
             type: 'args-script',
@@ -112,6 +120,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_financial'], // （后端计算出的属性，如果没有配置，会直接拷贝folder的computedExecutablePerms）args-script的perms是“执行”权限；前端可以提示用户，需要该权限（之一）才能执行
             currentUserManageable: true, // （后端计算出的属性）
             manageablePerms: ['ke_general'],
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'bob',
             scriptId: '123',
             scriptParams: {
@@ -128,6 +137,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
             currentUserManageable: false, // （后端计算出的属性）
             manageablePerms: [],
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'sammy'
             // （后端剥离掉的数据）用户没有执行权限，则后端不提供对应的scriptId和params
             // scriptId: '123',
@@ -147,6 +157,7 @@ var mockTreeNodes = [
         currentUserManageable: true, // （后端计算出的属性）
         containsExecutableForCurrentUser: true, // （后端计算出的属性）
         manageablePerms: [],
+        computedManageablePerms: ['ke_general'], // （后端计算出的属性）
         creator: 'bob',
         children: [
           {
@@ -158,6 +169,7 @@ var mockTreeNodes = [
             computedExecutablePerms: ['ke_chief_financial'], // （后端计算出的属性）args-script的perms是“执行”权限；前端可以提示用户，需要该权限才能执行
             currentUserManageable: true, // （后端计算出的属性）
             manageablePerms: [],
+            computedManageablePerms: ['ke_general'], // （后端计算出的属性）
             creator: 'bob',
             scriptId: '456',
             scriptParams: {
@@ -176,6 +188,7 @@ var mockTreeNodes = [
         computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
         currentUserManageable: true, // （后端计算出的属性）
         manageablePerms: [],
+        computedManageablePerms: ['ke_general'], // （后端计算出的属性）
         creator: 'bob',
         children: [
           // 空的
@@ -190,6 +203,8 @@ var mockTreeNodes = [
     visiblePerms: ['ynote_general'], // product的perms是“可见”权限，有该权限则所有子节点可见
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
     currentUserManageable: false,
+    manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     containsExecutableForCurrentUser: false // （后端计算出的属性）
   },
   {
@@ -201,6 +216,7 @@ var mockTreeNodes = [
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
     currentUserManageable: true,
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     creator: 'bob',
     children: [
       // 空的
@@ -215,6 +231,7 @@ var mockTreeNodes = [
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
     currentUserManageable: true,
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     creator: 'bob',
     children: [
       {
@@ -226,6 +243,7 @@ var mockTreeNodes = [
         computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
         currentUserManageable: true, // （后端计算出的属性）
         manageablePerms: [],
+        computedManageablePerms: [], // （后端计算出的属性）
         creator: 'bob',
         children: [
           // 空的
@@ -242,6 +260,7 @@ var mockTreeNodes = [
     containsExecutableForCurrentUser: true, // （后端计算出的属性）
     currentUserManageable: true,
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     creator: 'bob',
     children: bottomChildren
   },
@@ -253,6 +272,7 @@ var mockTreeNodes = [
     currentUserVisible: false, //  （后端计算出的属性）当前用户是否有“可见”权限
     currentUserManageable: false,
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     containsExecutableForCurrentUser: false // （后端计算出的属性）
   }
 ]
@@ -268,6 +288,7 @@ for (let i = 0; i < 100; i++) {
     computedExecutablePerms: ['ke_general'], // （后端计算出的属性）
     currentUserManageable: true, // （后端计算出的属性）
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     creator: 'bob',
     children: [
       // 空的
@@ -285,6 +306,7 @@ for (let i = 0; i < 100; i++) {
     currentUserVisible: (i % 2 === 1), //  （后端计算出的属性）当前用户是否有“可见”权限
     currentUserManageable: (i % 2 === 1),
     manageablePerms: [],
+    computedManageablePerms: [], // （后端计算出的属性）
     containsExecutableForCurrentUser: (i % 2 === 1), // （后端计算出的属性）
     children: (i % 2 === 1) ? undefined : []
   }

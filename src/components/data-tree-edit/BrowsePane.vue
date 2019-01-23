@@ -66,7 +66,7 @@ export default {
           return ''
         }
         if(perms.length === 0) {
-          return '未设置，仅创建者有权'
+          return '未设置，仅创建者或管理员有权'
         }
         return perms.join(', ')
       }
@@ -78,7 +78,7 @@ export default {
         permText = `执行权限(${translate(data.computedExecutablePerms)})`
       }
 
-      permText = permText + ` 管理权限(${translate(data.manageablePerms)})`
+      permText = permText + ` 管理权限(${translate(data.computedManageablePerms)})`
       // console.log('node')
       // console.log(node)
       // console.log('data')
